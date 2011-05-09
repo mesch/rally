@@ -1,0 +1,30 @@
+<%= form_tag :action=>'change_email', :class=>"validator" %>
+
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="biz">
+    <div id="content" class="biz">
+        <div class="box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head"><h2>Change Email</h2></div>
+                <div class="sect">
+						<div class="note"> NOTE: If you change your email, you will have to re-activate your account. </div>
+                        <div class="field">
+                            <label for="email">New Email</label>
+							<%= text_field_tag :email, nil, :size=>"50", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                        </div>
+                        <div class="act">
+							<%= submit_tag :submit, :value=>"Change Email", :class=>"formbutton"%>
+							or <%= link_to "cancel", merchant_account_url %>
+                         </div>
+                </div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+    <div id="sidebar">
+	</div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

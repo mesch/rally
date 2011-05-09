@@ -1,0 +1,128 @@
+<%= form_tag :action=> "signup" %>
+
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="partner">
+	<div id="content" class="clear mainwide">
+        <div class="clear box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head"><h2>Signup</h2></div>
+                <div class="sect">
+						<div class="wholetip clear"><h3>1. Login Info</h3></div>
+                        <div class="field">
+							<%= label_tag 'Username' %> 
+							<%= text_field_tag :username, @merchant.username, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Password' %>
+							<%= password_field_tag :password, @merchant.password, :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Confirm Password', 'Confirm Password' %> 
+							<%= password_field_tag :password_confirmation, @merchant.password_confirmation, :class=>"f-input", :datatype=>"require", :require=>"true" %>
+						</div>
+						<div class="field">
+							<%= label_tag 'Email' %> 
+							<%= text_field_tag :email, @merchant.email, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                        </div>
+
+						<div class="wholetip clear"><h3>2. Company Info</h3></div>
+                        <div class="field">
+							<%= label_tag 'Company Name', 'Company Name' %> 
+							<%= text_field_tag :name, @merchant.name, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Website' %> 
+							<%= text_field_tag :website, @merchant.website, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Time Zone', 'Time Zone' %> 
+							<%= select_tag :time_zone, time_zone_options_for_select(@merchant.time_zone) %>
+							<div class="note">NOTE: You will not be able to edit your time zone later.</div>
+                        </div>
+
+						<div class="wholetip clear"><h3>3. Contact Info</h3></div>
+                        <div class="field">
+							<%= label_tag 'Contact Name', 'Contact Name' %> 
+							<%= text_field_tag :contact_name, @merchant.contact_name, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Address Line 1', 'Address Line 1' %> 
+							<%= text_field_tag :address1, @merchant.address1, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Address Line 2', 'Address Line 2' %> 
+							<%= text_field_tag :address2, @merchant.address2, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'City' %> 
+							<%= text_field_tag :city, @merchant.city, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'State' %> 
+							<%= text_field_tag :state, @merchant.state, :size=>"30", :class=>"f-input" %>
+                        </div>					
+                        <div class="field">
+							<%= label_tag 'ZIP', 'ZIP' %> 
+							<%= text_field_tag :zip, @merchant.zip, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Country' %> 
+							<%= text_field_tag :country, @merchant.country, :size=>"30", :class=>"f-input" %>
+                        </div>						
+                        <div class="field">
+							<%= label_tag 'Phone Number', 'Phone Number' %> 
+							<%= text_field_tag :phone_number, @merchant.phone_number, :size=>"30", :class=>"f-input" %>
+                        </div>
+
+						<div class="wholetip clear"><h3>4. Bank Account Info</h3></div>
+                        <div class="field">
+							<%= label_tag 'Tax Id', 'Tax Id' %> 
+							<%= text_field_tag :tax_id, @merchant.tax_id, :size=>"30", :class=>"f-input" %>
+                        </div>						
+                        <div class="field">
+							<%= label_tag 'Bank Name', 'Bank Name' %> 
+							<%= text_field_tag :bank, @merchant.bank, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Name on Account', 'Name on Account' %> 
+							<%= text_field_tag :account_name, @merchant.account_name, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Routing Number', 'Routing Number' %> 
+							<%= text_field_tag :routing_number, @merchant.routing_number, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Account Number', 'Account Number' %> 
+							<%= text_field_tag :account_number, @merchant.account_number, :size=>"30", :class=>"f-input" %>
+                        </div>
+                        <div class="field">
+							<%= label_tag 'Paypal Account', 'Paypal Account' %> 
+							<%= text_field_tag :paypal_account, @merchant.paypal_account, :size=>"30", :class=>"f-input" %>
+                        </div>
+						<div class="field">
+							<div class="note">
+								<%= check_box_tag :tos, 1, false %>
+								I agree to the <%= link_to 'Terms of Service', tos_url, :target=>"_blank" %>.</div>
+						</div>
+						<div id="recaptcha_container" class="field">
+							<%= raw recaptcha_tags :public_key => OPTIONS[:recaptcha_public_key], 
+								:display => { :theme => "clean" } %>
+						</div>
+                        <div class="act">
+							<%= submit_tag :submit, :value=>"Signup", :class=>"formbutton"%>
+							or <%= link_to "cancel", merchant_login_url %>
+                        </div>
+                </div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+	</div>
+
+<div id="sidebar">
+</div>
+
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

@@ -1,0 +1,111 @@
+<%= form_tag(controller.action_name == 'new_deal' ? merchant_create_deal_url : merchant_update_deal_url, :multipart => true) %>
+
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="leader">
+	<div id="content" class="clear mainwide">
+        <div class="clear box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+					<h2><%= controller.action_name == 'new_deal' ? 'Create Deal' : 'Update Deal' %></h2>
+				</div>
+                <div class="sect">
+					<div class="wholetip clear"><h3>1. Basic Info</h3></div>
+					<div class="field">
+						<%= label_tag 'Title' %> 
+						<%= text_field_tag :title, @deal.title, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+					</div>
+					<div class="field">
+						<%= label_tag 'Value' %> 
+						<%= text_field_tag :deal_value, @deal.deal_value, :size=>10, :class=>"number", :datatype=>"require", :require=>"true" %>
+						<%= label_tag 'Price' %> 
+						<%= text_field_tag :deal_price, @deal.deal_price, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>										
+						<span class="inputtip">Value must be greater than Price.</span>
+					</div>
+					<div class="field">
+						<%= label_tag 'Max' %>
+						<%= text_field_tag :max, @deal.max, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
+						<%= label_tag 'Limit per Person', 'Limit per Person' %> 
+						<%= text_field_tag :limit, @deal.limit, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
+						<span class="hint">Set to 0 for no limit.</span>
+					</div>
+					<div class="field">
+						<%= label_tag 'Start Date', 'Start Date' %> 
+						<%= text_field_tag :start_date, @deal.start_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>
+						<%= label_tag 'End Date', 'End Date' %> 
+						<%= text_field_tag :end_date, @deal.end_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>
+						<%= label_tag 'Expiration Date', 'Expiration Date' %> 
+						<%= text_field_tag :expiration_date, @deal.expiration_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>						
+						<span class="hint">The deal starts at Start Date 00:00:00, ends at End Date 23:59:59.</span>
+					</div>
+					<div class="field">
+						<%= label_tag 'Description' %> 
+						<div style="float:left;">
+							<%= text_area_tag :description, @deal.description, :cols=>45, :rows=>5, :class=>"xheditor-simple" %>
+						</div>
+					</div>
+					<div class="field">
+						<%= label_tag 'Terms' %> 
+						<div style="float:left;">
+							<%= text_area_tag :terms, @deal.terms, :cols=>45, :rows=>5, :class=>"xheditor-simple" %>
+						</div>
+						<span class="hint">Detailed information and valid date of this deal</span>
+					</div>
+					<div class="wholetip clear"><h3>2. Creative Content</h3></div>
+					<div class="field">
+						<%= label_tag 'Image 1' %>
+						<%= file_field_tag :image1, :size=>"30", :class => "f-input" %>
+						<% if @image1 %>
+							<span class="hint"><%= @image1.image.url %></span>
+						<% else %>
+							<span class="hint">Upload at least one picture.</span>
+						<% end %>
+					</div>
+					<div class="field">
+						<%= label_tag 'Image 2' %>
+						<%= file_field_tag :image2, :size=>"30", :class => "f-input" %>
+						<% if @image2 %>
+							<span class="hint"><%= @image2.image.url %></span>
+						<% end %>
+					</div>
+					<div class="field">
+						<%= label_tag 'Image 3' %>
+						<%= file_field_tag :image3, :size=>"30", :class => "f-input" %>
+						<% if @image3 %>
+							<span class="hint"><%= @image3.image.url %></span>
+						<% end %>
+					</div>
+					<div class="field">
+						<%= label_tag 'FLV Video', 'FLV Video' %>
+						<%= text_field_tag :video, @deal.video, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+						<span class="hint">Format: http://.../video.flv</span>
+					</div>
+					<div class="wholetip clear"><h3>3. Coupon Codes</h3></div>
+					<div class="field">
+						<%= label_tag 'Upload Codes' %>
+						<%= file_field_tag :codes_file, :size=>"30", :class => "f-input" %>
+						<% if @num_deal_codes %>
+							<span class="hint"><%= @num_deal_codes %> codes saved.</span>
+						<% else %>
+							<span class="hint">One code will be used for each subscribed coupon.</span>							
+						<% end %>
+					</div>
+					<div class="act">
+						<%= submit_tag :submit, :class=>"formbutton",
+							:value => controller.action_name == 'new_deal' ? "Create Deal" : "Update Deal" %>
+						or <%= link_to "cancel", merchant_deals_url %>
+					</div>
+				</form>
+                </div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+	</div>
+
+<div id="sidebar">
+</div>
+
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

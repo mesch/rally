@@ -1,0 +1,41 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="coupons">
+    <div id="content" class="coupons-box clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Deals</h2>
+					<%= link_to "New Deal", merchant_new_deal_url %>
+				</div>
+                <div class="sect">
+					<table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">
+						<tr><th width="40" nowrap>Id</th>
+							<th width="200">Title</th>
+							<th width="40">Price</th>
+							<th width="40">Value</th>
+							<th width="60" nowrap>Start</th>
+							<th width="60" nowrap>End</th>
+							<th width="60" nowrap>Expiration</th>
+						</tr>							
+						<% for deal in @deals %>
+						<tr ${$index%2?'':'class="alt"'}>
+							<td><%= link_to deal.id, merchant_edit_deal_url(deal.id) %></td>
+							<td><%= deal.title %></td>
+							<td><%= deal.deal_price %></td>
+							<td><%= deal.deal_value %></td>
+							<td><%= deal.start_date.strftime(OPTIONS[:date_format]) %></td>
+							<td><%= deal.end_date.strftime(OPTIONS[:date_format]) %></td>
+							<td><%= deal.expiration_date.strftime(OPTIONS[:date_format]) %></td>
+						</tr>
+						<% end %>
+                    </table>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

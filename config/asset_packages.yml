@@ -1,0 +1,59 @@
+--- 
+javascripts:
+    
+- application:
+    - mootools-core-1.3-full-compat
+    - mootools-more-1.3-full-compat    
+    - rails
+    - global
+    - modal
+    - overlay
+    - ejs
+    - view
+
+- merchant:
+    - mootools-core-1.3-full-compat
+    - mootools-more-1.3-full-compat    
+    - rails
+    - global
+    - modal
+    - overlay
+    - merchant
+    - ejs
+    - view
+
+- user:
+    - mootools-core-1.3-full-compat
+    - mootools-more-1.3-full-compat    
+    - rails
+    - global
+    - modal
+    - overlay
+    - user
+    - ejs
+    - view
+  	
+stylesheets:
+
+- screen:
+    - screen
+- print:
+    - print
+- ie_less_8:
+    - ie
+
+- application:
+    - global
+    - application
+
+- merchant:
+    - global
+    - application
+    - merchant
+
+- user:
+    - global
+    - application
+    - user
+
+

@@ -46,4 +46,15 @@ Rally::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+  
+  # Set the default action mailer host..
+  OPTIONS[:site_url] = "www.rallycommerce.com"
+  config.action_mailer.default_url_options = { :host => OPTIONS[:site_url] }
+  
+  OPTIONS[:paperclip_storage_options] = {
+    :storage => :s3,
+    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+    :path => ":class/:attachment/:id/:style.:extension",
+    :default_url => "/images/missing_thumb.png"
+  }  
 end

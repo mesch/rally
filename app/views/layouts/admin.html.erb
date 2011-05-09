@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" id="">
+<head>
+	<meta http-equiv=content-type content="text/html; charset=UTF-8">
+	<title><%= OPTIONS[:site_name] %></title>
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<!-- ><link rel="shortcut icon" href="/favicon.ico" /> -->
+	<%= raw stylesheet_link_tag 'index.css', :media => "screen", :charset => "utf-8" %>	
+	<script type="text/javascript">var WEB_ROOT = '';</script>
+	<%= raw javascript_include_tag "index.js" %>
+</head>
+<body class="<%= request.method == 'index' ? 'bg-alt' : 'newbie' %>">
+<div id="pagemasker"></div><div id="dialog"></div>
+<div id="doc">
+	<%= raw javascript_include_tag "xheditor/xheditor.js" %>	
+	<div id="hdw">
+		<div id="hd">
+			<div id="logo">
+			<%= link_to image_tag("logo.gif"), root_url, :class => "link", :target => "_blank" %>
+			</div>
+			<div class="guides">
+				<div class="city">
+					<h2>Admin</h2>
+				</div>
+			</div>
+			<ul class="nav cf">
+				<li class="current"><a href="/home">Home</a></li>
+				<li><a href="/deals">Deals</a></li>
+				<li><a href="/orders">Orders</a></li>
+				<li><a href="/coupons">Coupons</a></li>
+				<li><a href="/users">Users</a></li>
+				<li><a href="/merchants">Merchants</a></li>
+				<li><a href="/system">System</a></li></ul>
+		</div>
+	</div>
+
+	<% if flash[:notice] %>
+	<div class="sysmsgw" id="sysmsg-success"><div class="sysmsg"><p><%= flash[:notice] %></p><span class="close">Close</span></div></div>
+	<% end %>
+	<% if flash[:error] %>
+	<div class="sysmsgw" id="sysmsg-error"><div class="sysmsg"><p><%= flash[:error] %></p><span class="close">Close</span></div></div> 
+	<% end %>
+
+	<%= yield %>
+	
+	<div id="ftw">
+		<div id="ft">
+			<p class="contact"><a href="/feedback/suggest">Feedback</a></p>
+			<ul class="cf">
+				<li class="col">
+					<h3>Help</h3>
+					<ul class="sub-list">
+						<li><a href="/help/tour">Tour <%= OPTIONS[:site_name] %></a></li>
+						<li><a href="/help/faqs">FAQ</a></li>
+						<li><a href="/help/about">What is <%= OPTIONS[:site_name] %></a></li>
+						<li><a href="/help/api">Developers/API</a></li>
+					</ul>
+				</li>
+				<li class="col">
+					<h3>Follow Us</h3>
+					<ul class="sub-list">
+						<li><a href="/subscribe">Subscribe Email</a></li>
+						<li><a href="/feed">Subscribe RSS</a></li>
+					</ul>
+				</li>
+				<li class="col">
+					<h3>Contact & Info</h3>
+					<ul class="sub-list">
+						<li><a href="/feedback/seller">Business</a></li>
+						<li><a href="/feedback/suggest">Suggestions</a></li>
+						<li><a href="/about/contact">Contact</a></li>
+					</ul>
+				</li>
+				<li class="col">
+					<h3>Company</h3>
+					<ul class="sub-list">
+						<li><a href="/about/us">About <%= OPTIONS[:site_name] %></a></li>
+						<li><a href="/about/job">Job Oportunity</a></li>
+						<li><a href="/about/terms">Terms & Conditions </a></li>
+						<li><a href="/about/privacy">Privacy</a></li>
+					</ul>
+				</li>
+				<li class="col end">
+						<div class="logo-footer">
+							<%= link_to image_tag("logo-footer.gif"), root_url %>
+						</div>
+				</li>
+			</ul>
+			<div class="copyright">
+			<p>&copy;<span>2010</span>&nbsp;<%= OPTIONS[:site_name] %>. All Rights Reserved.&nbsp;<a href="/about/terms.php">Read Terms & Conditions before use. </a>&nbsp;</p>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
