@@ -40,7 +40,7 @@ Badgnet::Application.configure do
   # config.threadsafe!
 
   # Set the default action mailer host..
-  OPTIONS[:site_url] = "www.rallycommerce-staging.com"
+  OPTIONS[:site_url] = "rallycommerce-staging.heroku.com"
   config.action_mailer.default_url_options = { :host => OPTIONS[:site_url] }
   
   OPTIONS[:paperclip_storage_options] = {
