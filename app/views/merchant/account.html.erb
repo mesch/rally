@@ -13,6 +13,12 @@
 				</div>
                 <div class="sect">
 						<div class="wholetip clear"><h3>1. Login Info</h3></div>
+						<% if @merchant.id %>
+							<div class="field">
+								<%= label_tag 'Merchant Id', 'Merchant Id' %> 
+								<%= text_field_tag :id, @merchant.id, :size=>"30", :class=>"f-input", :disabled => true %>
+							</div>
+						<% end %>
                         <div class="field">
 							<%= label_tag 'Username' %>
 							<%= text_field_tag :username, @merchant.username, :size=>"30", :class=>"f-input", :disabled => true %>					

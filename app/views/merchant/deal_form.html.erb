@@ -12,6 +12,12 @@
 				</div>
                 <div class="sect">
 					<div class="wholetip clear"><h3>1. Basic Info</h3></div>
+					<% if @deal.id %>
+						<div class="field">
+							<%= label_tag 'Deal Id', 'Deal Id' %> 
+							<%= text_field_tag :id, @deal.id, :size=>"30", :class=>"f-input", :disabled => true %>
+						</div>
+					<% end %>				
 					<div class="field">
 						<%= label_tag 'Title' %> 
 						<%= text_field_tag :title, @deal.title, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>

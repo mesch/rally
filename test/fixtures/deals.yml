@@ -1,11 +1,12 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+burger_deal:
+    merchant: bob
+    title: Cool New Deal!
+    start_date: "2011-05-01T00:00:00"
+    end_date: "2011-09-01T00:00:00"
+    expiration_date: "2012-01-01T00:00:00"
+    deal_price_in_cents: 1000
+    deal_value_in_cents: 2000
+    description: "$20 worth of burgers for $10."
+    terms: "Redeemable at any local Bob's Burgers."
+    video: "http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv"
 
-# This model initially had no columns defined.  If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-#  column: value

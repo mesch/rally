@@ -55,7 +55,6 @@ class MerchantController < ApplicationController
       redirect_to :controller => 'merchant', :action => :deals
     rescue ActiveRecord::RecordInvalid => invalid
       ### TODO: add invalid.record.errors?
-      p invalid.record.errors
       flash[:error] = "There was a problem creating your deal."
       redirect_to :controller => 'merchant', :action => :new_deal
     end    
@@ -86,22 +85,22 @@ class MerchantController < ApplicationController
         :description => params[:description], :terms => params[:terms], :video => params[:video])
         # Create each new DealImage
         if (image = params[:image1])
-          DealImage.delete_all(:conditions => { :deal_id => deal.id, :counter => 1 })
+          DealImage.delete_all(["deal_id = ? AND counter = 1", deal.id])
           di = DealImage.new(:deal_id => deal.id, :counter => 1, :image => image)
           di.save!
         end
         if (image = params[:image2])
-          DealImage.delete_all(:conditions => { :deal_id => deal.id, :counter => 2 })
+          DealImage.delete_all(["deal_id = ? AND counter = 2", deal.id])
           di = DealImage.new(:deal_id => deal.id, :counter => 2, :image => image)
           di.save!
         end
         if (image = params[:image3])
-          DealImage.delete_all(:conditions => { :deal_id => deal.id, :counter => 3})
+          DealImage.delete_all(["deal_id = ? AND counter = 3", deal.id])
           di = DealImage.new(:deal_id => deal.id, :counter => 3, :image => image)
           di.save!
         end
         if (file = params[:codes_file])
-          DealCode.delete_all(:deal_id => deal.id)
+          DealCode.delete_all(["deal_id = ?", deal.id])
           while (line = file.gets)
             dc = DealCode.new(:deal_id => deal.id, :code => line.strip)
             dc.save!
@@ -168,9 +167,6 @@ class MerchantController < ApplicationController
           flash[:notice] = "Signup successful. An activation code has been sent."
           redirect_to :controller => 'merchant', :action =>'login'
       else
-        p @merchant
-        p @merchant.save
-        p @merchant.send_activation()
         flash.now[:error] = "Signup unsuccessful."
         render(:action => :signup)
       end

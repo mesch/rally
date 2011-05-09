@@ -1,11 +1,24 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-# This model initially had no columns defined.  If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-#  column: value
+burger_deal1:
+    id: 1
+    deal: burger_deal
+    counter: 2
+    image_file_name: human_flesh.jpg
+    image_content_type: image/jpg
+    image_file_size: 336456
+    
+burger_deal2:
+    id: 2
+    counter: 1
+    deal: burger_deal
+    image_file_name: group.jpg
+    image_content_type: image/jpg
+    image_file_size: 876389
+    
+burger_deal3:
+    id: 3
+    counter: 3
+    deal: burger_deal
+    image_file_name: burger.jpg
+    image_content_type: image/jpg
+    image_file_size: 147681    
+    

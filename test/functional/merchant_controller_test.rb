@@ -15,6 +15,10 @@ class MerchantControllerTest < ActionController::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     @request.host = "localhost"
+    
+    @start = Time.zone.today
+    @end = Time.zone.today + 1.days
+    @expiration = Time.zone.today + 1.months
   end
 
   def login
@@ -158,7 +162,7 @@ class MerchantControllerTest < ActionController::TestCase
     #passwords dont match
     post :change_password, :password => "newpass", :password_confirmation => "newpassdoesntmatch"
     assert_response :redirect
-    assert flash[:notice]
+    assert flash[:error]
     #empty password
     post :change_password, :password => "", :password_confirmation => ""
     assert_response :redirect
@@ -300,7 +304,8 @@ class MerchantControllerTest < ActionController::TestCase
     assert_template "merchant/account"
     assert_equal Merchant.find(@bob.id).name, '1234567890' 
   end
-  
+
+  # cannot change time zone after creation ...
   def test_change_time_zone
     #can login
     post :login, :username => "bob", :password => "test"
@@ -311,27 +316,26 @@ class MerchantControllerTest < ActionController::TestCase
     assert_response :success
     assert flash[:notice]
     assert_template "merchant/account"
-    assert_equal Merchant.find(@bob.id).time_zone, 'Hawaii'
+    assert_not_equal Merchant.find(@bob.id).time_zone, 'Hawaii'
     # go back to page and check time zone
     get :account
     assert_response :success
-    assert_equal Time.zone.name, 'Hawaii'
+    assert_not_equal Time.zone.name, 'Hawaii'
   end
 
 ## unable to test due to @request not getting set in ApplicationController
 =begin
   def test_return_to
-    #cant access edit without being logged in
-    get :edit
-    assert flash[:error]
+    #cant access account without being logged in
+    get :account
     assert_response :redirect
     assert_redirected_to :action=>'login'
     assert session[:return_to]
     #login
     post :login, :username => "bob", :password => "test"
     assert_response :redirect
-    #redirected to edit
-    assert_redirected_to :action=>'edit'
+    #redirected to account
+    assert_redirected_to :action=>'account'
     assert_nil session[:return_to]
     assert session[:merchant_id]
     assert flash[:notice]
@@ -344,5 +348,181 @@ class MerchantControllerTest < ActionController::TestCase
     assert_redirected_to :action=>'home'
   end
 =end
+
+  def test_get_to_deals
+    self.login
+    get :deals
+    assert_response :success
+    assert_template "merchant/deals"    
+  end
+
+  def test_create_deal
+    self.login
+    #create basic
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+  end
+  
+  def test_create_deal_missing_fields
+    self.login
+    post :create_deal, :title => nil, :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal' 
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 0    
+    post :create_deal, :title => 'dealio', :start_date => nil, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => nil, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => nil, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => nil, :deal_value => '20.00'
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => nil
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+  end
+  
+  def test_create_deal_field_lengths
+    self.login
+    # title - 50 chars
+    string = ""
+    length = 51
+    length.times{ string << "a"}
+    post :create_deal, :title => string, :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'    
+  end
+  
+  def test_create_deal_full
+    self.login
+    #create full
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :description => 'blahblahblah', :terms => 'you have to ...', :max => '100', :limit => '5',
+      :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+  end
+
+# Behavioral Testing? In order to upload files?  
+=begin
+  def test_create_deal_images
+    
+  end
+
+  def test_create_deal_codes
+    
+  end
+=end
+
+  def test_update_deal
+    self.login
+    #create full
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :description => 'blahblahblah', :terms => 'you have to ...', :max => '100', :limit => '5',
+      :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert_equal deal.title, 'dealio'
+    #edit title
+    post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deal = Deal.find(deal.id)
+    assert_equal deal.title, 'new name'      
+  end
+  
+  def test_update_deal_full
+    self.login
+    #create basic
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert_equal deal.title, 'dealio'
+    #edit all fields
+    post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start + 1.days, 
+      :end_date => @end + 1.days, :expiration_date => @expiration + 1.days,
+      :deal_price => '15.00', :deal_value => '30.00',  :max => '10', :limit => '3',
+      :description => 'blahblahblah', :terms => 'you have to ...', :max => '100', :limit => '5',
+      :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deal = Deal.find(deal.id)
+    assert_equal deal.title, 'new name'
+  end
+
+  def test_update_deal_field_lengths
+    self.login
+    #create basic
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert_equal deal.title, 'dealio'
+    # edit title
+    # title - 50 chars
+    string = ""
+    length = 51
+    length.times{ string << "a"}
+    post :update_deal, :id => deal.id, :title => string
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'edit_deal'
+    # verify in DB
+    deal = Deal.find(deal.id)
+    assert_equal deal.title, 'dealio' 
+  end
 
 end

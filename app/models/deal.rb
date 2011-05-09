@@ -1,6 +1,7 @@
 class Deal < ActiveRecord::Base
   validates_length_of :title, :maximum => 50
   validates_length_of :description, :maximum => 200
+  validates_length_of :terms, :maximum => 200
   validates_presence_of :merchant_id, :title, :start_date, :end_date, :expiration_date, :deal_price, :deal_value
 
   attr_protected :id
