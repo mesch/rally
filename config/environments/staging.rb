@@ -19,7 +19,7 @@ Rally::Application.configure do
   config.active_support.deprecation = :notify
 
   # Use memcache
-  Rails.configuration.cache_store = :dalli_store
+  # Rails.configuration.cache_store = :dalli_store
 
   # See everything in the log (default is :info)
   # config.log_level = :debug
