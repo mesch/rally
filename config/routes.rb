@@ -44,16 +44,43 @@ Rally::Application.routes.draw do
 
   # User
   controller :user do
-    match '/' => :home, :via => :get
-    match :home, :via => :get
-    match :login, :via => :get
-    match :logout, :via => :get
-    match :connect, :via => :get
-    match :invite, :via => :get
+    scope :via => :get do
+      match '/' => :home
+      match :home
+      match :login
+      match :logout
+      match :signup
+      match :activate
+      match :reactivate
+      match :account
+      match :change_email
+      match :change_password
+      match :forgot_password
+      match :invite
+      match :deals
+      match '/deal/:id' => :deal, :as => :deal
+    end
+    scope :via => :post do
+      match :home
+      match :login
+      match :signup
+      match :reactivate
+      match :account
+      match :change_email
+      match :change_password
+      match :forgot_password
+      match :invite
+    end
   end
   
   controller :site do
     match 'tos' => :tos, :via => :get
+  end
+  
+  namespace :help do
+    scope :via => :get do
+      match 'tour'
+    end
   end
   
   root :to => "site#home"

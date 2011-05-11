@@ -330,13 +330,13 @@ class MerchantControllerTest < ActionController::TestCase
     get :account
     assert_response :redirect
     assert_redirected_to :action=>'login'
-    assert session[:return_to]
+    assert session[:merchant_return_to]
     #login
     post :login, :username => "bob", :password => "test"
     assert_response :redirect
     #redirected to account
     assert_redirected_to :action=>'account'
-    assert_nil session[:return_to]
+    assert_nil session[:merchant_return_to]
     assert session[:merchant_id]
     assert flash[:notice]
     #logout and login again

@@ -230,14 +230,14 @@ class MerchantTest < ActiveSupport::TestCase
     m = Merchant.find(@bob)
     # bad format
     assert !m.update_email("bad_format")
-    m = Merchant.find(@bob) # save failed but c will have new password
+    m = Merchant.find(@bob)
     assert m.activated
-    assert equal?(m, @bob, [:name, :username, :email, :hashed_password, :salt, :activation_code, :activate])
+    assert equal?(m, @bob, [:name, :username, :email, :hashed_password, :salt, :active, :activation_code, :activated])
     # success
     assert m.update_email("test@abc.com")
     assert_equal m.email, "test@abc.com"
     assert !m.activated
-    assert equal?(m, @bob, [:name, :username, :hashed_password, :salt, :activate])
+    assert equal?(m, @bob, [:name, :username, :hashed_password, :salt, :active])
   end
   
 end

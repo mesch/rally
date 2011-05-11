@@ -23,8 +23,12 @@ class DealTest < ActiveSupport::TestCase
     assert_equal d.deal_value, 20.00
     assert d.save
     # check id is protected
+    old_id = d.id
     d.id = 1
-    assert !d.save
+    assert d.save
+    d = Deal.find(old_id)
+    assert d
+    assert_equal d.id, old_id
   end
   
   def test_empty_fields

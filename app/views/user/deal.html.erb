@@ -1,0 +1,156 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+
+<!-- TODO: add check for newbie -->
+<% if true %>
+<div id="sysmsg-guide"><div class="link"><a href="/help/tour.php"></a></div><a id="sysmsg-guide-close" href="javascript:void(0);" class="close">Close</a></div>
+<% end %>
+
+<% if @closed %>
+<div id="sysmsg-tip" class="sysmsg-tip-deal-close"><div class="sysmsg-tip-top"></div><div class="sysmsg-tip-content"><div class="deal-close"><div class="focus">Sorry, you are late, <br /> this deal is over.</div><div id="tip-deal-subscribe-body" class="body"><form id="tip-deal-subscribe-form" method="post" action="/subscribe.php" class="validator"><table><tr><td>Don't miss other deals, subscribe our daily deal news now:&nbsp;</td><td><input type="text" name="email" class="f-text" value="" require="true" datatype="email" /></td><td>&nbsp;<input class="commit" type="submit" value="Subscribe" /></td></tr></table></form></div></div><span id="sysmsg-tip-close" class="sysmsg-tip-close">Close</span></div><div class="sysmsg-tip-bottom"></div></div>
+<% end %>
+
+<% if @ordered %>
+<div id="sysmsg-tip" ><div class="sysmsg-tip-top"></div><div class="sysmsg-tip-content">You have ordered, not paid yet.<a href="/order/check.php?id={$order['id']}">Check order and make a payment</a><span id="sysmsg-tip-close" class="sysmsg-tip-close">Close</span></div><div class="sysmsg-tip-bottom"></div></div>
+<% end %>
+
+<div id="deal-default">
+	<%= render :partial => 'layouts/block/team_share' %>
+	<div id="content">
+		<div id="deal-intro" class="cf">
+        <h1><% link_to "Today's Deal:", deal_url(@deal.id), :class => "deal-today-link"%><%= @deal.title %></h1>
+        <div class="main">
+            <div class="deal-buy">
+            	<div class="deal-price-tag"></div>
+				<% if @soldout %>
+					<p class="deal-price"><strong><%= @deal.deal_price %></strong><span class="deal-price-soldout"></span></p>
+				<% elsif @closed %>
+                	<p class="deal-price"><strong><%= @deal.deal_price %></strong><span class="deal-price-expire"></span></p>
+				<% else %>
+					<p class="deal-price"><strong><%= @deal.deal_price %></strong><span><a ${$team['begin_time']<time()?'href="/team/buy.php?id='.$team['id'].'"':''}><img src="/static/css/i/button-deal-buy.png" /></a></span></p>
+				<% end %>
+                </div>
+                <table class="deal-discount">
+                	<tr>
+						<th>Value</th>
+                       	<th>Discount</th>
+                       	<th>You Save</th>
+                 	</tr>
+                    <tr>
+                    	<td><%= @deal.deal_value %></td>
+                        <td><%= (@deal.deal_value - @deal.deal_price) * 100 / @deal.deal_value %>%</td>
+                        <td><%= @deal.deal_value - @deal.deal_price %></td>
+                    </tr>
+               	</table>
+				<% if @closed %>
+	                <div class="deal-box deal-timeleft deal-off" id="deal-timeleft" curtime="{$now}000" diff="{$diff_time}000">
+						<h3>Deal is over at: </h3>
+						<div class="limitdate"><p class="deal-buy-ended">${date('Y-m-d', $team['close_time'])}<br>${date('H:i:s', $team['close_time'])}</p></div>
+					</div>
+				<% else %>
+	                <div class="deal-box deal-timeleft deal-on" id="deal-timeleft" curtime="{$now}000" diff="{$diff_time}000">
+						<h3>Time Left To Buy</h3>
+						<div class="limitdate">
+						<ul id="counter">
+							<!-- TODO: check for days left -->
+							<% if true %>
+							<li><span><%= @left_days %></span>days</li>
+							<li><span><%= @left_hours %></span>hours</li>
+							<li><span><%= @left_minutes %></span>minutes</li>
+							<% else %>
+							<li><span><%= @left_hours %></span>hours</li>
+							<li><span><%= @left_minutes %></span>minutes</li>
+							<li><span><%= @left_seconds %></span>seconds</li>
+							<% end %>
+						</ul></div>
+					</div>
+				<% end %>
+
+			<% if @closed %>
+				<div class="deal-box deal-status deal-status-{$team['state']}" id="deal-status"><div class="deal-buy-{$team['state']}"></div><p class="deal-buy-tip-total">Total <strong>{$team['now_number']}</strong> bought </p></div>
+			<% else %>
+				<% if @tipped %>
+				<div class="deal-box deal-status deal-status-open" id="deal-status">
+					<p class="deal-buy-tip-top"><strong>{$team['now_number']}</strong> bought </p>
+					<p class="deal-buy-on" style="line-height:200%;"><img src="/static/css/i/deal-buy-succ.gif"/> The deal is tipped! <!--{if $team['max_number']>$team['now_number']||$team['max_number']==0}--><br/>You can buy it now. <!--{/if}--></p>
+				</div>
+				<% else %>
+				<div class="deal-box deal-status" id="deal-status">
+					<p class="deal-buy-tip-top"><strong>{$team['now_number']}</strong> bought </p>
+					<div class="progress-pointer" style="padding-left:{$bar_size-$bar_offset}px;"><span></span></div>
+					<div class="progress-bar"><div class="progress-left" style="width:{$bar_size-$bar_offset}px;"></div><div class="progress-right "></div></div>
+					<div class="cf"><div class="min">0</div><div class="max">{$team['min_number']}</div></div>
+					<p class="deal-buy-tip-btm">This Deal Has <strong>{$team['min_number']-$team['now_number']}</strong> Left To Be On</p>
+				</div>
+				<% end %>
+			<% end %>
+			</div>
+			
+			<div class="side">
+	        	<div class="deal-buy-cover-img" id="team_images">
+				<% if @deal.deal_images.size > 1 %>
+				<div class="mid">
+					<ul>
+						<li class="first"><img src="${team_image($team['image'])}"/></li>
+					<!--{if $team['image1']}-->
+						<li><img src="${team_image($team['image1'])}"/></li>
+					<!--{/if}-->
+					<!--{if $team['image2']}-->
+						<li><img src="${team_image($team['image2'])}"/></li>
+					<!--{/if}-->
+					</ul>
+					<div id="img_list">
+						<a ref="1" class="active">1</a>
+					<!--${$imageindex=1;}-->
+					<!--{if $team['image1']}-->
+						<a ref="${++$imageindex}" >{$imageindex}</a>
+					<!--{/if}-->
+					<!--{if $team['image2']}-->
+						<a ref="${++$imageindex}" >{$imageindex}</a>
+					<!--{/if}-->
+					</div> 
+				</div>
+				<% else %>
+					<img src="${team_image($team['image'])}"/>
+				<% end %>
+			</div>
+			<!--
+      		<div class="digest"><br/>${nl2br(strip_tags($team['summary']))}</div>
+			-->
+      		<div class="digest"><br/>@deal.description</div>			
+		</div>
+	</div>
+	<div id="deal-stuff" class="cf">
+    	<div class="clear box box-split">
+           	<div class="box-top"></div>
+            	<div class="box-content cf">
+                	<div class="main">
+						<% if @deal.terms %>
+                       	<h2 id="detail">Terms of the deal</h2>
+						<div class="blk detail"><%= @deal.terms %></div>
+						<% end %>
+					</div>
+                    <div class="side">
+                    	<div id="side-business">
+							<h2><%= @deal.merchant.name %></h2>
+							<div style="margin-top:10px;"><%= link_to @deal.merchant.website, @deal.merchant.website, :target => "_blank"%></div>
+						</div>
+					</div>
+                    <div class="clear"></div>
+                </div>
+                <div class="box-bottom"></div>
+			</div>
+		</div>
+	</div>
+	<div id="sidebar">
+		<%= render :partial => 'layouts/block/side_invite' %>
+		<%= render :partial => 'layouts/block/side_bulletin' %>
+		<%= render :partial => 'layouts/block/side_flv' %>
+		<%= render :partial => 'layouts/block/side_ask' %>
+		<%= render :partial => 'layouts/block/side_others' %>
+		<%= render :partial => 'layouts/block/side_business' %>
+		<%= render :partial => 'layouts/block/side_subscribe' %>
+	</div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

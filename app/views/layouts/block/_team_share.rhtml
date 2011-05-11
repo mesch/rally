@@ -1,0 +1,15 @@
+<div id="deal-share">
+	<div class="deal-share-top">
+		<div class="deal-share-links">
+			<h4>Share: </h4>
+			<ul class="cf"><li><a class="im" href="javascript:void(0);" id="deal-share-im">IM</a></li><li><a class="facebook" href="${share_facebook($team)}" target="_blank">facebook</a></li><li><a class="twitter" href="${share_twitter($team)}" target="_blank">twitter</a></li><li><a class="email" href="${share_mail($team)}" id="deal-buy-mailto">email</a></li></ul>
+		</div>
+	</div>
+	<div class="deal-share-fix"></div>
+	<div id="deal-share-im-c">
+		<div class="deal-share-im-b">
+			<h3>Copy this and paste to IM</h3>
+			<p><input id="share-copy-text" type="text" value="{$INI['system']['wwwprefix']}/team.php?id={$team['id']}&r={$login_user_id}" size="30" class="f-input" /> <input id="share-copy-button" type="button" value="Copy" class="formbutton" /></p>
+		</div>
+	</div>
+</div>

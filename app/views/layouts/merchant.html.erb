@@ -24,18 +24,28 @@
 				</div>
 			</div>
 			<ul class="nav cf">
-				<li <%= controller.action_name == 'home' ? 'class=current' : '' %> ><%= link_to "Home", merchant_home_url %></li>
-				<li <%= controller.action_name == 'deals' ? 'class=current' : '' %> ><%= link_to "Deals", merchant_deals_url %></li>
-				<li <%= controller.action_name == 'account' ? 'class=current' : '' %> ><%= link_to "Account", merchant_account_url %></li>
+				<% if @current_merchant %>
+					<li <%= controller.action_name == 'home' ? 'class=current' : '' %> ><%= link_to "Home", merchant_home_url %></li>
+					<li <%= controller.action_name == 'deals' ? 'class=current' : '' %> ><%= link_to "Deals", merchant_deals_url %></li>
+				<% end %>
 			</ul>
 			<% if @current_merchant %>
 			<div class="logins">
 				<ul id="account">
 					<li class="username">Welcome, <%= @current_merchant.name %></li>
+					<li class="account"><%= link_to " My Account", merchant_account_url %></li>					
 					<li class="logout"><%= link_to "Exit", merchant_logout_url %></li>
 				</ul>
 				<div class="line islogin"></div>
 			</div>			
+			<% else %>
+			<div class="logins">
+				<ul id="account">
+					<li class="login"><%= link_to "Login", merchant_login_url %></li>
+					<li class="signup"><%= link_to "Sign Up", merchant_signup_url %></li>
+					</ul>
+				<div class="line "></div>
+			</div>
 			<% end %>
 		</div>
 	</div>

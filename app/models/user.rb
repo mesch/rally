@@ -1,11 +1,13 @@
 require "digest"
-class Merchant < ActiveRecord::Base
-  
+
+class User < ActiveRecord::Base
   validates_length_of :username, :within => 3..40
-  validates_length_of :name, :maximum => 50
-  validates_length_of :email, :maximum => 50  
+  validates_length_of :first_name, :maximum => 50
+  validates_length_of :last_name, :maximum => 50
+  validates_length_of :email, :maximum => 50
   validates_uniqueness_of :username
-  validates_presence_of :name, :username, :email, :salt, :time_zone
+  validates_uniqueness_of :email
+  validates_presence_of :username, :email, :salt
   validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "Invalid email."
 
   # different validations for password, password_confirmation based on type of action
@@ -17,48 +19,57 @@ class Merchant < ActiveRecord::Base
 
   attr_protected :id, :salt
   attr_accessor :password, :password_confirmation
-  
+
+  def full_name
+    return "#{self.first_name} #{self.last_name}"
+  end
+
   # Authentication methods
   def self.authenticate(username, password)
-    m=find(:first, :conditions=>["username = ?", username])
-    return nil if m.nil?
-    return m if Merchant.encrypt(password, m.salt)==m.hashed_password
-    nil
+    # first check username
+    u = find(:first, :conditions=>["username = ?", username])
+    # then try email
+    if u.nil?
+      u = find(:first, :conditions=>["email = ?", username])
+    end       
+    return nil if u.nil?
+    return u if User.encrypt(password, u.salt)==u.hashed_password
+    return nil
   end  
 
   def password=(pass)
     @password=pass
-    self.salt = Merchant.random_string(10) if !self.salt?
-    self.hashed_password = Merchant.encrypt(@password, self.salt)
+    self.salt = User.random_string(10) if !self.salt?
+    self.hashed_password = User.encrypt(@password, self.salt)
   end
 
   # Mailer methods
   def send_new_password
-    new_pass = Merchant.random_string(5)
+    new_pass = User.random_string(5)
     self.password = self.password_confirmation = new_pass
     if self.save
-      # Send the merchant email through a delayed job
-      MerchantMailer.delay.send_forgot_password(self.email, self.username, new_pass)
+      # Send the user email through a delayed job
+      UserMailer.delay.send_forgot_password(self.email, self.username, new_pass)
       return true
     end
     return false
   end
-  
+
   def send_activation
-    if self.update_attributes(:activation_code => Merchant.generate_activation_code)
-      # Send the merchant email through a delayed job
-      MerchantMailer.delay.send_activation(self.email, self.username, self.id, self.activation_code)
+    if self.update_attributes(:activation_code => User.generate_activation_code)
+      # Send the user email through a delayed job
+      UserMailer.delay.send_activation(self.email, self.username, self.id, self.activation_code)
       return true
     end
     return false
   end
-  
+
   def send_email_change(old_email)
-    # Send the merchant email through a delayed job
-    MerchantMailer.delay.send_changed_email(old_email, self.username, old_email, self.email)
+    # Send the user email through a delayed job
+    UserMailer.delay.send_changed_email(old_email, self.username, old_email, self.email)
     return true
   end
-  
+
   def update_email(new_email)
     old_email = self.email
     if self.update_attributes(:email => new_email, :activated => false)
@@ -68,35 +79,31 @@ class Merchant < ActiveRecord::Base
     end
     return false
   end
-  
+
   # Activation methods
   def activate
     return self.update_attributes(:activated => true)
   end
-  
+
   def inactivate
     return self.update_attributes(:activated => false)
   end
 
   # code generators
   def self.generate_activation_code
-    Merchant.secure_digest(Time.now, (1..10).map{ rand.to_s })
+    User.secure_digest(Time.now, (1..10).map{ rand.to_s })
   end
 
-  def self.generate_api_key
-    Merchant.secure_digest(Time.now, (1..10).map{ rand.to_s })
-  end
-  
   protected
 
   def password_required?
     !password.blank?
   end
-  
+
   def self.secure_digest(*args)
     Digest::SHA1.hexdigest(args.flatten.join('--'))
   end
-   
+
   def self.encrypt(password, salt)
     Digest::SHA1.hexdigest(password+salt)
   end
@@ -108,5 +115,5 @@ class Merchant < ActiveRecord::Base
     1.upto(len) { |i| newpass << chars[rand(chars.size-1)] }
     return newpass
   end  
-  
+
 end

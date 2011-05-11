@@ -1,0 +1,22 @@
+<!--${
+	$ask_con = array('team_id>0', 'length(comment)>0');
+	$ask_count = Table::Count('ask', $ask_con);
+	$asks = DB::LimitQuery('ask', array('condition'=>$ask_con, 'size'=>3, 'order'=>'ORDER BY id DESC'));
+}-->
+<div class="deal-consult sbox">
+	<div class="sbox-bubble"></div>
+	<div class="sbox-top"></div>
+	<div class="sbox-content">
+		<div class="deal-consult-tip">
+			<h2>Q&A of this order</h2>
+			<p class="nav"><a href="/team/ask.php?id={$team['id']}">Check all({$ask_count})</a> | <a href="/team/ask.php?id={$team['id']}#post">I want to ask</a></p>
+			<ul class="list">
+			<!--{loop $asks $one}-->
+				<li><a href="/team/ask.php?id={$team['id']}#ask-entry-{$one['id']}" target="_blank">${htmlspecialchars(mb_substr($one['content'],0,30,'UTF-8'))}...</a></li>
+			<!--{/loop}-->
+			</ul>
+			<div class="custom-service"><p class="im"><a id="service-msn-help" href="msnim:chat?contact={$INI['system']['kefumsn']}"><img src="/static/css/i/button-custom-msn.gif" /></a>&nbsp;<a href="tencent://message/?uin={$INI['system']['kefuqq']}&Site={$INI['system']['sitename']}&Menu=yes"><img SRC="/static/css/i/button-custom-qq.gif" alt=""></a></p><p class="time">Monday to Saturday 9:00-18:00</p></div>
+		</div>
+	</div>
+	<div class="sbox-bottom"></div>
+</div>

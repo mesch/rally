@@ -1,0 +1,9 @@
+Welcome to <%= OPTIONS[:site_name]%>!<br><br>
+
+Please activate your account to start creating deals.<br><br>
+
+<%= link_to "Activate Your Account", url_for(:controller => "user", :action => "activate", 
+	:user_id => @user_id, :activation_code => @activation_code, :only_path => false)%><br><br>
+
+Regards,<br>
+<%= OPTIONS[:site_name] %>

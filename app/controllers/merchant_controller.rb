@@ -183,7 +183,7 @@ class MerchantController < ApplicationController
         if m.active
           if m.activated
             session[:merchant_id] = m.id
-            redirect_to_stored
+            redirect_merchant_to_stored
           else
             flash[:error] = "You must activate your account."
             redirect_to :controller => 'merchant', :action => :reactivate
@@ -203,8 +203,8 @@ class MerchantController < ApplicationController
 
   def forgot_password
     if request.post?
-      c = Merchant.find(:first, :conditions => {:username => params[:username], :email => params[:email]})
-      if c and c.send_new_password
+      u = Merchant.find(:first, :conditions => {:username => params[:username], :email => params[:email]})
+      if u and u.send_new_password
         flash[:notice]  = "A new password has been sent."
         redirect_to :controller => 'merchant', :action =>'login'
       else

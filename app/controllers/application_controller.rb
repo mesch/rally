@@ -10,30 +10,52 @@ class ApplicationController < ActionController::Base
       Time.zone = @current_merchant.time_zone
       return true
     end
-    flash[:warning]='Please login to continue.'
-    session[:return_to] = request.path
+    session[:merchant_return_to] = request.path
     redirect_to :controller => "merchant", :action => "login"
     return false 
   end
 
-  def redirect_to_stored
-    if return_to = session[:return_to]
-      session[:return_to]=nil
+  def redirect_merchant_to_stored
+    if return_to = session[:merchant_return_to]
+      session[:merchant_return_to]=nil
       redirect_to(return_to)
     else
       redirect_to :controller=>'merchant', :action=>'home'
     end
   end
   
-  def verify_date(string)
-    begin
-      return Time.zone.parse(string) ? true : false
-    rescue
-      return false
+  # User methods
+  def require_user
+    if session[:user_id]
+      @current_user = User.find(session[:user_id])
+      Time.zone = @current_user.time_zone
+      return true
+    end
+    session[:user_return_to] = request.path
+    redirect_to :controller => "user", :action => "login"
+    return false 
+  end
+
+  def redirect_user_to_stored
+    if return_to = session[:user_return_to]
+      session[:user_return_to]=nil
+      redirect_to(return_to)
+    else
+      redirect_to :controller=>'user', :action=>'home'
     end
   end
   
-  # User methods
+  def set_user
+    if session[:user_id]
+      @current_user = User.find(session[:user_id])
+      Time.zone = @current_user.time_zone
+      return true
+    end
+    return false
+  end
+  
+## FB-related user methods
+=begin
   def require_user
     # Require that one of users is in the session
     
@@ -63,11 +85,15 @@ class ApplicationController < ActionController::Base
     # Find the base user and use them
     User.find_by_facebook_id(fb_user["id"])  
   end
-  
-  def set_user(user)
-    # Set the user id in the session
-    session[:user_id] = user.id
-    @current_user = user
+=end
+
+  # Helper methods
+  def verify_date(string)
+    begin
+      return Time.zone.parse(string) ? true : false
+    rescue
+      return false
+    end
   end
-  
+
 end
