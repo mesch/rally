@@ -24,11 +24,26 @@ class DealTest < ActiveSupport::TestCase
     assert d.save
     # check id is protected
     old_id = d.id
-    d.id = 1
+    d.id = old_id+1
     assert d.save
     d = Deal.find(old_id)
     assert d
     assert_equal d.id, old_id
+  end
+  
+  def test_ranges
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    d.min = -1
+    assert !d.save
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    d.max = -1
+    assert !d.save
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    d.limit = -1
+    assert !d.save
   end
   
   def test_empty_fields
@@ -65,6 +80,7 @@ class DealTest < ActiveSupport::TestCase
   def test_create_full
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    d.min = 10
     d.max = 100
     d.limit = 5
     d.description = 'blahblah'
@@ -113,6 +129,188 @@ class DealTest < ActiveSupport::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     d.terms = string
     assert !d.save
+  end
+  
+  def test_discount_savings
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+       
+    assert_equal d.discount, 50
+    assert_equal d.savings, 10.to_money    
+    # deal_value = 0
+    d.deal_value = 0
+    d.deal_price = 10
+    assert_equal d.discount, 0
+    assert_equal d.savings, -10.to_money    
+    # deal_price = 0
+    d.deal_value = 20
+    d.deal_price = 0
+    assert_equal d.discount, 100
+    assert_equal d.savings, 20.to_money
+    # both = 0
+    d.deal_value = 0
+    d.deal_price = 0
+    assert_equal d.discount, 0
+    assert_equal d.savings, 0.to_money    
+  end
+
+  def test_coupon_count
+    Order.delete_all
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal d.coupon_count, 0
+    # order with no quantity - no change
+    o = Order.new(:user_id => 1, :deal_id => d.id)
+    assert o.save
+    assert_equal d.coupon_count, 0
+    # update order with 1 quantity - +1 count
+    o.quantity = 1
+    o.amount = '10'
+    assert o.save
+    assert_equal d.coupon_count, 1
+    # update order with confirmation_code - no change
+    o.confirmation_code = 'XYZ123'
+    assert o.save
+    assert_equal d.coupon_count, 1    
+    # order with different deal_id with no quantity - no change
+    o = Order.new(:user_id => 1, :deal_id => d.id+1)
+    assert o.save
+    assert_equal d.coupon_count, 1
+    # order with different deal_id with 1 quantity - no change
+    o.quantity = 1
+    o.amount = '10'
+    assert o.save
+    assert_equal d.coupon_count, 1
+    # order with new user_id with 2 quantity - +2 count
+    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20')
+    assert o.save
+    assert_equal d.coupon_count, 3  
+  end
+  
+  def test_is_tipped
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :min => 1)
+    assert d.save
+    assert !d.is_tipped
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20')
+    assert o.save
+    assert d.is_tipped
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20')
+    assert o.save 
+    assert d.is_tipped
+    
+    assert !d.is_tipped(0)
+    assert d.is_tipped(1)
+    assert d.is_tipped(2)
+  end
+  
+  def test_is_maxed
+    Coupon.delete_all
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :max => 1)
+    assert d.save
+    assert !d.is_maxed
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20')
+    assert o.save
+    assert d.is_maxed
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20')
+    assert o.save   
+    assert d.is_maxed
+    
+    assert !d.is_maxed(0)
+    assert d.is_maxed(1)
+    assert d.is_maxed(2)
+  end
+  
+  def test_is_ended
+    today = Time.zone.today
+    yesterday = Time.zone.today - 1.days
+    tomorrow = Time.zone.today + 1.days
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today, :end_date => today, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert !d.is_ended
+    assert !d.is_ended(yesterday)
+    assert d.is_ended(tomorrow)
+    
+    # end_date yesterday - true
+    d.end_date = yesterday
+    assert d.is_ended
+    
+    # end_date tomorrow - false
+    d.end_date = tomorrow
+    assert !d.is_ended
+  end
+  
+  def test_is_expired
+    today = Time.zone.today
+    yesterday = Time.zone.today - 1.days
+    tomorrow = Time.zone.today + 1.days
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today, :end_date => today, 
+      :expiration_date => today, :deal_price => '10.00', :deal_value => '20.00')
+    assert !d.is_expired
+    assert !d.is_expired(yesterday)
+    assert d.is_expired(tomorrow)
+    
+    # expiration_date yesterday - true
+    d.expiration_date = yesterday
+    assert d.is_expired
+    
+    # expiration_date tomorrow - false
+    d.expiration_date = tomorrow
+    assert !d.is_expired   
+  end
+  
+  def test_time_difference_for_display
+    seconds = 0
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => 0, :hours => 0, :minutes => 0, :seconds => 0}
+    seconds = seconds + 5  
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => 0, :hours => 0, :minutes => 0, :seconds => 5}
+    seconds = seconds + 60    
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => 0, :hours => 0, :minutes => 1, :seconds => 5}
+    seconds = seconds + 60*2 
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => 0, :hours => 0, :minutes => 3, :seconds => 5}
+    seconds = seconds + 3600*2     
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => 0, :hours => 2, :minutes => 3, :seconds => 5}
+    seconds = seconds + 86400*1     
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => 1, :hours => 2, :minutes => 3, :seconds => 5}
+    seconds = seconds + 86400*10     
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => 11, :hours => 2, :minutes => 3, :seconds => 5}
+    
+    seconds *= -1
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => -11, :hours => -2, :minutes => -3, :seconds => -5}
+    seconds = -10
+    difference = Deal.time_difference_for_display(seconds)
+    assert_equal difference, {:days => 0, :hours => 0, :minutes => 0, :seconds => -10}                 
+  end
+  
+  def test_time_left
+    today = Time.zone.today
+    yesterday = Time.zone.today - 1.days
+    tomorrow = Time.zone.today + 1.days
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today, :end_date => today, 
+      :expiration_date => today, :deal_price => '10.00', :deal_value => '20.00')
+    difference = d.time_left
+    assert difference < 86400
+ 
+    # end_date yesterday
+    d.end_date = yesterday
+    difference = d.time_left
+    assert difference < 0
+    assert difference > -86400
+    
+    # end_date tomorrow
+    d.end_date = tomorrow
+    difference = d.time_left
+    assert difference > 86400
   end
   
 end

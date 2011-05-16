@@ -1,6 +1,6 @@
 burger_deal:
     merchant: bob
-    title: Cool New Deal!
+    title: Burger Deal!
     start_date: "2011-05-01T00:00:00"
     end_date: "2011-09-01T00:00:00"
     expiration_date: "2012-01-01T00:00:00"
@@ -9,4 +9,28 @@ burger_deal:
     description: "$20 worth of burgers for $10."
     terms: "Redeemable at any local Bob's Burgers."
     video: "http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv"
+    min: 2
+    max: 9
+    limit: 3
 
+movie_deal:
+    merchant: existingbob
+    title: Cool New Deal!
+    start_date: "2011-05-01T00:00:00"
+    end_date: "2011-09-01T00:00:00"
+    expiration_date: "2012-01-01T00:00:00"
+    deal_price_in_cents: 1000
+    deal_value_in_cents: 2500
+    description: "$25 worth of movie tickets for $10."
+    terms: "Redeemable at any local theatre."
+
+test_deal:
+    merchant: existingbob
+    title: Another Cool New Deal!
+    start_date: "2011-05-01T00:00:00"
+    end_date: "2011-09-01T00:00:00"
+    expiration_date: "2012-01-01T00:00:00"
+    deal_price_in_cents: 3000
+    deal_value_in_cents: 5000
+    description: "Some blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
+    terms: "Somehow ... somewhere."    

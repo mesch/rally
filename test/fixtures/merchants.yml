@@ -4,6 +4,7 @@ bob:
     email: "matt.esch@gmail.com"
     salt: 1000
     hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
+    website: "http://www.fox.com/bobsburgers/"
     activation_code: 1234567890
     activated: true
 

@@ -1,16 +1,17 @@
-<!--{if $others}-->
+<% if @others %>
 <div class="sbox side-business">
 	<div class="sbox-top"></div>
 	<div class="sbox-content">
 		<div class="tip">
-		<h2>Today's side deal</h2>
-		<!--{loop $others $one}-->
-			<b>${++$index}.&nbsp;{$one['title']}</b>
-			<p><a href="/team.php?id={$one['id']}"><img src="${team_image($one['image'])}" width="195" height="148" border="0" /></a></p>
-			<p><a href="/team.php?id={$one['id']}">&raquo;&nbsp;Click to check detailed information</a></p>
-		<!--{/loop}-->
+		<h2>Other deals</h2>
+		<% index = 0 %>
+		<% for deal in @others %>
+			<b><%= index += 1%>.&nbsp;<%= deal.title %></b>
+			<p><%= link_to image_tag(deal.deal_images[0].image.url, :width=>"195", :height=>"148", :border=>"0"), deal_url(deal.id) %></p>
+			<p><%= link_to deal.description, deal_url(deal.id) %></p>
+		<% end %>
 		</div>
 	</div>
 	<div class="sbox-bottom"></div>
 </div>
-<!--{/if}-->
+<% end %>

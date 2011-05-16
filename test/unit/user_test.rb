@@ -246,6 +246,30 @@ class UserTest < ActiveSupport::TestCase
     assert equal?(u, @test_user, [:username, :hashed_password, :salt, :active])
   end
   
+  def test_coupon_count
+    u = User.new(:username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234")
+    u.password = u.password_confirmation = "bobs_secure_password"
+    assert u.save
+    assert_equal u.coupon_count, 0
+    c = Coupon.new(:user_id => u.id, :deal_id => 1, :order_id => 3, :deal_code_id => 100)
+    assert c.save
+    assert_equal u.coupon_count, 1
+    assert_equal u.coupon_count(1), 1
+    c = Coupon.new(:user_id => u.id, :deal_id => 1, :order_id => 4, :deal_code_id => 100)
+    assert c.save
+    assert_equal u.coupon_count, 2
+    assert_equal u.coupon_count(1), 2
+    c = Coupon.new(:user_id => u.id, :deal_id => 1, :order_id => 4, :deal_code_id => 100)
+    assert c.save
+    assert_equal u.coupon_count, 3
+    assert_equal u.coupon_count(1), 3          
+    c = Coupon.new(:user_id => u.id, :deal_id => 2, :order_id => 5, :deal_code_id => 100)
+    assert c.save
+    assert_equal u.coupon_count, 4
+    assert_equal u.coupon_count(1), 3
+    assert_equal u.coupon_count(2), 1
+  end    
+      
 end
 
 

@@ -3,7 +3,7 @@
 	<div class="sbox-content">
 		<div class="credit">
 			<h2>Balance</h2>
-			<p>Your balance: <span class="money">{$currency}</span>${moneyit($login_user['money'])}</p>
+			<p>Your balance: <%= @current_user.balance.format(:no_cents) %></p>
 		</div>
 	</div>
 	<div class="sbox-bottom"></div>

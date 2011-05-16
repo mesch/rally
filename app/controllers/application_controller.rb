@@ -31,6 +31,7 @@ class ApplicationController < ActionController::Base
       Time.zone = @current_user.time_zone
       return true
     end
+    flash[:notice] = "Login required."
     session[:user_return_to] = request.path
     redirect_to :controller => "user", :action => "login"
     return false 

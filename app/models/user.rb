@@ -20,8 +20,18 @@ class User < ActiveRecord::Base
   attr_protected :id, :salt
   attr_accessor :password, :password_confirmation
 
+  money :balance, :currency => false
+
   def full_name
     return "#{self.first_name} #{self.last_name}"
+  end
+  
+  def coupon_count(deal_id=nil)
+    if deal_id
+      return Order.sum(:quantity, :conditions => ["user_id = ? AND deal_id = ?", self.id, deal_id])
+    else
+      return Order.sum(:quantity, :conditions => ["user_id = ?", self.id])
+    end
   end
 
   # Authentication methods

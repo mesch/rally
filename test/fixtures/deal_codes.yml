@@ -1,12 +1,38 @@
 burger_code1:
     deal: burger_deal
-    code: 1234abc1
+    code: '1234abc1'
+    reserved: true
 
 burger_code2:
     deal: burger_deal
-    code: 1234abc2
+    code: '1234abc2'
+    reserved: true
 
 burger_code3:
     deal: burger_deal
-    code: 1234abc3
+    code: '1234abc3'
+
+burger_code4:
+    deal: burger_deal
+    code: '1234abc4'
+
+burger_code5:
+    deal: burger_deal
+    code: '1234abc5'
+
+burger_code6:
+    deal: burger_deal
+    code: '1234abc6'
+
+burger_code7:
+    deal: burger_deal
+    code: '1234abc7'
+
+burger_code8:
+    deal: burger_deal
+    code: '1234abc8'
+
+burger_code9:
+    deal: burger_deal
+    code: '1234abc9'
     

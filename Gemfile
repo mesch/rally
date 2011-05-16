@@ -14,6 +14,9 @@ gem 'xml-simple'
 gem 'aws-s3', :require => 'aws/s3'
 gem 'right_aws'
 
+gem 'nokogiri'
+gem 'authorize-net'
+
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
@@ -25,7 +28,6 @@ gem 'right_aws'
 
 # Bundle the extra gems:
 # gem 'bj'
-# gem 'nokogiri'
 
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators

@@ -6,7 +6,7 @@
             <div class="box-top"></div>
             <div class="box-content">
                 <div class="head">
-                    <h2>Deals</h2>
+                    <h2>My Deals</h2>
 					<%= link_to "New Deal", merchant_new_deal_url %>
 				</div>
                 <div class="sect">
@@ -22,7 +22,7 @@
 						<% for deal in @deals %>
 						<tr ${$index%2?'':'class="alt"'}>
 							<td><%= link_to deal.id, merchant_edit_deal_url(deal.id) %></td>
-							<td><%= deal.title %></td>
+							<td><%= link_to deal.title, deal_url(deal.id), :target=>"_blank" %></td>
 							<td><%= deal.deal_price %></td>
 							<td><%= deal.deal_value %></td>
 							<td><%= deal.start_date.strftime(OPTIONS[:date_format]) %></td>

@@ -303,8 +303,8 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action=>'login'
   end
 
-  def test_change_name
-    old_name = @test_user.first_name
+  def test_change_account_basic
+    #just changing name
     #can login
     post :login, :username => @test_user.username, :password => "test"
     assert_response :redirect
@@ -314,13 +314,39 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
     assert flash[:error]
     assert_template "user/account"
-    assert_equal User.find(@test_user.id).first_name, old_name
+    assert_equal User.find(@test_user.id).first_name, @test_user.first_name
     #success
     post :account, :first_name => 'tester'
     assert_response :success
     assert flash[:notice]
     assert_template "user/account"
+    assert_not_equal User.find(@test_user.id).first_name, @test_user.first_name
     assert_equal User.find(@test_user.id).first_name, 'tester' 
+  end
+  
+  def test_change_account_full
+    #can login
+    post :login, :username => @test_user.username, :password => "test"
+    assert_response :redirect
+    assert session[:user_id]
+    #success
+    post :account, :first_name => 'tester', :last_name => 'testerson', 
+      :address1 => '1 Main St', :address2 => 'Apt A', :city => 'San Francisco', 
+      :state => 'CA', :zip => '94101', :country => 'USA',
+      :phone_number => '4155551212', :mobile_number => '4155551213'
+    assert_response :success
+    assert flash[:notice]
+    assert_template "user/account"
+    assert_equal User.find(@test_user.id).first_name, 'tester'
+    assert_equal User.find(@test_user.id).last_name, 'testerson'
+    assert_equal User.find(@test_user.id).address1, '1 Main St'
+    assert_equal User.find(@test_user.id).address2, 'Apt A'
+    assert_equal User.find(@test_user.id).city, 'San Francisco'
+    assert_equal User.find(@test_user.id).state, 'CA'
+    assert_equal User.find(@test_user.id).zip, '94101'
+    assert_equal User.find(@test_user.id).country, 'USA'
+    assert_equal User.find(@test_user.id).phone_number, '4155551212'
+    assert_equal User.find(@test_user.id).mobile_number, '4155551213'
   end
 
   # cannot change time zone for user (yet)

@@ -1,0 +1,56 @@
+<%= form_tag :controller => :user, :action => "order" %>
+
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="content">
+    <div id="deal-buy" class="box">
+        <div class="box-top"></div>
+        <div class="box-content">
+            <div class="head"><h2>Order</h2></div>
+            <div class="sect">
+            <table class="order-table">
+                <tr>
+                    <th class="deal-buy-desc">Deal</th>
+                    <th class="deal-buy-quantity">Quantity</th>
+                    <th class="deal-buy-multi"></th>
+                    <th class="deal-buy-price">Price</th>
+                    <th class="deal-buy-equal"></th>
+                    <th class="deal-buy-total">Total</th>
+                </tr>
+                <tr>
+                    <td class="deal-buy-desc"><%= @deal.title %></td>
+                    <td class="deal-buy-quantity">
+						<%= text_field_tag :quantity, '1', :class=>"input-text f-input", :id=>"deal-buy-quantity-input" %>
+						<% if @max %>
+							<br/><span style="font-size:12px;color:gray;">Limit <%= @max %></span>
+						<% end %>
+					</td>
+                    <td class="deal-buy-multi">x</td>
+                    <td class="deal-buy-price"><span class="money">$</span><span id="deal-buy-price"><%= @deal.deal_price.to_f.truncate %></span></td>
+                    <td class="deal-buy-equal">=</td>
+                    <td class="deal-buy-total"><span class="money">$</span><span id="deal-buy-total"><%= 1*@deal.deal_price.to_f.truncate %></span></td>
+                </tr>
+				<tr class="order-total">
+                    <td class="deal-buy-desc"><strong>Total Amount: </strong></td>
+                    <td class="deal-buy-quantity"></td>
+                    <td class="deal-buy-multi"></td>
+                    <td class="deal-buy-price"></td>
+                    <td class="deal-buy-equal">=</td>
+                    <td class="deal-buy-total"><span class="money">$</span><strong id="deal-buy-total-t"><%= 1*@deal.deal_price.to_f.truncate %></strong></td>
+                </tr>
+            </table>
+			<%= hidden_field_tag "deal-per-number", @max %>
+			<%= hidden_field_tag :deal_id, @deal.id %>
+            <div class="form-submit">
+				<%= submit_tag :submit, :value=>"Confirm Order", :class=>"formbutton"%>
+            </div>
+        	</div>
+        </div>
+        <div class="box-bottom"></div>
+    </div>
+</div>
+<div id="sidebar">
+	<%= render :partial => 'layouts/block/side_credit' %>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

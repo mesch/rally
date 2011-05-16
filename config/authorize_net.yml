@@ -1,0 +1,18 @@
+default:
+    api_login_id: 6ZqUc56q
+    api_transaction_key: 92bbPV487mh8GguL
+    merchant_hash_value: 6ZqUc56q
+
+development:
+    api_login_id: 6ZqUc56q
+    api_transaction_key: 92bbPV487mh8GguL
+    merchant_hash_value: 6ZqUc56q    
+test:
+    api_login_id: 6ZqUc56q
+    api_transaction_key: 92bbPV487mh8GguL
+    merchant_hash_value: 6ZqUc56q
+staging:
+    api_login_id: 6ZqUc56q
+    api_transaction_key: 92bbPV487mh8GguL
+    merchant_hash_value: 6ZqUc56q
+production: 

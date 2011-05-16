@@ -10,13 +10,27 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110510170132) do
+ActiveRecord::Schema.define(:version => 20110516040837) do
+
+  create_table "coupons", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "deal_id"
+    t.integer  "deal_code_id"
+    t.integer  "order_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",       :default => false
+  end
+
+  add_index "coupons", ["deal_id"], :name => "index_coupons_on_deal_id"
+  add_index "coupons", ["user_id"], :name => "index_coupons_on_user_id"
 
   create_table "deal_codes", :force => true do |t|
     t.integer  "deal_id"
     t.string   "code"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "reserved",   :default => false
   end
 
   add_index "deal_codes", ["deal_id"], :name => "index_deal_codes_on_deal_id"
@@ -50,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20110510170132) do
     t.boolean  "active",              :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "min",                 :default => 0
   end
 
   add_index "deals", ["merchant_id"], :name => "index_deals_on_merchant_id"
@@ -101,6 +116,18 @@ ActiveRecord::Schema.define(:version => 20110510170132) do
 
   add_index "merchants", ["username"], :name => "index_merchants_on_username"
 
+  create_table "orders", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "deal_id"
+    t.integer  "quantity",          :default => 0
+    t.integer  "amount_in_cents",   :default => 0
+    t.string   "confirmation_code"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "orders", ["user_id", "deal_id"], :name => "orders_by_user_deal"
+
   create_table "users", :force => true do |t|
     t.string   "username"
     t.string   "hashed_password"
@@ -109,12 +136,13 @@ ActiveRecord::Schema.define(:version => 20110510170132) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "activation_code"
-    t.boolean  "activated",       :default => false
-    t.boolean  "active",          :default => true
-    t.string   "time_zone",       :default => "Pacific Time (US & Canada)"
+    t.boolean  "activated",        :default => false
+    t.boolean  "active",           :default => true
+    t.string   "time_zone",        :default => "Pacific Time (US & Canada)"
     t.string   "mobile_number"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "balance_in_cents", :default => 0
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

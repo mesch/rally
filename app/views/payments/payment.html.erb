@@ -1,0 +1,75 @@
+<%= form_for :sim_transaction, :url => AuthorizeNet::SIM::Transaction::Gateway::TEST do |f| %>
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="partner">
+	<div id="content" class="clear mainwide">
+        <div class="clear box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head"><h2>Purchase</h2>
+				</div>
+                <div class="sect">
+					<%= sim_fields(@sim_transaction) %>
+					<div class="field">
+						<%= label_tag 'x_amount', 'Amount' %>
+						<%= label_tag 'x_amount', @order.amount.format %>
+					</div>
+					<div class="wholetip clear"><h3>1. Billing Info</h3></div>
+                    <div class="field">
+						<%= label_tag 'x_first_name', 'First Name' %> 
+						<%= text_field_tag 'x_first_name', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                   	</div>
+                  	<div class="field">
+						<%= label_tag 'x_last_name', 'Last Name' %> 
+						<%= text_field_tag 'x_last_name', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                   	</div>
+                  	<div class="field">
+						<%= label_tag 'x_address', 'Address' %> 
+						<%= text_field_tag 'x_address', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                   	</div>
+                    <div class="field">
+						<%= label_tag 'x_city', 'City' %> 
+						<%= text_field_tag 'x_city', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'x_state', 'State' %> 
+						<%= text_field_tag 'x_state', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                    </div>					
+                    <div class="field">
+						<%= label_tag 'x_zip', 'ZIP' %> 
+						<%= text_field_tag 'x_zip', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'x_country', 'Country' %> 
+						<%= text_field_tag 'x_country', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                    </div>						
+                    <div class="field">
+						<%= label_tag 'x_phone', 'Phone Number' %> 
+						<%= text_field_tag 'x_phone', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                    </div>
+					<div class="wholetip clear"><h3>2. Credit Card Info</h3></div>
+					<div class="field">
+						<%= label_tag 'x_card_num', 'Credit Card #' %>
+						<%= text_field_tag 'x_card_num', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+					</div>
+					<div class="field">
+						<%= label_tag 'x_exp_date', 'Exp. Date (MMYY)' %>
+						<%= text_field_tag 'x_exp_date', nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+					</div>
+					<%= hidden_field_tag 'x_invoice_num', @order.id %>					
+                    <div class="act">
+						<%= f.submit 'Purchase', :class=>"formbutton"%>
+                    </div>
+                </div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+	</div>
+
+<div id="sidebar">
+</div>
+
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->
+<% end %>

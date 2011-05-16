@@ -18,6 +18,8 @@ class Merchant < ActiveRecord::Base
   attr_protected :id, :salt
   attr_accessor :password, :password_confirmation
   
+  has_many :deals
+  
   # Authentication methods
   def self.authenticate(username, password)
     m=find(:first, :conditions=>["username = ?", username])

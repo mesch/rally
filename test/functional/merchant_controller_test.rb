@@ -487,8 +487,8 @@ class MerchantControllerTest < ActionController::TestCase
     #edit all fields
     post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start + 1.days, 
       :end_date => @end + 1.days, :expiration_date => @expiration + 1.days,
-      :deal_price => '15.00', :deal_value => '30.00',  :max => '10', :limit => '3',
-      :description => 'blahblahblah', :terms => 'you have to ...', :max => '100', :limit => '5',
+      :deal_price => '15.00', :deal_value => '30.00',  :min => '5', :max => '100', :limit => '3',
+      :description => 'blahblahblah', :terms => 'you have to ...',
       :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
     assert flash[:notice]
     assert_response :redirect

@@ -7,7 +7,7 @@ class MerchantController < ApplicationController
   # Deals
   def deals
     @deals = Deal.find(:all, 
-      :conditions => {:merchant_id => @current_merchant.id }, 
+      :conditions => { :merchant_id => @current_merchant.id }, 
       :order => 'active desc, created_at desc')
   end
 
@@ -28,7 +28,8 @@ class MerchantController < ApplicationController
         # Create Badge
         deal = Deal.new(:merchant_id => @current_merchant.id, :title => params[:title],
         :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
-        :deal_price => params[:deal_price], :deal_value => params[:deal_value], :max => params[:max], :limit => params[:limit],
+        :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
+        :min => params[:min], :max => params[:max], :limit => params[:limit],
         :description => params[:description], :terms => params[:terms], :video => params[:video])
         deal.save!
         # Create each new DealImage
@@ -81,7 +82,8 @@ class MerchantController < ApplicationController
         # Update deal
         deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
         :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
-        :deal_price => params[:deal_price], :deal_value => params[:deal_value], :max => params[:max], :limit => params[:limit],
+        :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
+        :min => params[:min], :max => params[:max], :limit => params[:limit],
         :description => params[:description], :terms => params[:terms], :video => params[:video])
         # Create each new DealImage
         if (image = params[:image1])

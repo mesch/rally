@@ -2,6 +2,7 @@ class DealImage < ActiveRecord::Base
   MAX_IMAGE_SIZE = 3145728 # Max bytes (3 MB)
   CONTENT_TYPES = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png']
   THUMB_SIZE = "100x100!"
+  DISPLAY_SIZE = "440x280!"
 
   validates_attachment_presence :image
   validates_attachment_size :image, :less_than => MAX_IMAGE_SIZE
@@ -16,7 +17,8 @@ class DealImage < ActiveRecord::Base
 
   has_attached_file :image, {
     :styles => { 
-      :thumb => THUMB_SIZE
+      :thumb => THUMB_SIZE,
+      :display => DISPLAY_SIZE
     }
   }.merge(OPTIONS[:paperclip_storage_options])
   
