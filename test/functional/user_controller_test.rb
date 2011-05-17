@@ -330,22 +330,12 @@ class UserControllerTest < ActionController::TestCase
     assert_response :redirect
     assert session[:user_id]
     #success
-    post :account, :first_name => 'tester', :last_name => 'testerson', 
-      :address1 => '1 Main St', :address2 => 'Apt A', :city => 'San Francisco', 
-      :state => 'CA', :zip => '94101', :country => 'USA',
-      :phone_number => '4155551212', :mobile_number => '4155551213'
+    post :account, :first_name => 'tester', :last_name => 'testerson', :mobile_number => '4155551213'
     assert_response :success
     assert flash[:notice]
     assert_template "user/account"
     assert_equal User.find(@test_user.id).first_name, 'tester'
     assert_equal User.find(@test_user.id).last_name, 'testerson'
-    assert_equal User.find(@test_user.id).address1, '1 Main St'
-    assert_equal User.find(@test_user.id).address2, 'Apt A'
-    assert_equal User.find(@test_user.id).city, 'San Francisco'
-    assert_equal User.find(@test_user.id).state, 'CA'
-    assert_equal User.find(@test_user.id).zip, '94101'
-    assert_equal User.find(@test_user.id).country, 'USA'
-    assert_equal User.find(@test_user.id).phone_number, '4155551212'
     assert_equal User.find(@test_user.id).mobile_number, '4155551213'
   end
 

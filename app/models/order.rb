@@ -5,14 +5,6 @@ class Order < ActiveRecord::Base
   
   belongs_to :deal
   belongs_to :user
-
-  def self.unconfirmed_order(user_id, deal_id)
-    if order = Order.find(:first, :conditions => ["user_id = ? AND deal_id = ? AND confirmation_code IS NULL", user_id, deal_id])
-      return order
-    else
-      return Order.new(:user_id => user_id, :deal_id => deal_id)
-    end
-  end
   
   # try to reserve the quantity of coupons
   def reserve_quantity(quantity)
@@ -21,8 +13,8 @@ class Order < ActiveRecord::Base
       Deal.transaction do
         deal = Deal.find(self.deal.id, :lock => true)
         
-        if deal.coupon_count + quantity <= deal.max
-          self.update_attributes!(:quantity => quantity, :amount => quantity*deal.deal_price.to_f)
+        if deal.coupon_count + quantity - self.quantity <= deal.max
+          self.update_attributes!(:quantity => quantity, :amount => quantity*deal.deal_price.to_f, :updated_at => Time.zone.now)
           return true
         end
       end
@@ -33,26 +25,43 @@ class Order < ActiveRecord::Base
   end
   
   # create coupons - after payment confirmation
-  def create_coupons(user_id)
+  def create_coupons()
     begin
       Order.transaction do
         deal = Deal.find(self.deal.id)
         if deal.deal_codes.size == 0
           for i in (1..self.quantity)
-            Coupon.create!(:user_id => 1000, :deal_id => deal.id, :order_id => self.id)
+            Coupon.create!(:user_id => self.user.id, :deal_id => deal.id, :order_id => self.id)
           end        
         else
           for i in (1..self.quantity)
             dc = DealCode.find(:first, :conditions => ["deal_id = ? AND reserved = ?", deal.id, false], :lock => true)
             if dc
-              Coupon.create!(:user_id => 1000, :deal_id => deal.id, :order_id => self.id, :deal_code => dc.id)
-              dc.update_attribute!(:reserved => true)
+              Coupon.create!(:user_id => self.user.id, :deal_id => deal.id, :order_id => self.id, :deal_code_id => dc.id)
+              dc.update_attributes!(:reserved => true)
             end
           end
         end
       end
+      return true
     rescue ActiveRecord::RecordInvalid => invalid
       # do anything here?
+    end
+    return false
+  end
+  
+  def is_timed_out(timeout=nil)
+    unless timeout
+      timeout = OPTIONS[:order_timeout]
+    end
+    
+    updated_at = self.updated_at
+    # force update for next checks
+    self.update_attributes(:updated_at => Time.zone.now)
+    
+    # check updated_at
+    if updated_at + timeout.seconds < Time.zone.now
+      return true
     end
     return false
   end

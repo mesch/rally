@@ -34,6 +34,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Tries to find an existing unconfirmed order for the deal - else return a new order
+  def unconfirmed_order(deal_id)
+    if order = Order.find(:first, :conditions => ["user_id = ? AND deal_id = ? AND confirmation_code IS NULL", self.id, deal_id])
+      return order
+    else
+      return Order.new(:user_id => self.id, :deal_id => deal_id)
+    end
+  end
+
   # Authentication methods
   def self.authenticate(username, password)
     # first check username

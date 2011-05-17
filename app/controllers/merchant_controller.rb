@@ -62,7 +62,7 @@ class MerchantController < ApplicationController
   end
   
   def edit_deal
-    @deal = Deal.find(params[:id])
+    @deal = Deal.find_by_id(params[:id])
     deal_images = DealImage.find(:all, 
       :conditions => { :deal_id => @deal.id }, 
       :order => 'created_at asc')
@@ -76,7 +76,7 @@ class MerchantController < ApplicationController
   end
   
   def update_deal
-    deal = Deal.find(params[:id])
+    deal = Deal.find_by_id(params[:id])
     begin
       Deal.transaction do
         # Update deal
@@ -125,7 +125,7 @@ class MerchantController < ApplicationController
   
   # Account methods
   def account
-    @merchant = Merchant.find(@current_merchant.id)
+    @merchant = Merchant.find_by_id(@current_merchant.id)
     if request.post?
       if @merchant.update_attributes(:name => params[:name], :website => params[:website], 
         :contact_name => params[:contact_name], :address1 => params[:address1], :address2 => params[:address2], 
@@ -216,7 +216,7 @@ class MerchantController < ApplicationController
   end
 
   def change_password
-    @merchant = Merchant.find(@current_merchant.id)
+    @merchant = Merchant.find_by_id(@current_merchant.id)
     if request.post?
       if params[:password].blank?
         flash[:error] = "Passwords cannot be empty."
@@ -235,7 +235,7 @@ class MerchantController < ApplicationController
   end
   
   def change_email
-    @merchant = Merchant.find(@current_merchant.id)
+    @merchant = Merchant.find_by_id(@current_merchant.id)
     if request.post?
       if @merchant.update_email(params[:email])
         flash[:notice]  = "Your email has been updated."

@@ -247,29 +247,79 @@ class UserTest < ActiveSupport::TestCase
   end
   
   def test_coupon_count
+    Order.delete_all
     u = User.new(:username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234")
     u.password = u.password_confirmation = "bobs_secure_password"
     assert u.save
     assert_equal u.coupon_count, 0
-    c = Coupon.new(:user_id => u.id, :deal_id => 1, :order_id => 3, :deal_code_id => 100)
-    assert c.save
+    # order with no quantity - no change
+    o = Order.new(:user_id => u.id, :deal_id => 10)
+    assert o.save
+    assert_equal u.coupon_count, 0
+    # update order with 1 quantity - +1 count
+    o.quantity = 1
+    o.amount = '10'
+    assert o.save
     assert_equal u.coupon_count, 1
-    assert_equal u.coupon_count(1), 1
-    c = Coupon.new(:user_id => u.id, :deal_id => 1, :order_id => 4, :deal_code_id => 100)
-    assert c.save
-    assert_equal u.coupon_count, 2
-    assert_equal u.coupon_count(1), 2
-    c = Coupon.new(:user_id => u.id, :deal_id => 1, :order_id => 4, :deal_code_id => 100)
-    assert c.save
+    assert_equal u.coupon_count(10), 1
+    # update order with confirmation_code - no change
+    o.confirmation_code = 'XYZ123'
+    assert o.save
+    assert_equal u.coupon_count, 1   
+    assert_equal u.coupon_count(10), 1 
+    # order with different deal_id with no quantity - no change
+    o = Order.new(:user_id => u.id, :deal_id => 11)
+    assert o.save
+    assert_equal u.coupon_count, 1   
+    assert_equal u.coupon_count(10), 1
+    # update order with 2 quantity - + 1 general, no change 10, +2 11
+    o.quantity = 2
+    o.amount = '20'
+    assert o.save
     assert_equal u.coupon_count, 3
-    assert_equal u.coupon_count(1), 3          
-    c = Coupon.new(:user_id => u.id, :deal_id => 2, :order_id => 5, :deal_code_id => 100)
-    assert c.save
-    assert_equal u.coupon_count, 4
-    assert_equal u.coupon_count(1), 3
-    assert_equal u.coupon_count(2), 1
+    assert_equal u.coupon_count(10), 1
+    assert_equal u.coupon_count(11), 2
+    # order with new user_id with 3 quantity - no change
+    o = Order.new(:user_id => u.id+1, :deal_id => 10, :quantity => 3, :amount => '30')
+    assert o.save
+    assert_equal u.coupon_count, 3
+    assert_equal u.coupon_count(10), 1
+    assert_equal u.coupon_count(11), 2   
   end    
-      
+
+  def test_unconfirmed_order
+    u = User.new(:username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234")
+    u.password = u.password_confirmation = "bobs_secure_password"
+    assert u.save
+    o = u.unconfirmed_order(10) 
+    assert_equal o.quantity, 0
+    # create order with different user, different deal - still create a new order
+    o = Order.new(:user_id => u.id+1, :deal_id => 11, :quantity => 1, :amount => '20.00')
+    assert o.save
+    o = u.unconfirmed_order(10) 
+    assert_equal o.quantity, 0
+    # create order with same user, different deal - still create a new order
+    o = Order.new(:user_id => u.id, :deal_id => 11, :quantity => 1, :amount => '20.00')
+    assert o.save
+    o = u.unconfirmed_order(10)
+    assert_equal o.quantity, 0    
+    # create order with different user, same deal - still create a new order
+    o = Order.new(:user_id => u.id+1, :deal_id => 10, :quantity => 1, :amount => '20.00')
+    assert o.save
+    o = u.unconfirmed_order(10)
+    assert_equal o.quantity, 0
+    # create order with same user, same deal, confirmed - still create a new order
+    o = Order.new(:user_id => u.id, :deal_id => 10, :quantity => 1, :amount => '20.00', :confirmation_code => 'XYZ123')
+    assert o.save
+    o = u.unconfirmed_order(10) 
+    assert_equal o.quantity, 0
+    # create order with same user, same deal, unconfirmed - returns that order
+    o = Order.new(:user_id => u.id, :deal_id => 10, :quantity => 1, :amount => '20.00')
+    assert o.save
+    o = u.unconfirmed_order(10) 
+    assert_equal o.quantity, 1
+  end
+
 end
 
 

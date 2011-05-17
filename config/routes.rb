@@ -59,8 +59,6 @@ Rally::Application.routes.draw do
       match :invite
       match :deals
       match '/deal/:id' => :deal, :as => :deal
-      match :order
-      match :billing
     end
     scope :via => :post do
       match :home
@@ -72,14 +70,22 @@ Rally::Application.routes.draw do
       match :change_password
       match :forgot_password
       match :invite
-      match :order
-      match :billing
     end
   end
-
-  match '/payments/payment', :to => 'payments#payment', :as => 'paymentspayment', :via => [:get]
+  
+  namespace :payment do
+    match '/order'          =>  :order,           :via => :get
+    match '/order'          =>  :order,           :via => :post    
+    match '/purchase'       =>  :purchase,        :via => :get
+    match '/relay_response' =>  :relay_response,  :via => :post
+    match '/receipt'        =>  :receipt,         :via => :get
+  end
+  
+=begin
+  match '/payments/payment', :to => 'payments#payment', :as => 'payments_payment', :via => [:get]
   match '/payments/relay_response', :to => 'payments#relay_response', :as => 'payments_relay_response', :via => [:post]
   match '/payments/receipt', :to => 'payments#receipt', :as => 'payments_receipt', :via => [:get]
+=end
 
   controller :site do
     match 'tos' => :tos, :via => :get

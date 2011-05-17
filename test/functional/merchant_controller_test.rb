@@ -360,7 +360,8 @@ class MerchantControllerTest < ActionController::TestCase
     self.login
     #create basic
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals'
@@ -372,7 +373,8 @@ class MerchantControllerTest < ActionController::TestCase
   def test_create_deal_missing_fields
     self.login
     post :create_deal, :title => nil, :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:error]
     assert_response :redirect
     assert_redirected_to :action => 'new_deal' 
@@ -380,31 +382,76 @@ class MerchantControllerTest < ActionController::TestCase
     deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
     assert_equal deals.size, 0    
     post :create_deal, :title => 'dealio', :start_date => nil, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:error]
     assert_response :redirect
     assert_redirected_to :action => 'new_deal'
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => nil, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:error]
     assert_response :redirect
     assert_redirected_to :action => 'new_deal'
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
-      :expiration_date => nil, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => nil, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:error]
     assert_response :redirect
     assert_redirected_to :action => 'new_deal'
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => nil, :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => nil, :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:error]
     assert_response :redirect
     assert_redirected_to :action => 'new_deal'
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => nil
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => nil,
+      :min => 1, :max => 0, :limit => 0
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => nil, :max => 0, :limit => 0
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => nil, :limit => 0
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => nil
     assert flash[:error]
     assert_response :redirect
     assert_redirected_to :action => 'new_deal'
   end
+  
+  def test_create_non_numbers
+    self.login
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 'a', :max => 0, :limit => 0
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 'a', :limit => 0
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 'a'
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action => 'new_deal'
+  end  
   
   def test_create_deal_field_lengths
     self.login
@@ -413,7 +460,8 @@ class MerchantControllerTest < ActionController::TestCase
     length = 51
     length.times{ string << "a"}
     post :create_deal, :title => string, :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:error]
     assert_response :redirect
     assert_redirected_to :action => 'new_deal'    
@@ -424,7 +472,7 @@ class MerchantControllerTest < ActionController::TestCase
     #create full
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
-      :description => 'blahblahblah', :terms => 'you have to ...', :max => '100', :limit => '5',
+      :description => 'blahblahblah', :terms => 'you have to ...', :min => 20, :max => '100', :limit => '5',
       :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
     assert flash[:notice]
     assert_response :redirect
@@ -450,7 +498,7 @@ class MerchantControllerTest < ActionController::TestCase
     #create full
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
-      :description => 'blahblahblah', :terms => 'you have to ...', :max => '100', :limit => '5',
+      :description => 'blahblahblah', :terms => 'you have to ...', :min => 20, :max => '100', :limit => '5',
       :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
     assert flash[:notice]
     assert_response :redirect
@@ -462,7 +510,8 @@ class MerchantControllerTest < ActionController::TestCase
     assert_equal deal.title, 'dealio'
     #edit title
     post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals'
@@ -475,7 +524,8 @@ class MerchantControllerTest < ActionController::TestCase
     self.login
     #create basic
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals'
@@ -502,7 +552,8 @@ class MerchantControllerTest < ActionController::TestCase
     self.login
     #create basic
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00'
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals'

@@ -32,7 +32,7 @@
 	<div class="sysmsg-tip-top"></div>
 	<div class="sysmsg-tip-content">
 		You have ordered, but not paid yet.
-		<%= link_to "Check your order and make a payment", order_url(:deal_id => @deal.id) %>
+		<%= link_to "Check your order and make a payment", payment_order_url(:deal_id => @deal.id) %>
 		<span id="sysmsg-tip-close" class="sysmsg-tip-close">Close</span>
 	</div>
 	<div class="sysmsg-tip-bottom"></div>
@@ -60,7 +60,7 @@
 				<% else %>
 					<p class="deal-price">
 						<strong><%= @deal.deal_price.format(:no_cents) %></strong>
-						<span><%= link_to image_tag("/stylesheets/i/button-deal-buy.png"), order_url(:deal_id => @deal.id) %></span>
+						<span><%= link_to image_tag("/stylesheets/i/button-deal-buy.png"), payment_order_url(:deal_id => @deal.id) %></span>
 					</p>
 				<% end %>
                 </div>

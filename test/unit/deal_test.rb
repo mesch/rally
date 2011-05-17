@@ -206,7 +206,7 @@ class DealTest < ActiveSupport::TestCase
   end
   
   def test_is_maxed
-    Coupon.delete_all
+    Order.delete_all
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :max => 1)
     assert d.save

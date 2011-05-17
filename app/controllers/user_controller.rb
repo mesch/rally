@@ -12,39 +12,18 @@ class UserController < ApplicationController
   end
   
   def deal
-    @deal = Deal.find(params[:id])
+    @deal = Deal.find_by_id(params[:id])
+    p @deal
+    p @deal.deal_images
+    p @deal.deal_images[0]
+    p @deal.deal_images[0].image.url
     @now = Time.zone.now.to_f.round
     @diff = @deal.time_left
     @time_left = Deal.time_difference_for_display(@diff)
-    @order = Order.unconfirmed_order(@current_user.id, @deal.id)
+    @order = @current_user.unconfirmed_order(@deal.id)
     
     # TODO: better query for other deals?
     @others = Deal.find(:all, :conditions => [ "id != ?", @deal.id], :limit => 3)
-  end
-
-  def order
-    # find an unconfirmed order
-    @deal = Deal.find(params[:deal_id])
-    @order = Order.unconfirmed_order(@current_user.id, @deal.id)
-    # set max quantity - leave nil if no limit
-    if @deal.limit != 0
-      user_limit = @deal.limit - (@current_user.coupon_count(@deal.id) - @order.quantity)
-      @max = [@deal.limit, user_limit].min   
-    end
-
-    if request.post?
-      quantity = params[:quantity].to_i
-      if quantity != 0
-        # try to reserve the quantity - update order
-        if @order.reserve_quantity(quantity)
-          redirect_to :controller => 'payments', :action => 'payment', :order_id => @order.id
-        else
-          flash.now[:error] = "There are not enough coupons available. Reduce your quantity and try again."
-        end
-      else
-        flash.now[:error] = "Select at least one coupon."
-      end
-    end
   end
 
   def home
@@ -53,12 +32,10 @@ class UserController < ApplicationController
 
   # Account methods
   def account
-    @user = User.find(@current_user.id)
+    @user = User.find_by_id(@current_user.id)
     if request.post?
       if @user.update_attributes(:first_name => params[:first_name], :last_name => params[:last_name], 
-        :address1 => params[:address1], :address2 => params[:address2], :city => params[:city], 
-        :state => params[:state], :zip => params[:zip], :country => params[:country],
-        :phone_number => params[:phone_number], :mobile_number => params[:mobile_number])
+          :mobile_number => params[:mobile_number])
         flash.now[:notice] = "Your account has been updated."
       else
         flash.now[:error] = "Could not update account. Please try again."
@@ -139,7 +116,7 @@ class UserController < ApplicationController
   end
 
   def change_password
-    @user = User.find(@current_user.id)
+    @user = User.find_by_id(@current_user.id)
     if request.post?
       if params[:password].blank?
         flash[:error] = "Passwords cannot be empty."
@@ -158,7 +135,7 @@ class UserController < ApplicationController
   end
   
   def change_email
-    @user = User.find(@current_user.id)
+    @user = User.find_by_id(@current_user.id)
     if request.post?
       if @user.update_email(params[:email])
         flash[:notice]  = "Your email has been updated."
