@@ -20,7 +20,9 @@ class UserController < ApplicationController
     @now = Time.zone.now.to_f.round
     @diff = @deal.time_left
     @time_left = Deal.time_difference_for_display(@diff)
-    @order = @current_user.unconfirmed_order(@deal.id)
+    if @current_user
+      @order = @current_user.unconfirmed_order(@deal.id)
+    end
     
     # TODO: better query for other deals?
     @others = Deal.find(:all, :conditions => [ "id != ?", @deal.id], :limit => 3)

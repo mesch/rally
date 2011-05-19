@@ -11,14 +11,14 @@
                 <div class="sect">
                         <div class="field">
                             <label for="username">Username</label>
-							<%= text_field_tag :username, nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+							<%= text_field_tag :username, nil, :class=>"f-input", :datatype=>"require", :require=>"true" %>
                         </div>
                         <div class="field">
                             <label for="password">Password</label>
 							<%= password_field_tag :password, nil, :class=>"f-input", :datatype=>"require", :require=>"true" %>
                         </div>
                         <div class="act">
-							<%= submit_tag :submit, :value => 'Login', :class=>"formbutton"%>
+							<%= submit_tag :submit, :value => 'Log In', :class=>"formbutton"%>
 							<%= link_to 'Signup', merchant_signup_url %> |
 						    <%= link_to 'Forgot my password', merchant_forgot_password_url %>
                          </div>

@@ -19,7 +19,7 @@
 							<th width="60" nowrap>Expiration</th>
 						</tr>							
 						<% for deal in @deals %>
-						<tr ${$index%2?'':'class="alt"'}>
+						<tr>
 							<td><%= deal.merchant.name %></td>
 							<td><%= link_to deal.title, deal_url(deal.id) %></td>
 							<td><%= deal.deal_price %></td>

@@ -3,7 +3,7 @@
 
 <% if !@current_user %>
 <div id="sysmsg-guide">
-	<div class="link"><%= link_to help_tour_url %></div>
+	<div class="link"><%= link_to '', help_tour_url %></div>
 	<%= link_to "Close", "javascript:void(0)", :id=>"sysmsg-guide-close", :class=>"close" %>
 </div>
 <% end %>
@@ -27,7 +27,7 @@
 </div>
 <% end %>
 
-<% if @order.id %>
+<% if @order and @order.id %>
 <div id="sysmsg-tip">
 	<div class="sysmsg-tip-top"></div>
 	<div class="sysmsg-tip-content">

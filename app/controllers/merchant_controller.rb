@@ -118,6 +118,17 @@ class MerchantController < ApplicationController
     end        
   end
 
+  def publish_deal
+    deal = Deal.find_by_id(params[:id])
+    if deal.publish
+      flash[:notice] = "Your deal was published successfully."
+      redirect_to :controller => 'merchant', :action => :deals
+    else
+      flash[:error] = "There was a problem publishing your deal."
+      redirect_to :controller => 'merchant', :action => :deals
+    end        
+  end
+
   # Home
   def home
 

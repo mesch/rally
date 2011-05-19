@@ -18,16 +18,23 @@
 							<th width="60" nowrap>Start</th>
 							<th width="60" nowrap>End</th>
 							<th width="60" nowrap>Expiration</th>
+							<th width="140" nowrap>Actions</th>
 						</tr>							
 						<% for deal in @deals %>
-						<tr ${$index%2?'':'class="alt"'}>
-							<td><%= link_to deal.id, merchant_edit_deal_url(deal.id) %></td>
-							<td><%= link_to deal.title, deal_url(deal.id), :target=>"_blank" %></td>
+						<tr>
+							<td><%= deal.id %></td>
+							<td><%= deal.title %></td>
 							<td><%= deal.deal_price %></td>
 							<td><%= deal.deal_value %></td>
 							<td><%= deal.start_date.strftime(OPTIONS[:date_format]) %></td>
 							<td><%= deal.end_date.strftime(OPTIONS[:date_format]) %></td>
 							<td><%= deal.expiration_date.strftime(OPTIONS[:date_format]) %></td>
+							<td><%= link_to "Edit", merchant_edit_deal_url(deal.id) %>
+								| <%= link_to "View", deal_url(deal.id), :target=>"_blank" %>
+								<% if !deal.published %>
+								| <%= link_to "Publish", merchant_publish_deal_url(deal.id) %>
+								<% end %>
+							</td>
 						</tr>
 						<% end %>
                     </table>

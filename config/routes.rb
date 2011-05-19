@@ -21,6 +21,7 @@ Rally::Application.routes.draw do
       match :deals
       match '/deal' => :new_deal, :as => :new_deal
       match '/deal/:id' => :edit_deal, :as => :edit_deal
+      match '/deal/publish/:id' => :publish_deal, :as => :publish_deal
     end
     scope :via => :post do
       match :home

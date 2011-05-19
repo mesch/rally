@@ -18,6 +18,7 @@ class DealTest < ActiveSupport::TestCase
     assert d.active
     assert_equal d.max, 0
     assert_equal d.limit, 1
+    assert !d.published
     # check money fields
     assert_equal d.deal_price, 10.00
     assert_equal d.deal_value, 20.00
@@ -186,6 +187,44 @@ class DealTest < ActiveSupport::TestCase
     o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20')
     assert o.save
     assert_equal d.coupon_count, 3  
+  end
+  
+  def test_publish
+    # publish with no deal codes - max doesn't change
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :max => 2)
+    assert d.save
+    assert !d.published
+    assert d.publish
+    assert_equal d.max, 2
+    # publish again? no changes?
+    assert d.publish
+    assert_equal d.max, 2
+    # publish with 1 deal code - max changes to 1
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :max => 2)
+    assert d.save
+    assert !d.published
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    assert d.publish
+    assert_equal d.max, 1
+    # publish again? no changes?
+    assert d.publish
+    assert_equal d.max, 1
+    # publish with 3 deal codes - max changes to 3
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :max => 2)
+    assert d.save
+    assert !d.published
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf124')
+    assert dc.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf125')
+    assert dc.save
+    assert d.publish
+    assert_equal d.max, 3
   end
   
   def test_is_tipped

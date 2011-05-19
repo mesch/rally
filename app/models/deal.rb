@@ -37,6 +37,20 @@ class Deal < ActiveRecord::Base
     count = Order.sum(:quantity, :conditions => ["deal_id = ?", self.id])
   end
 
+  def publish
+    begin
+      Deal.transaction do
+        # If there are deal_codes - set max to the count
+        max = self.deal_codes.size != 0 ? self.deal_codes.size : self.max
+        self.update_attributes!(:published => true, :max => max)      
+      end
+      return true
+    rescue ActiveRecord::RecordInvalid => invalid
+      # do anything?
+    end
+    return false
+  end
+
   def is_tipped(coupon_count=nil)
     if self.min == 0
       return true

@@ -39,14 +39,14 @@
 				<ul id="account">
 					<li class="username">Welcome, <%= @current_user.username %></li>
 					<li class="account"><%= link_to "My Account", account_url %></li>					
-					<li class="logout"><%= link_to "Exit", logout_url %></li>
+					<li class="logout"><%= link_to "Log Out", logout_url %></li>
 				</ul>
 				<div class="line islogin"></div>
 			</div>
 			<% else %>
 			<div class="logins">
 				<ul id="account">
-					<li class="login"><%= link_to "Login", login_url %></li>
+					<li class="login"><%= link_to "Log In", login_url %></li>
 					<li class="signup"><%= link_to "Sign Up", signup_url %></li>
 					</ul>
 				<div class="line "></div>

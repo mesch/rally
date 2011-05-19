@@ -43,6 +43,9 @@ Rally::Application.configure do
     :url => "/system/#{Rails.env}/:class/:attachment/:id/:style.:extension",
     :default_url => "/images/missing_thumb.png"
   }
+
+  # Order Timout
+  OPTIONS[:order_timeout] = 10
   
   # Facebook logins
   #OPTIONS[:facebook_app_id] = "119734331414282"

@@ -36,4 +36,4 @@ OPTIONS[:date_format] = '%m/%d/%y'
 OPTIONS[:time_format] = '%Y-%m-%d %H:%M:%S'
 
 # Order Timout
-OPTIONS[:order_timeout] = 10
+OPTIONS[:order_timeout] = 10*60

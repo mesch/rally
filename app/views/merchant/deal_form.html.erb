@@ -23,11 +23,18 @@
 						<%= text_field_tag :title, @deal.title, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
 					</div>
 					<div class="field">
-						<%= label_tag 'Value' %> 
+					<% if @deal.published %>
+						<%= label_tag 'Value' %>
+						<%= text_field_tag :deal_value, @deal.deal_value, :size=>10, :class=>"number", :disabled => true %>
+						<%= label_tag 'Price' %> 
+						<%= text_field_tag :deal_price, @deal.deal_price, :size=>"10", :class=>"number", :disabled => true %>									
+					<% else %>
+						<%= label_tag 'Value' %>
 						<%= text_field_tag :deal_value, @deal.deal_value, :size=>10, :class=>"number", :datatype=>"require", :require=>"true" %>
 						<%= label_tag 'Price' %> 
-						<%= text_field_tag :deal_price, @deal.deal_price, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>										
+						<%= text_field_tag :deal_price, @deal.deal_price, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>									
 						<span class="inputtip">Value must be greater than Price.</span>
+					<% end %>
 					</div>
 					<div class="field">
 						<%= label_tag 'Min' %>
@@ -43,8 +50,12 @@
 						<%= text_field_tag :start_date, @deal.start_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>
 						<%= label_tag 'End Date', 'End Date' %> 
 						<%= text_field_tag :end_date, @deal.end_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>
-						<%= label_tag 'Expiration Date', 'Expiration Date' %> 
-						<%= text_field_tag :expiration_date, @deal.expiration_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>						
+						<%= label_tag 'Expiration Date', 'Expiration Date' %>
+						<% if @deal.published %>
+							<%= text_field_tag :expiration_date, @deal.expiration_date, :size=>"10", :class=>"date", :disabled=>true %>			
+						<% else %>
+							<%= text_field_tag :expiration_date, @deal.expiration_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>							
+						<% end %>
 						<span class="hint">The deal starts at Start Date 00:00:00, ends at End Date 23:59:59.</span>
 					</div>
 					<div class="field">
@@ -92,7 +103,11 @@
 					<div class="wholetip clear"><h3>3. Coupon Codes</h3></div>
 					<div class="field">
 						<%= label_tag 'Upload Codes' %>
-						<%= file_field_tag :codes_file, :size=>"30", :class => "f-input" %>
+						<% if @deal.published %>
+							<%= file_field_tag :codes_file, :size=>"30", :class=>"f-input", :disabled=>true %>
+						<% else %>
+							<%= file_field_tag :codes_file, :size=>"30", :class=>"f-input" %>
+						<% end %>
 						<% if @num_deal_codes %>
 							<span class="hint"><%= @num_deal_codes %> codes saved.</span>
 						<% else %>

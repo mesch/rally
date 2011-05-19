@@ -32,7 +32,7 @@ class PaymentController < ApplicationController
       return
     end
     
-    # find an unconfirmed order
+    # find (or create) an unconfirmed order
     @order = @current_user.unconfirmed_order(@deal.id)
 
     # set max quantity - leave nil if no limit

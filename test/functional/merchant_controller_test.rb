@@ -575,5 +575,33 @@ class MerchantControllerTest < ActionController::TestCase
     deal = Deal.find(deal.id)
     assert_equal deal.title, 'dealio' 
   end
-
+  
+  def test_publish_deal
+    self.login
+    # create
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert !deal.published
+    assert_equal deal.max, 0
+    # publish
+    get :publish_deal, :id => deal.id
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert deal.published
+    assert_equal deal.max, 0    
+  end
+  
 end

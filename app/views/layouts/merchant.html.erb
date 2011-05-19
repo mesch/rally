@@ -33,15 +33,15 @@
 			<div class="logins">
 				<ul id="account">
 					<li class="username">Welcome, <%= @current_merchant.name %></li>
-					<li class="account"><%= link_to " My Account", merchant_account_url %></li>					
-					<li class="logout"><%= link_to "Exit", merchant_logout_url %></li>
+					<li class="account"><%= link_to "My Account", merchant_account_url %></li>					
+					<li class="logout"><%= link_to "Log Out", merchant_logout_url %></li>
 				</ul>
 				<div class="line islogin"></div>
 			</div>			
 			<% else %>
 			<div class="logins">
 				<ul id="account">
-					<li class="login"><%= link_to "Login", merchant_login_url %></li>
+					<li class="login"><%= link_to "Log In", merchant_login_url %></li>
 					<li class="signup"><%= link_to "Sign Up", merchant_signup_url %></li>
 					</ul>
 				<div class="line "></div>
