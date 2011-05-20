@@ -65,6 +65,15 @@ Feature: Manage Deals
 		And "image2" should not be disabled
 		And "image3" should not be disabled
 		And "codes_file" should not be disabled
+	
+	Scenario: Update Deal (Unpublished)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have created a deal titled "Cool New Deal"
+		And I am on the edit deal page for "Cool New Deal" 
+		When I fill in "title" with "Even Cooler New Deal"
+		And I press "Update Deal"
+		Then I should see "Your deal was updated successfully."
+		And I should see "Even Cooler New Deal"
 		
 	Scenario: Publish Deal
 		Given I am logged in as merchant "emptybob" with password "test"
@@ -77,7 +86,7 @@ Feature: Manage Deals
 		And I should see "View"
 		And I should not see "Publish"
 
-	Scenario: Edit Deal (Unpublished)
+	Scenario: Edit Deal (Published)
 		Given I am logged in as merchant "emptybob" with password "test"
 		And I have published a deal titled "Cool New Deal"
 		And I am on the merchant list of deals
@@ -97,4 +106,13 @@ Feature: Manage Deals
 		And "image2" should not be disabled
 		And "image3" should not be disabled
 		And "codes_file" should be disabled
+	
+	Scenario: Update Deal (Published)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have published a deal titled "Cool New Deal"
+		And I am on the edit deal page for "Cool New Deal" 
+		When I fill in "title" with "Even Cooler New Deal"
+		And I press "Update Deal"
+		Then I should see "Your deal was updated successfully."
+		And I should see "Even Cooler New Deal"
 		

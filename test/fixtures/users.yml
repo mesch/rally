@@ -38,3 +38,11 @@ inactivated_user:
     hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
     activation_code: 1234567890
     activated: false
+
+empty_user:
+    username: empty_user
+    email: "matt.esch+6@gmail.com"
+    salt: 1000
+    hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
+    activation_code: 1234567890
+    activated: true    

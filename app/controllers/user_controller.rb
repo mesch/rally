@@ -7,16 +7,12 @@ class UserController < ApplicationController
 
   # Deals
   def deals
-    # Show all deals for now?
-    @deals = Deal.find(:all)
+    # TODO: Show all deals for now? Move into model?
+    @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
   end
   
   def deal
     @deal = Deal.find_by_id(params[:id])
-    p @deal
-    p @deal.deal_images
-    p @deal.deal_images[0]
-    p @deal.deal_images[0].image.url
     @now = Time.zone.now.to_f.round
     @diff = @deal.time_left
     @time_left = Deal.time_difference_for_display(@diff)
@@ -24,8 +20,24 @@ class UserController < ApplicationController
       @order = @current_user.unconfirmed_order(@deal.id)
     end
     
-    # TODO: better query for other deals?
-    @others = Deal.find(:all, :conditions => [ "id != ?", @deal.id], :limit => 3)
+    if !@deal.is_tipped
+      @bar_size = (190*(@deal.coupon_count/@deal.min)).ceil
+      @bar_offset = (5*(@deal.coupon_count/@deal.min)).ceil
+    end
+    
+    # TODO: better query for other deals? Move into model?
+    @others = Deal.find(
+      :all, 
+      :conditions => [ "published = ? AND start_date <= ? AND end_date >= ? AND id != ?", true, Time.zone.today, Time.zone.today, @deal.id], 
+      :limit => 3)
+  end
+
+  def subscribe
+    
+  end
+
+  def invite
+    
   end
 
   def home

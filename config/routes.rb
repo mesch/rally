@@ -58,6 +58,7 @@ Rally::Application.routes.draw do
       match :change_password
       match :forgot_password
       match :invite
+      match :subscribe
       match :deals
       match '/deal/:id' => :deal, :as => :deal
     end
@@ -71,6 +72,7 @@ Rally::Application.routes.draw do
       match :change_password
       match :forgot_password
       match :invite
+      match :subscribe
     end
   end
   

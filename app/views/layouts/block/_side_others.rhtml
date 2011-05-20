@@ -7,7 +7,9 @@
 		<% index = 0 %>
 		<% for deal in @others %>
 			<b><%= index += 1%>.&nbsp;<%= deal.title %></b>
-			<p><%= link_to image_tag(deal.deal_images[0].image.url, :width=>"195", :height=>"148", :border=>"0"), deal_url(deal.id) %></p>
+			<% if deal.deal_images[0] %>
+				<p><%= link_to image_tag(deal.deal_images[0].image.url, :width=>"195", :height=>"148", :border=>"0"), deal_url(deal.id) %></p>
+			<% end %>
 			<p><%= link_to deal.description, deal_url(deal.id) %></p>
 		<% end %>
 		</div>

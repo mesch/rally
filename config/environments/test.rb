@@ -38,8 +38,8 @@ Rally::Application.configure do
   config.action_mailer.default_url_options = { :host => OPTIONS[:site_url] }
   
   OPTIONS[:paperclip_storage_options] = {
-    :path => "#{Rails.env}/:class/:attachment/:id/:style.:extension",
-    :url => "system/#{Rails.env}/:class/:attachment/:id/:style.:extension"
+    :path => ":rails_root/public/system/#{Rails.env}/:class/:attachment/:id/:style.:extension",
+    :url => "/system/#{Rails.env}/:class/:attachment/:id/:style.:extension"
   }
   
 end

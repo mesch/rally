@@ -80,11 +80,18 @@ class MerchantController < ApplicationController
     begin
       Deal.transaction do
         # Update deal
-        deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
-        :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
-        :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
-        :min => params[:min], :max => params[:max], :limit => params[:limit],
-        :description => params[:description], :terms => params[:terms], :video => params[:video])
+        if deal.published
+          deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
+          :start_date => params[:start_date], :end_date => params[:end_date],
+          :min => params[:min], :max => params[:max], :limit => params[:limit],
+          :description => params[:description], :terms => params[:terms], :video => params[:video])
+        else
+          deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
+          :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
+          :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
+          :min => params[:min], :max => params[:max], :limit => params[:limit],
+          :description => params[:description], :terms => params[:terms], :video => params[:video])
+        end
         # Create each new DealImage
         if (image = params[:image1])
           DealImage.delete_all(["deal_id = ? AND counter = 1", deal.id])
@@ -101,7 +108,7 @@ class MerchantController < ApplicationController
           di = DealImage.new(:deal_id => deal.id, :counter => 3, :image => image)
           di.save!
         end
-        if (file = params[:codes_file])
+        if (file = params[:codes_file] and !deal.published)
           DealCode.delete_all(["deal_id = ?", deal.id])
           while (line = file.gets)
             dc = DealCode.new(:deal_id => deal.id, :code => line.strip)

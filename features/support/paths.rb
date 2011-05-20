@@ -14,6 +14,15 @@ module NavigationHelpers
       merchant_deals_path
     when /the new deal page/
       merchant_new_deal_path
+    when /the edit deal page for "([^"]*)"/
+      deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
+      merchant_edit_deal_path(deal.id)
+    when /the list of deals/
+      deals_path
+    when /the deal page for "([^"]*)"/
+      deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
+      deal_path(deal.id)
+      
 
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
