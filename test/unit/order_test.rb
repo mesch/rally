@@ -173,4 +173,27 @@ class OrderTest < ActiveSupport::TestCase
     assert o.updated_at > old_updated_at
   end
   
+  def test_reset_orders
+    Order.delete_all
+    o = Order.new(:user_id => 1, :deal_id => 10, :quantity => 1, :amount => "10.00")
+    assert o.save
+    # should remain - still within default timeout
+    Order.reset_orders
+    o = Order.find_by_id(o.id)
+    assert_equal o.quantity, 1
+    timeout = 0.001
+    # will be reset
+    sleep(timeout+1)
+    Order.reset_orders(timeout)
+    o = Order.find_by_id(o.id)
+    assert_equal o.quantity, 0
+    o = Order.new(:user_id => 1, :deal_id => 10, :quantity => 1, :amount => "10.00", :confirmation_code => 'XYZ123')
+    o.save
+    # should remain - is confirmed
+    sleep(timeout+1)
+    Order.reset_orders(timeout)
+    o = Order.find_by_id(o.id)
+    assert_equal o.quantity, 1
+  end
+  
 end

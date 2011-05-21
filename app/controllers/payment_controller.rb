@@ -35,12 +35,8 @@ class PaymentController < ApplicationController
     # find (or create) an unconfirmed order
     @order = @current_user.unconfirmed_order(@deal.id)
 
-    # set max quantity - leave nil if no limit
-    if @deal.limit != 0
-      user_limit = @deal.limit - (@current_user.coupon_count(@deal.id) - @order.quantity)
-      @max = [@deal.limit, user_limit].min   
-    end
-    @quantity = @order.quantity == 0 ? 1 : @order.quantity
+    @limit = @deal.limit
+    @quantity = @order.quantity != 0 ? @order.quantity : 1
 
     if request.post?
       quantity = params[:quantity].to_i

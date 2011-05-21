@@ -37,6 +37,14 @@
 					<% end %>
 					</div>
 					<div class="field">
+					<% if @deal.published %>
+						<%= label_tag 'Min' %>
+						<%= text_field_tag :min, @deal.min, :size=>"10", :class=>"number", :disabled => true  %>
+						<%= label_tag 'Max' %>
+						<%= text_field_tag :max, @deal.max, :size=>"10", :class=>"number", :disabled => true  %>
+						<%= label_tag 'Limit per Person', 'Limit per Person' %> 
+						<%= text_field_tag :limit, @deal.limit, :size=>"10", :class=>"number", :disabled => true  %>
+					<% else %>
 						<%= label_tag 'Min' %>
 						<%= text_field_tag :min, @deal.min, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
 						<%= label_tag 'Max' %>
@@ -44,6 +52,7 @@
 						<%= label_tag 'Limit per Person', 'Limit per Person' %> 
 						<%= text_field_tag :limit, @deal.limit, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
 						<span class="hint">Set Max or Limit per Person to 0 for no limit.</span>
+					<% end %>
 					</div>
 					<div class="field">
 						<%= label_tag 'Start Date', 'Start Date' %> 

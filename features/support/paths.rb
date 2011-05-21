@@ -22,6 +22,9 @@ module NavigationHelpers
     when /the deal page for "([^"]*)"/
       deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
       deal_path(deal.id)
+    when /the order page for "([^"]*)"/
+      deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
+      payment_order_path(:deal_id => deal.id)    
       
 
     # Add more mappings here.

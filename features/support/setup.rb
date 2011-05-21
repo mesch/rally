@@ -1,3 +1,5 @@
+Capybara.ignore_hidden_elements = false
+
 # load fixtures - before each scenario
 Before do
   Fixtures.reset_cache

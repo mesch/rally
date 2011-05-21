@@ -97,9 +97,9 @@ Feature: Manage Deals
 		And "start_date" should not be disabled
 		And "end_date" should not be disabled
 		And "expiration_date" should be disabled
-		And "min" should not be disabled
-		And "max" should not be disabled
-		And "limit" should not be disabled
+		And "min" should be disabled
+		And "max" should be disabled
+		And "limit" should be disabled
 		And "description" should not be disabled
 		And "terms" should not be disabled
 		And "image1" should not be disabled

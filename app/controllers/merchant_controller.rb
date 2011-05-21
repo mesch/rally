@@ -83,7 +83,6 @@ class MerchantController < ApplicationController
         if deal.published
           deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
           :start_date => params[:start_date], :end_date => params[:end_date],
-          :min => params[:min], :max => params[:max], :limit => params[:limit],
           :description => params[:description], :terms => params[:terms], :video => params[:video])
         else
           deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],

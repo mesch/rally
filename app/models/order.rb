@@ -60,10 +60,23 @@ class Order < ActiveRecord::Base
     self.update_attributes(:updated_at => Time.zone.now)
     
     # check updated_at
-    if updated_at + timeout.seconds < Time.zone.now
+    if updated_at < Time.zone.now - timeout.seconds
       return true
     end
     return false
+  end
+  
+  # Reset quantity and amount (to 0) for unconfirmed orders that have timed out
+  def self.reset_orders(timeout=nil)
+    unless timeout
+      # add some buffer (5 mins)
+      timeout = OPTIONS[:order_timeout] + 5*60
+    end
+    orders = Order.find(:all, :conditions => ["updated_at < ? AND confirmation_code IS NULL AND quantity > 0", Time.zone.now - (timeout.seconds)])
+		# set quantity to 0, amount to 0
+		for order in orders
+		  order.update_attributes!(:quantity => 0, :amount => 0)
+    end
   end
 
 end

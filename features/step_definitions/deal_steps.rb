@@ -1,5 +1,5 @@
 # Merchant Givens
-Given /^(?:I am|a merchant has) logged in as merchant "(.+?)" with password "(.+?)"/ do |username, password|
+Given /^I am logged in as merchant "(.+?)" with password "(.+?)"/ do |username, password|
   visit merchant_login_url
   fill_in "Username", :with => username
   fill_in "Password", :with => password
@@ -59,12 +59,15 @@ Given /^(?:I have|a merchant has) changed the (min|max|limit) of deal "([^"]*)" 
   deal.update_attributes!(field => value)
 end
 
-Given /^the deal "([^"]*)" has (\d) order of (\d) quantity$/ do |title, num_orders, quantity|
+Given /^the deal "([^"]*)" has (\d) (confirmed|unconfirmed) order(?:s)? of (\d) quantity$/ do |title, num_orders, type, quantity|
   num_orders = num_orders.to_i
   quantity = quantity.to_i
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
+  confirmation_code = type == "confirmed" ? 'XYZ123' : nil
   for i in (1..num_orders)
-    Order.create!(:user_id => @current_user.id, :deal_id => deal.id, :quantity => quantity, :amount => quantity*deal.deal_price.to_f)
+    Order.create!(:user_id => @current_user.id, :deal_id => deal.id, 
+      :quantity => quantity, :amount => quantity*deal.deal_price.to_f,
+      :confirmation_code => confirmation_code)
   end
 end 	
 
@@ -128,5 +131,13 @@ Then /^I should( not)? see the Soldout button$/ do |negate|
   else
     page.should have_css("span[class=deal-price-soldout]")
   end
+end
+
+Then /^I should see the limit is (\d)$/ do |limit|
+  #p page.find('deal-per-number', :hidden => true)
+  value = find_field("deal-per-number", :hidden => true).value
+  p limit
+  p value
+  find_field("deal-per-number", :hidden => true).value.should == limit
 end
 

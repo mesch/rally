@@ -107,7 +107,7 @@ Feature: Buy Deals
 	Scenario: Deal Page (Tipped, Maxed, Not Ended)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the max of deal "Cool New Deal" to 1
-		And the deal "Cool New Deal" has 1 order of 1 quantity	
+		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity	
 		When I go to the deal page for "Cool New Deal"
 		Then I should not see the Buy button
 		And I should not see the Expired button
@@ -120,7 +120,7 @@ Feature: Buy Deals
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the end date of deal "Cool New Deal" to yesterday
 		And a merchant has changed the max of deal "Cool New Deal" to 1
-		And the deal "Cool New Deal" has 1 order of 1 quantity	
+		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity	
 		When I go to the deal page for "Cool New Deal"
 		Then I should not see the Buy button
 		And I should not see the Expired button
@@ -128,3 +128,71 @@ Feature: Buy Deals
 		And I should not see "Buy 1 More To Tip This Deal!"
 		And I should not see "The deal is tipped!"
 		And I should see "Total 1 bought."
+
+	Scenario: Order Page (Not Logged In)
+		Given a merchant has published a deal titled "Cool New Deal"
+		When I go to the order page for "Cool New Deal"
+		Then I should see "User Login"
+	
+	Scenario: Order Page (Logged In)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And I am logged in as user "empty_user" with password "test"
+		When I go to the order page for "Cool New Deal"
+		Then I should see "Order"
+
+	Scenario: Order Page (limit = 0, no previous order)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has changed the limit of deal "Cool New Deal" to 0
+		And I am logged in as user "empty_user" with password "test"
+		When I go to the order page for "Cool New Deal"
+		Then I should see "Order"
+		And I should not see "Limit 0"
+		And show me the page
+			
+	Scenario: Order Page (limit = 0, previous order)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has changed the limit of deal "Cool New Deal" to 0
+		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity
+		And I am logged in as user "empty_user" with password "test"
+		When I go to the order page for "Cool New Deal"
+		Then I should see "Order"
+		And I should not see "Limit 0"
+		And show me the page
+	
+	Scenario: Order Page (limit = 1, no previous order)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has changed the limit of deal "Cool New Deal" to 1
+		And I am logged in as user "empty_user" with password "test"
+		When I go to the order page for "Cool New Deal"
+		Then I should see "Order"
+		And I should see "Limit 1"
+		And show me the page
+		
+	Scenario: Order Page (limit = 1, previous order)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has changed the limit of deal "Cool New Deal" to 1
+		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity
+		And I am logged in as user "empty_user" with password "test"
+		When I go to the order page for "Cool New Deal"
+		Then I should see "Order"
+		And I should see "Limit 1"
+		And show me the page
+	
+	Scenario: Order Page (limit = 2, no previous order)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has changed the limit of deal "Cool New Deal" to 2
+		And I am logged in as user "empty_user" with password "test"
+		When I go to the order page for "Cool New Deal"
+		Then I should see "Order"
+		And I should see "Limit 2"
+		And show me the page
+
+	Scenario: Order Page (limit = 2, previous order)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has changed the limit of deal "Cool New Deal" to 2
+		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity
+		And I am logged in as user "empty_user" with password "test"
+		When I go to the order page for "Cool New Deal"
+		Then I should see "Order"
+		And I should see "Limit 2"		
+		And show me the page

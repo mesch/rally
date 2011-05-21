@@ -21,8 +21,8 @@
                     <td class="deal-buy-desc"><%= @deal.title %></td>
                     <td class="deal-buy-quantity">
 						<%= text_field_tag :quantity, @quantity, :class=>"input-text f-input", :id=>"deal-buy-quantity-input" %>
-						<% if @max %>
-							<br/><span style="font-size:12px;color:gray;">Limit <%= @max %></span>
+						<% if @limit > 0 %>
+							<br/><span style="font-size:12px;color:gray;">Limit <%= @limit %></span>
 						<% end %>
 					</td>
                     <td class="deal-buy-multi">x</td>
@@ -39,7 +39,7 @@
                     <td class="deal-buy-total"><span class="money">$</span><strong id="deal-buy-total-t"><%= @quantity * @deal.deal_price.to_f.truncate %></strong></td>
                 </tr>
             </table>
-			<%= hidden_field_tag "deal-per-number", @max %>
+			<%= hidden_field_tag "deal-per-number", @limit %>
 			<%= hidden_field_tag :deal_id, @deal.id %>
             <div class="form-submit">
 				<%= submit_tag :submit, :value=>"Confirm Order", :class=>"formbutton"%>
