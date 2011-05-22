@@ -32,6 +32,14 @@ class UserController < ApplicationController
       :limit => 3)
   end
 
+  def coupons
+    @coupons = @current_user.coupons
+  end
+  
+  def coupon
+    @coupon = Coupon.find_by_id(params[:id])
+  end
+
   def subscribe
     
   end

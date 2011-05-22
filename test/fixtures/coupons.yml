@@ -1,17 +1,17 @@
 burger_coupon1:
     deal: burger_deal
-    user: user_test
+    user: test_user
     deal_code: burger_code1
     active: true
 
 burger_coupon2:
     deal: burger_deal
-    user: user_test
+    user: test_user
     deal_code: burger_code2
     active: true
 
 movie_coupon1:
     deal: movie_deal
-    user: user_test
+    user: test_user
     active: true
 

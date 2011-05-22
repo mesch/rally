@@ -25,12 +25,12 @@
 					<div class="field">
 					<% if @deal.published %>
 						<%= label_tag 'Value' %>
-						<%= text_field_tag :deal_value, @deal.deal_value, :size=>10, :class=>"number", :disabled => true %>
+						<%= text_field_tag :deal_value, @deal.deal_value, :size=>"10", :class=>"number", :disabled => true %>
 						<%= label_tag 'Price' %> 
 						<%= text_field_tag :deal_price, @deal.deal_price, :size=>"10", :class=>"number", :disabled => true %>									
 					<% else %>
 						<%= label_tag 'Value' %>
-						<%= text_field_tag :deal_value, @deal.deal_value, :size=>10, :class=>"number", :datatype=>"require", :require=>"true" %>
+						<%= text_field_tag :deal_value, @deal.deal_value, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
 						<%= label_tag 'Price' %> 
 						<%= text_field_tag :deal_price, @deal.deal_price, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>									
 						<span class="inputtip">Value must be greater than Price.</span>
@@ -128,7 +128,6 @@
 							:value => controller.action_name == 'new_deal' ? "Create Deal" : "Update Deal" %>
 						or <%= link_to "cancel", merchant_deals_url %>
 					</div>
-				</form>
                 </div>
             </div>
             <div class="box-bottom"></div>

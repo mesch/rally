@@ -27,8 +27,11 @@
 				<% if @current_user %>
 					<li <%= controller.action_name == 'home' ? 'class=current' : '' %> ><%= link_to "Home", home_url %></li>
 					<li <%= controller.action_name == 'deals' ? 'class=current' : '' %> ><%= link_to "Deals", deals_url %></li>
+					<li <%= controller.action_name == 'coupons' ? 'class=current' : '' %> ><%= link_to "Coupons", coupons_url %></li>					
+				<% else %>
 					<li <%= controller.action_name == 'tour' ? 'class=current' : '' %> ><%= link_to "Tour", help_tour_url %></li>
 				<% end %>
+				
 			</ul>
 			<div class="refer">&raquo;&nbsp;
 				<%= link_to "Invite Friends", invite_url %>&nbsp;&nbsp;&nbsp;&raquo;

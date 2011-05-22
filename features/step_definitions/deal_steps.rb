@@ -69,7 +69,20 @@ Given /^the deal "([^"]*)" has (\d) (confirmed|unconfirmed) order(?:s)? of (\d) 
       :quantity => quantity, :amount => quantity*deal.deal_price.to_f,
       :confirmation_code => confirmation_code)
   end
-end 	
+end
+
+Given /^the deal "([^"]*)" has 1 coupon(?: with a deal code "([^"]*)")?$/ do |title, code|
+  deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
+  o = Order.create!(:user_id => @current_user.id, :deal_id => deal.id, :quantity => 1, :amount => 1*deal.deal_price.to_f,
+    :confirmation_code => 'XYZ123')
+  if code
+    dc = DealCode.create!(:deal_id => 1, :code => code)
+    Coupon.create!(:user_id => @current_user.id, :deal_id => deal.id, :order_id => o.id, :deal_code_id => dc.id)
+  else
+    Coupon.create!(:user_id => @current_user.id, :deal_id => deal.id, :order_id => o.id)    
+  end
+end
+      
 
 # User Givens
 Given /^I am logged in as user "(.+?)" with password "(.+?)"/ do |username, password|

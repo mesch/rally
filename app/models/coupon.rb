@@ -8,4 +8,14 @@ class Coupon < ActiveRecord::Base
   belongs_to :order
   belongs_to :deal_code
 
+  def state
+    if self.deal.is_expired
+      return 'Expired'
+    elsif self.deal.is_tipped
+      return 'Active'
+    else
+      return 'Pending'
+    end
+  end  
+  
 end

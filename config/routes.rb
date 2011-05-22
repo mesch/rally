@@ -61,6 +61,8 @@ Rally::Application.routes.draw do
       match :subscribe
       match :deals
       match '/deal/:id' => :deal, :as => :deal
+      match :coupons
+      match '/coupon/:id' => :coupon, :as => :coupon
     end
     scope :via => :post do
       match :home

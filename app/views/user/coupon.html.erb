@@ -1,0 +1,54 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+	<div id="content" class="clear">
+        <div class="clear box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head"><h2>Coupon</h2></div>
+                <div class="sect">
+					<div class="wholetip clear"><h3>1. Deal Info</h3></div>			
+					<div class="field">
+						<%= label_tag 'Merchant' %> 
+						<%= text_field_tag :merchant, @coupon.deal.merchant.name, :size=>"30", :class=>"f-input", :disabled => true %>
+					</div>
+					<div class="field">
+						<%= label_tag 'Title' %>
+						<%= text_field_tag :title, @coupon.deal.title, :size=>"30", :class=>"f-input", :disabled => true %>
+					</div>
+					<div class="field">
+						<%= label_tag 'Description' %>
+						<%= text_area_tag :description, @coupon.deal.description, :size=>"30", :class=>"f-input", :disabled => true %>
+					</div>
+					<div class="field">
+						<%= label_tag 'Terms' %>
+						<%= text_area_tag :terms, @coupon.deal.terms, :size=>"30", :class=>"f-input", :disabled => true %>
+					</div>
+					<div class="wholetip clear"><h3>2. Coupon Info</h3></div>
+					<div class="field">
+						<%= label_tag 'State' %>
+						<%= text_field_tag :state, @coupon.state, :size=>"30", :class=>"f-input", :disabled => true %>
+					</div>
+					<div class="field">
+						<%= label_tag 'Value' %>
+						<%= text_field_tag :deal_value, @coupon.deal.deal_value, :size=>"10", :class=>"number", :disabled => true %>
+						<%= label_tag 'Price' %> 
+						<%= text_field_tag :deal_price, @coupon.deal.deal_price, :size=>"10", :class=>"number", :disabled => true %>
+					</div>
+					<div class="field">
+						<%= label_tag 'Redemption Code', 'Redemption Code' %>					
+						<% if @coupon.deal_code %>
+							<%= text_field_tag :code, @coupon.deal_code.code, :size=>"30", :class=>"f-input", :disabled => true %>
+						<% else %>
+							<%= text_field_tag :code, @coupon.id, :size=>"30", :class=>"f-input", :disabled => true %>
+						<% end %>
+					</div>
+					<div class="clear"></div>
+				</div>
+            </div>
+			<div class="box-bottom"></div>
+		</div>
+	</div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

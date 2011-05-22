@@ -22,6 +22,8 @@ class User < ActiveRecord::Base
 
   money :balance, :currency => false
 
+  has_many :coupons
+
   def full_name
     return "#{self.first_name} #{self.last_name}"
   end

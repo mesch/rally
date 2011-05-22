@@ -25,7 +25,8 @@ module NavigationHelpers
     when /the order page for "([^"]*)"/
       deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
       payment_order_path(:deal_id => deal.id)    
-      
+    when /the list of coupons/
+      coupons_path    
 
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:

@@ -147,7 +147,6 @@ Feature: Buy Deals
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should not see "Limit 0"
-		And show me the page
 			
 	Scenario: Order Page (limit = 0, previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -157,7 +156,6 @@ Feature: Buy Deals
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should not see "Limit 0"
-		And show me the page
 	
 	Scenario: Order Page (limit = 1, no previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -166,7 +164,6 @@ Feature: Buy Deals
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 1"
-		And show me the page
 		
 	Scenario: Order Page (limit = 1, previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -176,7 +173,6 @@ Feature: Buy Deals
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 1"
-		And show me the page
 	
 	Scenario: Order Page (limit = 2, no previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -185,7 +181,6 @@ Feature: Buy Deals
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 2"
-		And show me the page
 
 	Scenario: Order Page (limit = 2, previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -195,4 +190,3 @@ Feature: Buy Deals
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 2"		
-		And show me the page

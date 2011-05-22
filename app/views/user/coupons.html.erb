@@ -1,0 +1,44 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="coupons">
+    <div id="content" class="box clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Coupons</h2>
+				</div>
+                <div class="sect">
+					<table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">
+						<tr><th width="40" nowrap>Code</th>
+							<th width="100">Merchant</th>
+							<th width="200">Title</th>
+							<th width="60" nowrap>State</th>
+							<th width="60" nowrap>Purchased</th>
+							<th width="60" nowrap>Expiration</th>
+							<th width="60" nowrap>Action</th>
+						</tr>							
+						<% for coupon in @coupons %>
+							<tr>
+								<% if coupon.deal_code %>
+									<td><%= coupon.deal_code.code %></td>
+								<% else %>
+									<td><%= coupon.id %></td>
+								<% end %>
+								<td><%= coupon.deal.merchant.name %></td>
+								<td><%= coupon.deal.title %></td>
+								<td><%= coupon.state %></td>
+								<td><%= coupon.created_at.strftime(OPTIONS[:date_format]) %></td>
+								<td><%= coupon.deal.expiration_date.strftime(OPTIONS[:date_format]) %></td>
+								<td><%= link_to "View", coupon_url(coupon.id) %></td>
+							</tr>
+						<% end %>
+                    </table>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->
