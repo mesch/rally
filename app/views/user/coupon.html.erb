@@ -36,11 +36,13 @@
 						<%= text_field_tag :deal_price, @coupon.deal.deal_price, :size=>"10", :class=>"number", :disabled => true %>
 					</div>
 					<div class="field">
-						<%= label_tag 'Redemption Code', 'Redemption Code' %>					
-						<% if @coupon.deal_code %>
-							<%= text_field_tag :code, @coupon.deal_code.code, :size=>"30", :class=>"f-input", :disabled => true %>
-						<% else %>
-							<%= text_field_tag :code, @coupon.id, :size=>"30", :class=>"f-input", :disabled => true %>
+						<% if @coupon.state == 'Active' or @coupon.state == 'Expired' %>
+							<%= label_tag 'Redemption Code', 'Redemption Code' %>
+							<% if @coupon.deal_code %>
+								<%= text_field_tag :code, @coupon.deal_code.code, :size=>"30", :class=>"f-input", :disabled => true %>
+							<% else %>
+								<%= text_field_tag :code, '', :size=>"30", :class=>"f-input", :disabled => true %>
+							<% end %>
 						<% end %>
 					</div>
 					<div class="clear"></div>

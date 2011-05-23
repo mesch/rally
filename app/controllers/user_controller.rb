@@ -21,8 +21,8 @@ class UserController < ApplicationController
     end
     
     if !@deal.is_tipped
-      @bar_size = (190*(@deal.coupon_count/@deal.min)).ceil
-      @bar_offset = (5*(@deal.coupon_count/@deal.min)).ceil
+      @bar_size = (190*(@deal.confirmed_coupon_count/@deal.min.to_f)).ceil
+      @bar_offset = (5*(@deal.confirmed_coupon_count/@deal.min.to_f)).ceil
     end
     
     # TODO: better query for other deals? Move into model?

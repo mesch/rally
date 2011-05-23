@@ -26,6 +26,16 @@ Feature: Buy Deals
 		When I go to the list of deals
 		Then I should not see "Cool New Deal"
 
+	Scenario: Deal page - (confirmed vs unconfirmed)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity
+		And the deal "Cool New Deal" has 1 unconfirmed order of 1 quantity
+		And a merchant has changed the min of deal "Cool New Deal" to 2
+		And I am on the list of deals
+		When I follow "Cool New Deal"		
+		Then I should see the Buy button
+		And I should see "Buy 1 More To Tip This Deal!"			
+
 	Scenario: Deal page - Other Deals
 		Given there are no deals
 		And a merchant has published a deal titled "Dealio"
@@ -64,7 +74,7 @@ Feature: Buy Deals
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the min of deal "Cool New Deal" to 1
 		When I go to the deal page for "Cool New Deal"
-		Then I should see the Buy! button
+		Then I should see the Buy button
 		And I should not see the Expired button
 		And I should not see the Soldout button
 		And I should see "Buy 1 More To Tip This Deal!"

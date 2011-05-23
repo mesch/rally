@@ -52,7 +52,7 @@
 							<%= deal.start_date.strftime(OPTIONS[:date_format]) %><br/>
 							<%= deal.end_date.strftime(OPTIONS[:date_format]) %>
 						</td>
-						<td nowrap><%= deal.coupon_count %>/<%= deal.min %></td>
+						<td nowrap><%= deal.confirmed_coupon_count %>/<%= deal.min %></td>
 						<td nowrap>
 							<%= deal.deal_price.format %><br/>
 							<%= deal.deal_value.format %>

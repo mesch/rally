@@ -110,21 +110,21 @@
 			<% else %>
 				<% if @deal.is_tipped %>
 				<div class="deal-box deal-status deal-status-open" id="deal-status">
-					<p class="deal-buy-tip-top"><strong><%= @deal.coupon_count %></strong> bought </p>
+					<p class="deal-buy-tip-top"><strong><%= @deal.confirmed_coupon_count %></strong> bought </p>
 					<p class="deal-buy-on" style="line-height:200%;">
 						<%= image_tag "/stylesheets/i/deal-buy-succ.gif" %>The deal is tipped!<br/>
 						<% if !@deal.is_maxed %>You can buy it now.<% end %></p>
 				</div>
 				<% else %>
 				<div class="deal-box deal-status" id="deal-status">
-					<p class="deal-buy-tip-top"><strong><%= @deal.coupon_count %></strong> bought </p>
+					<p class="deal-buy-tip-top"><strong><%= @deal.confirmed_coupon_count %></strong> bought </p>
 					<div class="progress-pointer" style="padding-left:<%= @bar_size-@bar_offset %>px;"><span></span></div>
 					<div class="progress-bar"><div class="progress-left" style="width:<%= @bar_size-@bar_offset %>px;"></div>
 					<div class="progress-right "></div>
 				</div>
-				<div class="cf"><div class="min"><%= @deal.min %></div><div class="max"><%= @deal.max %></div>
+				<div class="cf"><div class="min">0</div><div class="max"><%= @deal.min %></div>
 				</div>
-					<p class="deal-buy-tip-btm">Buy <strong><%= @deal.min - @deal.coupon_count %></strong> More To Tip This Deal!</p>
+					<p class="deal-buy-tip-btm">Buy <strong><%= @deal.min - @deal.confirmed_coupon_count %></strong> More To Tip This Deal!</p>
 				</div>
 				<% end %>
 			<% end %>
@@ -191,13 +191,13 @@
 		</div>
 	</div>
 	<div id="sidebar">
-		<% render :partial => 'layouts/block/side_bulletin' %>
+<!--		<% render :partial => 'layouts/block/side_bulletin' %> -->
 		<%= render :partial => 'layouts/block/side_flv' %>
-		<% render :partial => 'layouts/block/side_invite' %>
-		<% render :partial => 'layouts/block/side_ask' %>
+<!--		<% render :partial => 'layouts/block/side_invite' %> -->
+<!--		<% render :partial => 'layouts/block/side_ask' %> -->
 		<%= render :partial => 'layouts/block/side_others' %>
-		<% render :partial => 'layouts/block/side_business' %>
-		<% render :partial => 'layouts/block/side_subscribe' %>
+<!--		<% render :partial => 'layouts/block/side_business' %> -->
+<!--		<% render :partial => 'layouts/block/side_subscribe' %> -->
 	</div>
 </div>
 </div> <!-- bd end -->

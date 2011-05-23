@@ -13,7 +13,7 @@ class Order < ActiveRecord::Base
       Deal.transaction do
         deal = Deal.find(self.deal.id, :lock => true)
         
-        if deal.coupon_count + quantity - self.quantity <= deal.max
+        if deal.max == 0 or deal.coupon_count + quantity - self.quantity <= deal.max
           self.update_attributes!(:quantity => quantity, :amount => quantity*deal.deal_price.to_f, :updated_at => Time.zone.now)
           return true
         end

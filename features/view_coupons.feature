@@ -15,7 +15,6 @@ Feature: View Coupons
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
-		And I should see "abc123"
 		And I should see "Active"
 
 	Scenario: Coupon List (Active, Without Deal Code)
@@ -25,7 +24,6 @@ Feature: View Coupons
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
-		And I should not see "abc123"
 		And I should see "Active"
 
 	Scenario: Coupon List (Not Tipped)
@@ -36,7 +34,6 @@ Feature: View Coupons
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
-		And I should see "abc123"
 		And I should see "Pending"
 	
 	Scenario: Coupon List (Expired)
@@ -47,7 +44,6 @@ Feature: View Coupons
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
-		And I should see "abc123"
 		And I should see "Expired"
 	
 	Scenario: Coupon Page (Active, With Deal Code)
@@ -69,7 +65,7 @@ Feature: View Coupons
 		When I follow "View"
 		Then I should see "Coupon"
 		And the "title" field should contain "Cool New Deal"
-		And the "code" field should not contain "abc123"
+		And the "code" field should contain ""
 		And the "state" field should contain "Active"
 
 	Scenario: Coupon Page (Not Tipped)
@@ -81,7 +77,7 @@ Feature: View Coupons
 		When I follow "View"
 		Then I should see "Coupon"
 		And the "title" field should contain "Cool New Deal"
-		And the "code" field should contain "abc123"
+		And I should not see "Redemption Code"
 		And the "state" field should contain "Pending"
 
 	Scenario: Coupon Page (Expired)

@@ -1,4 +1,4 @@
-<% if @deal.video %>
+<% if @deal.video and @deal.video != '' %>
 <div class="sbox">
 	<div id="team_<%= @deal.id %>_player" style="height:173px;width:230px;"><img src="<%= @deal.deal_images[0].image.url %>" height="173" width="230" /></div>
 </div>

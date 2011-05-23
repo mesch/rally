@@ -33,9 +33,15 @@ class Deal < ActiveRecord::Base
     return DealImage.find(:all, :conditions => {:deal_id => self.id}, :order => "counter ASC")
   end
 
+  # returns all reserved coupons - whether or not they have been purchased
   def coupon_count
     count = Order.sum(:quantity, :conditions => ["deal_id = ?", self.id])
   end
+  
+  # returns all purchased coupons
+  def confirmed_coupon_count
+    count = Order.sum(:quantity, :conditions => ["deal_id = ? AND confirmation_code IS NOT NULL", self.id])
+  end  
 
   def publish
     begin
@@ -57,7 +63,7 @@ class Deal < ActiveRecord::Base
     end
     
     unless coupon_count
-      coupon_count = self.coupon_count
+      coupon_count = self.confirmed_coupon_count
     end
 
     if coupon_count >= self.min

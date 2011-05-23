@@ -189,6 +189,44 @@ class DealTest < ActiveSupport::TestCase
     assert_equal d.coupon_count, 3  
   end
   
+  def test_confirmed_coupon_count
+    Order.delete_all
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal d.confirmed_coupon_count, 0
+    # order with no quantity - no change
+    o = Order.new(:user_id => 1, :deal_id => d.id)
+    assert o.save
+    assert_equal d.coupon_count, 0
+    # update order with 1 quantity, no confirmation_code - no change
+    o.quantity = 1
+    o.amount = '10'
+    assert o.save
+    assert_equal d.confirmed_coupon_count, 0
+    # update order with confirmation_code - +1
+    o.confirmation_code = 'XYZ123'
+    assert o.save
+    assert_equal d.coupon_count, 1  
+    # order with different deal_id with no quantity - no change
+    o = Order.new(:user_id => 1, :deal_id => d.id+1)
+    assert o.save
+    assert_equal d.confirmed_coupon_count, 1
+    # order with different deal_id with 1 quantity - no change
+    o.quantity = 1
+    o.amount = '10'
+    assert o.save
+    assert_equal d.confirmed_coupon_count, 1
+    # order with different deal_id with confirmation_code - no change  
+    o.confirmation_code = 'XYZ123'
+    assert o.save
+    assert_equal d.confirmed_coupon_count, 1      
+    # order with new user_id with 2 quantity and confirmation_code - +2 count
+    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20', :confirmation_code => 'abc')
+    assert o.save
+    assert_equal d.confirmed_coupon_count, 3
+  end
+  
   def test_publish
     # publish with no deal codes - max doesn't change
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
@@ -232,13 +270,19 @@ class DealTest < ActiveSupport::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :min => 1)
     assert d.save
     assert !d.is_tipped
+    # unconfirmed order shouldn't tip deal
     o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20')
     assert o.save
-    assert d.is_tipped
-    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20')
+    assert !d.is_tipped
+    # add one confirmed - tipped
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :confirmation_code => 'XYZ123')
     assert o.save 
     assert d.is_tipped
-    
+    # add another confirmed - still tipped
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :confirmation_code => 'XYZ123')
+    assert o.save 
+    assert d.is_tipped
+        
     assert !d.is_tipped(0)
     assert d.is_tipped(1)
     assert d.is_tipped(2)

@@ -147,10 +147,7 @@ Then /^I should( not)? see the Soldout button$/ do |negate|
 end
 
 Then /^I should see the limit is (\d)$/ do |limit|
-  #p page.find('deal-per-number', :hidden => true)
   value = find_field("deal-per-number", :hidden => true).value
-  p limit
-  p value
   find_field("deal-per-number", :hidden => true).value.should == limit
 end
 
