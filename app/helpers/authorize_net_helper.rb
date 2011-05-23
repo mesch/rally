@@ -1,0 +1,2 @@
+module AuthorizeNetHelper
+end
