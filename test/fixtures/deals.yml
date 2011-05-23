@@ -14,24 +14,50 @@ burger_deal:
     limit: 3
     published: true
 
-movie_deal:
+draft_deal:
     merchant: existingbob
-    title: Movie Deal
+    title: Draft Deal
     start_date: "2011-05-01T00:00:00"
     end_date: "2011-09-01T00:00:00"
-    expiration_date: "2012-01-01T00:00:00"
-    deal_price_in_cents: 1000
-    deal_value_in_cents: 2500
-    description: "$25 worth of movie tickets for $10."
-    terms: "Redeemable at any local theatre."
-
-test_deal:
+    expiration_date: "2011-01-01T00:00:00"
+    deal_price_in_cents: 3000
+    deal_value_in_cents: 5000
+    description: "Some blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
+    terms: "Somehow ... somewhere."
+    
+current_deal:
     merchant: existingbob
-    title: Another Great Movie Deal
+    title: Draft Deal
     start_date: "2011-05-01T00:00:00"
     end_date: "2011-09-01T00:00:00"
     expiration_date: "2012-01-01T00:00:00"
     deal_price_in_cents: 3000
     deal_value_in_cents: 5000
     description: "Some blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
-    terms: "Somehow ... somewhere."    
+    terms: "Somehow ... somewhere."
+    published: true
+
+good_deal:
+    merchant: existingbob
+    title: Good Deal
+    start_date: "2011-01-01T00:00:00"
+    end_date: "2011-03-01T00:00:00"
+    expiration_date: "2011-05-01T00:00:00"
+    deal_price_in_cents: 3000
+    deal_value_in_cents: 5000
+    description: "Some blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
+    terms: "Somehow ... somewhere."
+    published: true
+    
+failed_deal:
+    merchant: existingbob
+    title: Failed Deal
+    start_date: "2011-01-01T00:00:00"
+    end_date: "2011-03-01T00:00:00"
+    expiration_date: "2011-05-01T00:00:00"
+    deal_price_in_cents: 3000
+    deal_value_in_cents: 5000
+    description: "Some blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
+    terms: "Somehow ... somewhere."
+    published: true
+    min: 1

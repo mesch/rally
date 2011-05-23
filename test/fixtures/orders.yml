@@ -1,12 +1,12 @@
 burger_order:
-    user: user_test
+    user: test_user
     deal: burger_deal
     quantity: 2
     amount_in_cents: 2000
     confirmation_code: 'YAF642'
 
-movie_order:
-    user: user_test
-    deal: movie_deal
+current_order:
+    user: test_user
+    deal: current_deal
     quantity: 1
     amount_in_cents: 1000

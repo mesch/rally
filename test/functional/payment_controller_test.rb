@@ -9,6 +9,7 @@ class PaymentControllerTest < ActionController::TestCase
   self.use_instantiated_fixtures  = true
 
   fixtures :users
+  fixtures :deals
 
   def setup
     @controller = PaymentController.new
@@ -16,7 +17,7 @@ class PaymentControllerTest < ActionController::TestCase
     @response   = ActionController::TestResponse.new
     @request.host = "localhost"
     
-    @deal = Deal.find(:first)
+    @deal = @burger_deal
     @order = @test_user.unconfirmed_order(@deal.id)
     @order.update_attributes(:quantity => '1', :amount => '20.00')
   end
