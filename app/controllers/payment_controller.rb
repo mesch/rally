@@ -1,5 +1,5 @@
 class PaymentController < ApplicationController
-  before_filter :require_user, :except => [ ]
+  before_filter :require_user, :except => [ :relay_response ]
 
   layout "user"
   helper :authorize_net
@@ -99,7 +99,7 @@ class PaymentController < ApplicationController
       redirect_to :controller => 'payment', :action => 'order', :deal_id => @order.deal.id
       return
     end
-    
+   
     @sim_transaction = 
       AuthorizeNet::SIM::Transaction.new(
         AUTHORIZE_NET_CONFIG['api_login_id'], 
