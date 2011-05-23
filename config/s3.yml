@@ -1,0 +1,9 @@
+staging:
+ access_key_id: AKIAJZMYAACPC4MELBLA
+ secret_access_key: 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
+ bucket: rallycommerce-staging
+ 
+production:
+ access_key_id: AKIAJZMYAACPC4MELBLA
+ secret_access_key: 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
+ bucket: rallycommerce
