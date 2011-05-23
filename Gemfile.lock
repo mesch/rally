@@ -1,3 +1,8 @@
+PATH
+  remote: vendor/gems/authorize-net-1.5.2
+  specs:
+    authorize-net (1.5.2)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -154,6 +159,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  authorize-net (= 1.5.2)!
   aws-s3
   builder (~> 2.1.2)
   capybara
