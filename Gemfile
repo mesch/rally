@@ -16,7 +16,7 @@ gem 'aws-s3', :require => 'aws/s3'
 gem 'right_aws'
 
 gem 'nokogiri'
-#gem 'authorize-net'
+#gem 'authorize-net', "1.5.2", :path => 'vendor/gems/authorize-net-1.5.2'
 
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
