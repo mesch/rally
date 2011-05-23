@@ -132,7 +132,7 @@ class PaymentController < ApplicationController
     @order = Order.find_by_id(params[:x_invoice_num])
     @auth_code = params[:x_auth_code]
     # create coupons 
-    unless @order.update_attribute(:confirmation_code => @auth_code) and @order.create_coupons() 
+    unless @order.update_attributes(:confirmation_code => @auth_code) and @order.create_coupons() 
       flash.now[:error] = "Your transaction was approved. However, there was a problem creating your coupons. Please contact Customer Service."
     end
   end
