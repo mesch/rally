@@ -30,8 +30,6 @@ GEM
     activesupport (3.0.0)
     arel (1.0.1)
       activesupport (~> 3.0.0)
-    authorize-net (1.5.2)
-      nokogiri (~> 1.4)
     aws-s3 (0.6.2)
       builder
       mime-types
@@ -156,7 +154,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  authorize-net
   aws-s3
   builder (~> 2.1.2)
   capybara
