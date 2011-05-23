@@ -20,6 +20,45 @@ class Merchant < ActiveRecord::Base
   
   has_many :deals
   
+  # Deal methods
+  def drafts
+    return Deal.find(:all, 
+      :conditions => ["merchant_id = ? AND published = ?", self.id, false ], 
+      :order => 'active desc, created_at desc')
+  end
+  
+  def current_deals
+    return Deal.find(:all, 
+      :conditions => ["merchant_id = ? AND published = ? AND end_date >= ?", self.id, true, Time.zone.today], 
+      :order => 'active desc, created_at desc')
+  end
+  
+  def good_deals
+    deals = Deal.find(:all, 
+      :conditions => ["merchant_id = ? AND published = ? AND end_date < ?", self.id, true, Time.zone.today], 
+      :order => 'active desc, created_at desc')
+    results = []
+    for deal in deals
+      if deal.is_tipped
+        results << deal
+      end
+    end
+    return results
+  end
+  
+  def failed_deals
+    deals = Deal.find(:all, 
+      :conditions => ["merchant_id = ? AND published = ? AND end_date < ?", self.id, true, Time.zone.today], 
+      :order => 'active desc, created_at desc')
+    results = []
+    for deal in deals
+      if !deal.is_tipped
+        results << deal
+      end
+    end
+    return results
+  end
+  
   # Authentication methods
   def self.authenticate(username, password)
     m=find(:first, :conditions=>["username = ?", username])

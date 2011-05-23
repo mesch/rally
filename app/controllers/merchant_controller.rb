@@ -6,9 +6,16 @@ class MerchantController < ApplicationController
 
   # Deals
   def deals
-    @deals = Deal.find(:all, 
-      :conditions => { :merchant_id => @current_merchant.id }, 
-      :order => 'active desc, created_at desc')
+    @selector = params[:selector] ? params[:selector] : 'drafts'
+    if @selector == 'current'
+      @deals = @current_merchant.current_deals
+    elsif @selector == 'success'
+      @deals = @current_merchant.good_deals
+    elsif @selector == 'failure'
+      @deals = @current_merchant.failed_deals
+    else
+      @deals = @current_merchant.drafts
+    end
   end
 
   def new_deal
@@ -116,7 +123,12 @@ class MerchantController < ApplicationController
         end
       end
       flash[:notice] = "Your deal was updated successfully."
-      redirect_to :controller => 'merchant', :action => :deals
+      if deal.published 
+        selector = 'current'
+      else
+        selector = 'drafts'
+      end
+      redirect_to :controller => 'merchant', :action => :deals, :selector => selector
     rescue ActiveRecord::RecordInvalid => invalid
       ### TODO: add invalid.record.errors?
       flash[:error] = "There was a problem updating your deal."
@@ -128,16 +140,17 @@ class MerchantController < ApplicationController
     deal = Deal.find_by_id(params[:id])
     if deal.publish
       flash[:notice] = "Your deal was published successfully."
-      redirect_to :controller => 'merchant', :action => :deals
+      redirect_to :controller => 'merchant', :action => :deals, :selector => 'current'
     else
       flash[:error] = "There was a problem publishing your deal."
-      redirect_to :controller => 'merchant', :action => :deals
+      redirect_to :controller => 'merchant', :action => :deals, :selector => 'current'
     end        
   end
 
   # Home
   def home
-
+    # just go to deals for now?
+    redirect_to :controller => 'merchant', :action => :deals
   end
   
   # Account methods

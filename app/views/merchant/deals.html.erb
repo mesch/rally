@@ -1,42 +1,72 @@
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div id="coupons">
+	<div class="dashboard" id="dashboard">
+		<ul>
+			
+			<li <%= @selector == 'drafts' ? 'class=current' : '' %> >
+				<%= link_to 'Drafts', merchant_deals_url(:selector=>'drafts') %><span></span>
+			</li>			
+			<li <%= @selector == 'current' ? 'class=current' : '' %> >
+				<%= link_to 'Current Deals', merchant_deals_url(:selector=>'current') %><span></span>
+			</li>
+			<li <%= @selector == 'success' ? 'class=current' : '' %> >
+				<%= link_to 'Good Deals', merchant_deals_url(:selector=>'success') %><span></span>
+			</li>
+			<li <%= @selector == 'failure' ? 'class=current' : '' %> >
+				<%= link_to 'Failed Deals', merchant_deals_url(:selector=>'failure') %><span></span>
+			</li>
+		</ul>
+	</div>
     <div id="content" class="coupons-box clear mainwide">
 		<div class="box clear">
             <div class="box-top"></div>
             <div class="box-content">
                 <div class="head">
-                    <h2>My Deals</h2>
+				<% if @selector == 'drafts' %>
+					<h2>Drafts</h2>
 					<%= link_to "New Deal", merchant_new_deal_url %>
+				<% elsif @selector == 'success' %>
+                    <h2>Good Deals</h2>
+				<% elsif @selector == 'failure' %>				
+                    <h2>Failed Deals</h2>
+				<% else %>
+                    <h2>Current deal</h2>
+				<% end %>
 				</div>
                 <div class="sect">
-					<table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">
-						<tr><th width="40" nowrap>Id</th>
-							<th width="200">Title</th>
-							<th width="40">Price</th>
-							<th width="40">Value</th>
-							<th width="60" nowrap>Start</th>
-							<th width="60" nowrap>End</th>
-							<th width="60" nowrap>Expiration</th>
-							<th width="140" nowrap>Actions</th>
-						</tr>							
-						<% for deal in @deals %>
-						<tr>
-							<td><%= deal.id %></td>
-							<td><%= deal.title %></td>
-							<td><%= deal.deal_price %></td>
-							<td><%= deal.deal_value %></td>
-							<td><%= deal.start_date.strftime(OPTIONS[:date_format]) %></td>
-							<td><%= deal.end_date.strftime(OPTIONS[:date_format]) %></td>
-							<td><%= deal.expiration_date.strftime(OPTIONS[:date_format]) %></td>
-							<td><%= link_to "Edit", merchant_edit_deal_url(deal.id) %>
-								| <%= link_to "View", deal_url(deal.id), :target=>"_blank" %>
-								<% if !deal.published %>
-								| <%= link_to "Publish", merchant_publish_deal_url(deal.id) %>
-								<% end %>
-							</td>
-						</tr>
-						<% end %>
+					<table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">					
+					<tr>
+						<th width="40">Id</th>
+						<th width="400">Title</th>
+						<th width="100">Date</th>
+						<th width="50">Done</th>
+						<th width="60" nowrap>Deal Price</th>
+						<th width="140">Actions</th>
+					</tr>
+					<% for deal in @deals %>
+					<tr class="alt" id="team-list-id-<%= deal.id %>">
+						<td><%= deal.id %></td>
+						<td><%= deal.title %></td>
+						<td nowrap>
+							<%= deal.start_date.strftime(OPTIONS[:date_format]) %><br/>
+							<%= deal.end_date.strftime(OPTIONS[:date_format]) %>
+						</td>
+						<td nowrap><%= deal.coupon_count %>/<%= deal.min %></td>
+						<td nowrap>
+							<%= deal.deal_price.format %><br/>
+							<%= deal.deal_value.format %>
+						</td>
+						<td class="op" nowrap>
+							<%= link_to "View", deal_url(deal.id), :target=>"_blank" %>
+							<% if !deal.is_ended %>
+							| <%= link_to "Edit", merchant_edit_deal_url(deal.id) %>
+							<% end %>
+							<% if !deal.published %>
+							| <%= link_to "Publish", merchant_publish_deal_url(deal.id) %>
+							<% end %></td>
+					</tr>
+					<% end %>
                     </table>
 				</div>
             </div>

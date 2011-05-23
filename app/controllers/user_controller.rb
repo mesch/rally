@@ -7,7 +7,7 @@ class UserController < ApplicationController
 
   # Deals
   def deals
-    # TODO: Show all deals for now? Move into model?
+    # TODO: Move these into deal.rb? or user.rb?
     @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
   end
   
@@ -49,7 +49,8 @@ class UserController < ApplicationController
   end
 
   def home
-
+    # just go to deals, for now?
+    redirect_to :controller => 'user', :action => :deals
   end
 
   # Account methods

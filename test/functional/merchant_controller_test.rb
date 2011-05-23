@@ -514,7 +514,7 @@ class MerchantControllerTest < ActionController::TestCase
       :min => 1, :max => 0, :limit => 0
     assert flash[:notice]
     assert_response :redirect
-    assert_redirected_to :action=>'deals'
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
     # verify in DB
     deal = Deal.find(deal.id)
     assert_equal deal.title, 'new name'      
@@ -542,7 +542,7 @@ class MerchantControllerTest < ActionController::TestCase
       :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
     assert flash[:notice]
     assert_response :redirect
-    assert_redirected_to :action=>'deals'
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
     # verify in DB
     deal = Deal.find(deal.id)
     assert_equal deal.title, 'new name'
@@ -595,7 +595,7 @@ class MerchantControllerTest < ActionController::TestCase
     get :publish_deal, :id => deal.id
     assert flash[:notice]
     assert_response :redirect
-    assert_redirected_to :action=>'deals'
+    assert_redirected_to :action=>'deals', :selector=>'current'
     # verify in DB
     deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
     assert_equal deals.size, 1
