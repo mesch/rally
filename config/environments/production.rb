@@ -53,7 +53,7 @@ Rally::Application.configure do
   
   OPTIONS[:paperclip_storage_options] = {
     :storage => :s3,
-    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+    :s3_credentials => "#{::Rails.root.to_s}/config/s3.yml",
     :path => ":class/:attachment/:id/:style.:extension",
     :default_url => "/images/missing_thumb.png"
   }  
