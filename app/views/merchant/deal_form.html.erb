@@ -49,7 +49,7 @@
 						<%= text_field_tag :min, @deal.min, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
 						<%= label_tag 'Max' %>
 						<%= text_field_tag :max, @deal.max, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
-						<%= label_tag 'Limit per Person', 'Limit per Person' %> 
+						<%= label_tag 'Limit per Person', 'Limit per Order' %> 
 						<%= text_field_tag :limit, @deal.limit, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
 						<span class="hint">Set Max or Limit per Order to 0 for no limit.</span>
 					<% end %>

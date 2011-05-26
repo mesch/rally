@@ -36,3 +36,48 @@ burger_code9:
     deal: burger_deal
     code: '1234abc9'
     
+burger_code10:
+    deal: burger_deal
+    code: '1234abc10'
+    reserved: true
+
+burger_code11:
+    deal: burger_deal
+    code: '1234abc11'
+    reserved: true
+
+burger_code12:
+    deal: burger_deal
+    code: '1234abc12'
+
+burger_code13:
+    deal: burger_deal
+    code: '1234abc13'
+
+burger_code14:
+    deal: burger_deal
+    code: '1234abc14'
+
+burger_code15:
+    deal: burger_deal
+    code: '1234abc15'
+
+burger_code16:
+    deal: burger_deal
+    code: '1234abc16'
+
+burger_code17:
+    deal: burger_deal
+    code: '1234abc17'
+
+burger_code18:
+    deal: burger_deal
+    code: '1234abc18'
+
+burger_code19:
+    deal: burger_deal
+    code: '1234abc19'
+
+burger_code20:
+    deal: burger_deal
+    code: '1234abc20'
