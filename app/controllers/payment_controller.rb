@@ -118,7 +118,7 @@ class PaymentController < ApplicationController
     if sim_response.success?(AUTHORIZE_NET_CONFIG['api_login_id'], AUTHORIZE_NET_CONFIG['merchant_hash_value'])
       render :text => sim_response.direct_post_reply(payment_receipt_url(:only_path => false), :include => true)
     else
-      flash[:error] = "There was a problem approving your transaction. Please try again."
+      flash.now[:error] = "There was a problem approving your transaction. Please try again."
       render :text => sim_response.direct_post_reply(payment_purchase_url(:only_path => false, :order_id => params[:x_invoice_num]), :include => true)
       #redirect_to :controller => "payment", :action => "purchase", :order_id => params[:x_invoice_num]
     end
