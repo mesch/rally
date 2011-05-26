@@ -5,7 +5,6 @@ class PaymentController < ApplicationController
   helper :authorize_net
   protect_from_forgery :except => :relay_response  
   
-  
   def go_home
     redirect_to :controller => 'user', :action => 'home'
   end
@@ -119,8 +118,9 @@ class PaymentController < ApplicationController
     if sim_response.success?(AUTHORIZE_NET_CONFIG['api_login_id'], AUTHORIZE_NET_CONFIG['merchant_hash_value'])
       render :text => sim_response.direct_post_reply(payment_receipt_url(:only_path => false), :include => true)
     else
-      flash[:notice] = "There was a problem approving your transaction. Please try again."
-      redirect_to :controller => "payment", :action => "purchase", :order_id => params[:x_invoice_num]
+      flash[:error] = "There was a problem approving your transaction. Please try again."
+      render :text => sim_response.direct_post_reply(payment_purchase_url(:only_path => false, :order_id => params[:x_invoice_num]), :include => true)
+      #redirect_to :controller => "payment", :action => "purchase", :order_id => params[:x_invoice_num]
     end
   end
   
