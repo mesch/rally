@@ -119,7 +119,7 @@ class PaymentController < ApplicationController
     sim_response = AuthorizeNet::SIM::Response.new(params)
     if sim_response.success?(AUTHORIZE_NET_CONFIG['api_login_id'], AUTHORIZE_NET_CONFIG['merchant_hash_value'])
       render :text => sim_response.direct_post_reply(
-                        payment_receipt_url(:only_path => false, :gateway => "authorize_net"), 
+                        payment_receipt_url(:only_path => false, :gateway => OPTIONS[:gateways][:authorize_net]), 
                         :include => true)
     else
       # return back to purchase page - will display error message there
@@ -135,7 +135,7 @@ class PaymentController < ApplicationController
     gateway = params[:gateway]
     
     # only handling authorize.net transactions now
-    if @gateway == 'authorize_net'
+    if gateway == OPTIONS[:gateways][:authorize_net]
       order = Order.find_by_id(params[:x_invoice_num])
       transaction_type = params[:x_type]
       amount = params[:x_amount]
