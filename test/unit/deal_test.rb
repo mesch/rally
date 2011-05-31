@@ -170,10 +170,14 @@ class DealTest < ActiveSupport::TestCase
     o.amount = '10'
     assert o.save
     assert_equal d.coupon_count, 1
-    # update order with confirmation_code - no change
-    o.confirmation_code = 'XYZ123'
+    # update order as authorized - no change
+    o.state = OPTIONS[:order_states][:authorized]
     assert o.save
-    assert_equal d.coupon_count, 1    
+    assert_equal d.coupon_count, 1
+    # update order as paid - no change
+    o.state = OPTIONS[:order_states][:paid]
+    assert o.save
+    assert_equal d.coupon_count, 1
     # order with different deal_id with no quantity - no change
     o = Order.new(:user_id => 1, :deal_id => d.id+1)
     assert o.save
@@ -199,15 +203,19 @@ class DealTest < ActiveSupport::TestCase
     o = Order.new(:user_id => 1, :deal_id => d.id)
     assert o.save
     assert_equal d.coupon_count, 0
-    # update order with 1 quantity, no confirmation_code - no change
+    # update order with 1 quantity, created state - no change
     o.quantity = 1
     o.amount = '10'
     assert o.save
     assert_equal d.confirmed_coupon_count, 0
-    # update order with confirmation_code - +1
-    o.confirmation_code = 'XYZ123'
+    # update order as authorized - +1
+    o.state = OPTIONS[:order_states][:authorized]
     assert o.save
-    assert_equal d.coupon_count, 1  
+    assert_equal d.coupon_count, 1
+    # update order as paid - no change
+    o.state = OPTIONS[:order_states][:paid]
+    assert o.save
+    assert_equal d.coupon_count, 1
     # order with different deal_id with no quantity - no change
     o = Order.new(:user_id => 1, :deal_id => d.id+1)
     assert o.save
@@ -217,14 +225,18 @@ class DealTest < ActiveSupport::TestCase
     o.amount = '10'
     assert o.save
     assert_equal d.confirmed_coupon_count, 1
-    # order with different deal_id with confirmation_code - no change  
-    o.confirmation_code = 'XYZ123'
+    # order with different deal_id as authorized - no change  
+    o.state = OPTIONS[:order_states][:authorized]
     assert o.save
     assert_equal d.confirmed_coupon_count, 1      
-    # order with new user_id with 2 quantity and confirmation_code - +2 count
-    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20', :confirmation_code => 'abc')
+    # order with new user_id with 2 quantity and authorized - +2 count
+    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20', :state => OPTIONS[:order_states][:authorized])
     assert o.save
     assert_equal d.confirmed_coupon_count, 3
+    # order with new user_id with 2 quantity and paid - +2 count
+    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20', :state => OPTIONS[:order_states][:paid])
+    assert o.save
+    assert_equal d.confirmed_coupon_count, 5
   end
   
   def test_publish
@@ -274,12 +286,16 @@ class DealTest < ActiveSupport::TestCase
     o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20')
     assert o.save
     assert !d.is_tipped
-    # add one confirmed - tipped
-    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :confirmation_code => 'XYZ123')
+    # add one authorized - tipped
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => OPTIONS[:order_states][:authorized])
     assert o.save 
     assert d.is_tipped
-    # add another confirmed - still tipped
-    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :confirmation_code => 'XYZ123')
+    # make it paid - still tipped
+    o.state = OPTIONS[:order_states][:paid]
+    assert o.save
+    assert d.is_tipped
+    # add another authorized - still tipped
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => OPTIONS[:order_states][:authorized])
     assert o.save 
     assert d.is_tipped
         

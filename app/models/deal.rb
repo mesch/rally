@@ -40,7 +40,7 @@ class Deal < ActiveRecord::Base
   
   # returns all purchased coupons
   def confirmed_coupon_count
-    count = Order.sum(:quantity, :conditions => ["deal_id = ? AND confirmation_code IS NOT NULL", self.id])
+    count = Order.sum(:quantity, :conditions => ["deal_id = ? AND state != ?", self.id, OPTIONS[:order_states][:created]])
   end  
 
   def publish
@@ -52,7 +52,7 @@ class Deal < ActiveRecord::Base
       end
       return true
     rescue ActiveRecord::RecordInvalid => invalid
-      # do anything?
+      logger.error "Deal.publish: Failed for Deal #{self}", invalid
     end
     return false
   end
@@ -148,6 +148,20 @@ class Deal < ActiveRecord::Base
     end
 
     return {:days => days, :hours => hours, :minutes => minutes, :seconds => seconds}
+  end
+  
+  def self.charge_orders
+    # select all deals - tipped, not expired
+    deals = Deal.find(:all, :conditions => ["expiration_date >= ?", Time.zone.today])
+    for deal in deals
+      if deal.is_tipped
+        # charge any authorized orders
+        orders = Order.find(:all, :conditions => ["deal_id = ? AND state = ?", deal.id, OPTIONS[:order_states][:authorized]])
+        for order in orders
+          order.capture
+        end
+      end
+    end
   end
   
 end

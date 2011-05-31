@@ -262,11 +262,16 @@ class UserTest < ActiveSupport::TestCase
     assert o.save
     assert_equal u.coupon_count, 1
     assert_equal u.coupon_count(10), 1
-    # update order with confirmation_code - no change
-    o.confirmation_code = 'XYZ123'
+    # update order as authorized - no change
+    o.state = OPTIONS[:order_states][:authorized]
     assert o.save
     assert_equal u.coupon_count, 1   
-    assert_equal u.coupon_count(10), 1 
+    assert_equal u.coupon_count(10), 1
+    # update order as paid - no change
+    o.state = OPTIONS[:order_states][:paid]
+    assert o.save
+    assert_equal u.coupon_count, 1   
+    assert_equal u.coupon_count(10), 1
     # order with different deal_id with no quantity - no change
     o = Order.new(:user_id => u.id, :deal_id => 11)
     assert o.save
@@ -308,8 +313,13 @@ class UserTest < ActiveSupport::TestCase
     assert o.save
     o = u.unconfirmed_order(10)
     assert_equal o.quantity, 0
-    # create order with same user, same deal, confirmed - still create a new order
-    o = Order.new(:user_id => u.id, :deal_id => 10, :quantity => 1, :amount => '20.00', :confirmation_code => 'XYZ123')
+    # create order with same user, same deal, authorized - still create a new order
+    o = Order.new(:user_id => u.id, :deal_id => 10, :quantity => 1, :amount => '20.00', :state => OPTIONS[:order_states][:authorized])
+    assert o.save
+    o = u.unconfirmed_order(10) 
+    assert_equal o.quantity, 0
+    # create order with same user, same deal, paid - still create a new order
+    o = Order.new(:user_id => u.id, :deal_id => 10, :quantity => 1, :amount => '20.00', :state => OPTIONS[:order_states][:paid])
     assert o.save
     o = u.unconfirmed_order(10) 
     assert_equal o.quantity, 0

@@ -27,7 +27,7 @@ class CouponTest < ActiveSupport::TestCase
     assert c.save        
   end
   
-  def test_coupon_image_missing_fields
+  def test_coupon_missing_fields
     c = Coupon.new(:user_id => nil, :deal_id => 1, :order_id => 3, :deal_code_id => 100)
     assert !c.save
     c = Coupon.new(:user_id => 1000, :deal_id => nil, :order_id => 3, :deal_code_id => 100)

@@ -1,7 +1,7 @@
-Feature: Buy Deals
+Feature: View Deals
 	In order to buy deals
 	As a user
-	I want to view and purchase deals
+	I want to view deals
 	
 	Scenario: Deal List
 		Given a merchant has published deals titled "Cool New Deal", "Dealio"
@@ -26,10 +26,10 @@ Feature: Buy Deals
 		When I go to the list of deals
 		Then I should not see "Cool New Deal"
 
-	Scenario: Deal page - (confirmed vs unconfirmed)
+	Scenario: Deal page - (authorized vs created)
 		Given a merchant has published a deal titled "Cool New Deal"
-		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity
-		And the deal "Cool New Deal" has 1 unconfirmed order of 1 quantity
+		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
+		And the deal "Cool New Deal" has 1 created order of 1 quantity
 		And a merchant has changed the min of deal "Cool New Deal" to 2
 		And I am on the list of deals
 		When I follow "Cool New Deal"		
@@ -117,7 +117,7 @@ Feature: Buy Deals
 	Scenario: Deal Page (Tipped, Maxed, Not Ended)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the max of deal "Cool New Deal" to 1
-		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity	
+		And the deal "Cool New Deal" has 1 authorized order of 1 quantity	
 		When I go to the deal page for "Cool New Deal"
 		Then I should not see the Buy button
 		And I should not see the Expired button
@@ -130,7 +130,7 @@ Feature: Buy Deals
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the end date of deal "Cool New Deal" to yesterday
 		And a merchant has changed the max of deal "Cool New Deal" to 1
-		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity	
+		And the deal "Cool New Deal" has 1 authorized order of 1 quantity	
 		When I go to the deal page for "Cool New Deal"
 		Then I should not see the Buy button
 		And I should not see the Expired button
@@ -161,7 +161,7 @@ Feature: Buy Deals
 	Scenario: Order Page (limit = 0, previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 0
-		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity
+		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
 		And I am logged in as user "empty_user" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
@@ -178,7 +178,7 @@ Feature: Buy Deals
 	Scenario: Order Page (limit = 1, previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 1
-		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity
+		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
 		And I am logged in as user "empty_user" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
@@ -195,8 +195,8 @@ Feature: Buy Deals
 	Scenario: Order Page (limit = 2, previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 2
-		And the deal "Cool New Deal" has 1 confirmed order of 1 quantity
+		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
 		And I am logged in as user "empty_user" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
-		And I should see "Limit 2"		
+		And I should see "Limit 2"

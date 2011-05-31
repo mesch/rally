@@ -23,6 +23,8 @@ class User < ActiveRecord::Base
   money :balance, :currency => false
 
   has_many :coupons
+  has_many :orders
+  has_many :order_payments
 
   def full_name
     return "#{self.first_name} #{self.last_name}"
@@ -38,7 +40,7 @@ class User < ActiveRecord::Base
 
   # Tries to find an existing unconfirmed order for the deal - else return a new order
   def unconfirmed_order(deal_id)
-    if order = Order.find(:first, :conditions => ["user_id = ? AND deal_id = ? AND confirmation_code IS NULL", self.id, deal_id])
+    if order = Order.find(:first, :conditions => ["user_id = ? AND deal_id = ? AND state = ?", self.id, deal_id, OPTIONS[:order_states][:created]])
       return order
     else
       return Order.new(:user_id => self.id, :deal_id => deal_id)

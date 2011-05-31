@@ -3,7 +3,14 @@ burger_order:
     deal: burger_deal
     quantity: 2
     amount_in_cents: 2000
-    confirmation_code: 'YAF642'
+    state: <%= OPTIONS[:order_states][:paid] %>
+    
+burger_order2:
+    user: test_user
+    deal: burger_deal
+    quantity: 1
+    amount_in_cents: 1000
+    state: <%= OPTIONS[:order_states][:authorized] %>
 
 current_order:
     user: test_user

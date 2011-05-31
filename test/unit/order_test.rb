@@ -12,6 +12,7 @@ class OrderTest < ActiveSupport::TestCase
     o = Order.new(:user_id => 1000, :deal_id => 1)
     assert o.quantity, 0
     o.quantity = 3
+    assert o.state = OPTIONS[:order_states][:created]
     assert o.save
     assert_equal o.quantity, 3
     assert_equal o.amount, 0.to_money
@@ -25,7 +26,20 @@ class OrderTest < ActiveSupport::TestCase
     assert o.save
     o = Order.find(old_id)
     assert_equal o.id, old_id
-  end  
+  end
+  
+  def test_order_state_enum
+    o = Order.new(:user_id => 1000, :deal_id => 1, :state => OPTIONS[:order_states][:created])
+    assert o.save
+    o.state = 'SOMETHING_ELSE'
+    assert !o.save
+    o = Order.new(:user_id => 1000, :deal_id => 1, :state => OPTIONS[:order_states][:authorized])
+    assert o.save
+    o = Order.new(:user_id => 1000, :deal_id => 1, :state => OPTIONS[:order_states][:paid])
+    assert o.save
+    o = Order.new(:user_id => 1000, :deal_id => 1, :state => 'SOMETHING_ELSE')
+    assert !o.save
+  end
   
   def test_order_create_multiple
     o = Order.new(:user_id => 1000, :deal_id => 1)
@@ -113,7 +127,7 @@ class OrderTest < ActiveSupport::TestCase
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save
     assert o.reserve_quantity(1)
-    assert o.create_coupons()
+    assert o.create_coupons!
     coupons = Coupon.find(:all, :conditions => ["user_id = ? AND deal_id = ? AND order_id = ?", u.id, d.id, o.id])
     assert_equal coupons.size, 1
     assert_equal coupons[0].deal_code, nil
@@ -121,7 +135,7 @@ class OrderTest < ActiveSupport::TestCase
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save
     assert o.reserve_quantity(2)
-    assert o.create_coupons()
+    assert o.create_coupons!
     coupons = Coupon.find(:all, :conditions => ["user_id = ? AND deal_id = ? AND order_id = ?", u.id, d.id, o.id])
     assert_equal coupons.size, 2
     assert_equal coupons[0].deal_code, nil
@@ -137,7 +151,7 @@ class OrderTest < ActiveSupport::TestCase
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save
     assert o.reserve_quantity(1)
-    assert o.create_coupons()
+    assert o.create_coupons!
     coupons = Coupon.find(:all, :conditions => ["user_id = ? AND deal_id = ? AND order_id = ?", u.id, d.id, o.id])
     assert_equal coupons.size, 1
     assert_equal coupons[0].deal_code.code, 'a'
@@ -152,7 +166,7 @@ class OrderTest < ActiveSupport::TestCase
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save
     assert o.reserve_quantity(2)
-    assert o.create_coupons()
+    assert o.create_coupons!
     coupons = Coupon.find(:all, :conditions => ["user_id = ? AND deal_id = ? AND order_id = ?", u.id, d.id, o.id])
     assert_equal coupons.size, 2
     assert_equal coupons[0].deal_code.code, 'b'
@@ -161,6 +175,43 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal coupons[1].deal_code.code, 'c'
     dc = DealCode.find(coupons[1].deal_code_id)
     assert dc.reserved
+  end
+
+  def test_process_authorization
+    # create user
+    u = User.new(:username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234")
+    u.password = u.password_confirmation = "bobs_secure_password"
+    assert u.save
+    # create deal
+    d = Deal.new(:merchant_id => 1000, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
+    assert d.save
+    # create order with single quantity
+    o = Order.new(:user_id => u.id, :deal_id => d.id)
+    assert o.save
+    assert o.state = OPTIONS[:order_states][:created]
+    assert o.reserve_quantity(1)
+    assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => '10.00', 
+      :confirmation_code => 'XYZ123')
+    coupons = Coupon.find(:all, :conditions => ["user_id = ? AND deal_id = ? AND order_id = ?", u.id, d.id, o.id])
+    assert_equal coupons.size, 1
+    ops = OrderPayment.find(:all, :conditions => ["user_id = ? AND order_id = ?", u.id, o.id])
+    assert_equal ops.size, 1
+    assert_equal ops[0].gateway, 'authorize_net'
+    assert_equal ops[0].transaction_type, 'auth_only'
+    assert_equal ops[0].amount, 10.to_money
+    assert_equal ops[0].confirmation_code, 'XYZ123'
+    assert o.state = OPTIONS[:order_states][:authorized]
+    # can't be missing any fields in the method call
+    assert !o.process_authorization(:gateway => nil, :transaction_type => 'auth_only', :amount => '10.00', 
+      :confirmation_code => 'XYZ123')
+    assert !o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => nil, 
+      :confirmation_code => 'XYZ123')
+    # ok to be missing these fields? for now ...
+    assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => nil, :amount => '10.00', 
+        :confirmation_code => 'XYZ123')
+    assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => '10.00', 
+      :confirmation_code => nil)
   end
   
   def test_is_timed_out
@@ -187,7 +238,7 @@ class OrderTest < ActiveSupport::TestCase
     Order.reset_orders(timeout)
     o = Order.find_by_id(o.id)
     assert_equal o.quantity, 0
-    o = Order.new(:user_id => 1, :deal_id => 10, :quantity => 1, :amount => "10.00", :confirmation_code => 'XYZ123')
+    o = Order.new(:user_id => 1, :deal_id => 10, :quantity => 1, :amount => "10.00", :state => OPTIONS[:order_states][:authorized])
     o.save
     # should remain - is confirmed
     sleep(timeout+1)

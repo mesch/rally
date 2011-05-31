@@ -1,17 +1,23 @@
 burger_coupon1:
     deal: burger_deal
     user: test_user
+    order: burger_order
     deal_code: burger_code1
-    active: true
 
 burger_coupon2:
     deal: burger_deal
     user: test_user
+    order: burger_order
     deal_code: burger_code2
-    active: true
+
+burger_coupon3:
+    deal: burger_deal
+    user: test_user
+    order: burger_order2
+    deal_code: burger_code3
 
 current_coupon1:
     deal: current_deal
     user: test_user
-    active: true
+    order: current_order
 

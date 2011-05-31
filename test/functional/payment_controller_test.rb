@@ -94,11 +94,18 @@ class PaymentControllerTest < ActionController::TestCase
   end  
 
   def test_purchase_confirmed_order
-    @order.update_attributes(:confirmation_code => 'XYZ123')
+    # authorized
+    @order.update_attributes(:state => OPTIONS[:order_states][:authorized])
     self.login
     get :purchase, :order_id => @order.id
     assert_response :redirect
-    assert_redirected_to :controller => 'user', :action=>'home'    
+    assert_redirected_to :controller => 'user', :action=>'home'
+    # paid
+    @order.update_attributes(:state => OPTIONS[:order_states][:paid])
+    self.login
+    get :purchase, :order_id => @order.id
+    assert_response :redirect
+    assert_redirected_to :controller => 'user', :action=>'home'     
   end
   
   def test_purchase_empty_order

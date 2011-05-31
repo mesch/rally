@@ -30,3 +30,7 @@ group :development, :test, :staging do
 	gem 'database_cleaner'
 	gem 'cucumber-rails'
 end
+
+group :development do
+  gem 'rails-erd'
+end

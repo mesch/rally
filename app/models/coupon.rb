@@ -11,7 +11,7 @@ class Coupon < ActiveRecord::Base
   def state
     if self.deal.is_expired
       return 'Expired'
-    elsif self.deal.is_tipped
+    elsif self.order.state == OPTIONS[:order_states][:paid]
       return 'Active'
     else
       return 'Pending'

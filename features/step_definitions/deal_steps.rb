@@ -59,22 +59,37 @@ Given /^(?:I have|a merchant has) changed the (min|max|limit) of deal "([^"]*)" 
   deal.update_attributes!(field => value)
 end
 
-Given /^the deal "([^"]*)" has (\d) (confirmed|unconfirmed) order(?:s)? of (\d) quantity$/ do |title, num_orders, type, quantity|
+Given /^the deal "([^"]*)" has (\d) (created|authorized|paid) order(?:s)? of (\d) quantity$/ do |title, num_orders, type, quantity|
   num_orders = num_orders.to_i
   quantity = quantity.to_i
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
-  confirmation_code = type == "confirmed" ? 'XYZ123' : nil
+  case type
+    when "created" then
+      state = OPTIONS[:order_states][:created]
+    when "authorized" then 
+      state = OPTIONS[:order_states][:authorized]
+    when "paid" then
+      state = OPTIONS[:order_states][:paid]    
+  end
   for i in (1..num_orders)
     Order.create!(:user_id => @current_user.id, :deal_id => deal.id, 
       :quantity => quantity, :amount => quantity*deal.deal_price.to_f,
-      :confirmation_code => confirmation_code)
+      :state => state)
   end
 end
 
-Given /^the deal "([^"]*)" has 1 coupon(?: with a deal code "([^"]*)")?$/ do |title, code|
+Given /^the deal "([^"]*)" has 1 (authorized|paid) coupon(?: with a deal code "([^"]*)")?$/ do |title, type, code|
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
+  case type
+    when "created" then
+      state = OPTIONS[:order_states][:created]
+    when "authorized" then 
+      state = OPTIONS[:order_states][:authorized]
+    when "paid" then
+      state = OPTIONS[:order_states][:paid]    
+  end
   o = Order.create!(:user_id => @current_user.id, :deal_id => deal.id, :quantity => 1, :amount => 1*deal.deal_price.to_f,
-    :confirmation_code => 'XYZ123')
+    :state => state)
   if code
     dc = DealCode.create!(:deal_id => 1, :code => code)
     Coupon.create!(:user_id => @current_user.id, :deal_id => deal.id, :order_id => o.id, :deal_code_id => dc.id)

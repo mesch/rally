@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110518234202) do
+ActiveRecord::Schema.define(:version => 20110527210156) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -19,7 +19,6 @@ ActiveRecord::Schema.define(:version => 20110518234202) do
     t.integer  "order_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",       :default => false
   end
 
   add_index "coupons", ["deal_id"], :name => "index_coupons_on_deal_id"
@@ -117,14 +116,28 @@ ActiveRecord::Schema.define(:version => 20110518234202) do
 
   add_index "merchants", ["username"], :name => "index_merchants_on_username"
 
+  create_table "order_payments", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "order_id"
+    t.string   "gateway"
+    t.string   "transaction_type"
+    t.string   "confirmation_code"
+    t.integer  "amount_in_cents"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "order_payments", ["order_id"], :name => "index_order_payments_on_order_id"
+  add_index "order_payments", ["user_id"], :name => "index_order_payments_on_user_id"
+
   create_table "orders", :force => true do |t|
     t.integer  "user_id"
     t.integer  "deal_id"
-    t.integer  "quantity",          :default => 0
-    t.integer  "amount_in_cents",   :default => 0
-    t.string   "confirmation_code"
+    t.integer  "quantity",        :default => 0
+    t.integer  "amount_in_cents", :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "state",           :default => "CREATED"
   end
 
   add_index "orders", ["user_id", "deal_id"], :name => "orders_by_user_deal"
