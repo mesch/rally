@@ -85,12 +85,6 @@ Rally::Application.routes.draw do
     match '/relay_response' =>  :relay_response,  :via => :post
     match '/receipt'        =>  :receipt,         :via => :get
   end
-  
-=begin
-  match '/payments/payment', :to => 'payments#payment', :as => 'payments_payment', :via => [:get]
-  match '/payments/relay_response', :to => 'payments#relay_response', :as => 'payments_relay_response', :via => [:post]
-  match '/payments/receipt', :to => 'payments#receipt', :as => 'payments_receipt', :via => [:get]
-=end
 
   controller :site do
     match 'tos' => :tos, :via => :get

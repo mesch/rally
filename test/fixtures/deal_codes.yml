@@ -11,6 +11,7 @@ burger_code2:
 burger_code3:
     deal: burger_deal
     code: '1234abc3'
+    reserved: true
 
 burger_code4:
     deal: burger_deal
