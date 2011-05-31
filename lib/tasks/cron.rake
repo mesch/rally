@@ -4,6 +4,11 @@ task :cron => :environment do
     p "Resetting expired orders ..."
     Order.reset_orders
     p "Done."
+    
+    p "Charging authorized orders ..."
+    Deal.charge_orders
+    p "Done."
+    
   end
   
 end
