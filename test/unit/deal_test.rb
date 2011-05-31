@@ -5,7 +5,7 @@ class DealTest < ActiveSupport::TestCase
   fixtures :deals
   
   def setup
-    @m = Deal.find(:first)
+    @m = Merchant.find(:first)
     @start = Time.zone.today
     @end = Time.zone.today + 1.days
     @expiration = Time.zone.today + 1.months
@@ -114,17 +114,17 @@ class DealTest < ActiveSupport::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     d.title = string
     assert !d.save
-    # description - 200 chars
+    # description - 2000 chars
     string = ""
-    length = 201
+    length = 2001
     length.times{ string << "a"}
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     d.description = string
     assert !d.save
-    # terms - 200 chars
+    # terms - 2000 chars
     string = ""
-    length = 201
+    length = 2001
     length.times{ string << "a"}
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')

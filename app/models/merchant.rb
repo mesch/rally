@@ -8,6 +8,22 @@ class Merchant < ActiveRecord::Base
   validates_presence_of :name, :username, :email, :salt, :time_zone
   validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "Invalid email."
 
+  # info fields
+  validates_length_of :website, :maximum => 255
+  validates_length_of :contact_name, :maximum => 255
+  validates_length_of :address1, :maximum => 255
+  validates_length_of :address2, :maximum => 255
+  validates_length_of :city, :maximum => 255
+  validates_length_of :state, :maximum => 255
+  validates_length_of :zip, :maximum => 255
+  validates_length_of :country, :maximum => 255
+  validates_length_of :phone_number, :maximum => 255
+  validates_length_of :bank, :maximum => 255
+  validates_length_of :account_name, :maximum => 255
+  validates_length_of :routing_number, :maximum => 255
+  validates_length_of :account_number, :maximum => 255
+  validates_length_of :paypal_account, :maximum => 255
+
   # different validations for password, password_confirmation based on type of action
   validates_length_of :password, :within => 4..40, :on => :create
   validates_confirmation_of :password, :on => :create

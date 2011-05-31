@@ -7,7 +7,7 @@ class UserController < ApplicationController
 
   # Deals
   def deals
-    # TODO: Move these into deal.rb? or user.rb?
+    # TODO: Move this query into deal.rb? or user.rb?
     @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
   end
   
@@ -25,7 +25,7 @@ class UserController < ApplicationController
       @bar_offset = (5*(@deal.confirmed_coupon_count/@deal.min.to_f)).ceil
     end
     
-    # TODO: better query for other deals? Move into model?
+    # TODO: better query for other deals? Move into deal.rb? or user.rb?
     @others = Deal.find(
       :all, 
       :conditions => [ "published = ? AND start_date <= ? AND end_date >= ? AND id != ?", true, Time.zone.today, Time.zone.today, @deal.id], 

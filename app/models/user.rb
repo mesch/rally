@@ -10,6 +10,11 @@ class User < ActiveRecord::Base
   validates_presence_of :username, :email, :salt
   validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "Invalid email."
 
+  # info fields
+  validates_length_of :first_name, :maximum => 50
+  validates_length_of :last_name, :maximum => 50
+  validates_length_of :mobile_number, :maximum => 20
+
   # different validations for password, password_confirmation based on type of action
   validates_length_of :password, :within => 4..40, :on => :create
   validates_confirmation_of :password, :on => :create
