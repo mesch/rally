@@ -145,7 +145,7 @@ class PaymentController < ApplicationController
     end
           
     # process payment
-    unless order.process_payment(:gateway => gateway, :transaction_type => transaction_type, 
+    unless order.process_authorization(:gateway => gateway, :transaction_type => transaction_type, 
       :amount => amount, :confirmation_code => @confirmation_code)
       flash.now[:error] = "Your transaction was approved. However, there was a problem creating your coupons. Please contact Customer Service."
     end 
