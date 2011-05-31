@@ -21,7 +21,7 @@ gem 'authorize-net', "1.5.2", :path => 'vendor/gems/authorize-net-1.5.2'
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
-group :development, :test, :staging do
+group :development, :test do
 	gem 'launchy'
 	gem 'builder', '~> 2.1.2'
 	gem 'rspec'
@@ -29,6 +29,7 @@ group :development, :test, :staging do
 	gem 'capybara'
 	gem 'database_cleaner'
 	gem 'cucumber-rails'
+	gem 'ffi', '>=1.0.9'
 end
 
 group :development do
