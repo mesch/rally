@@ -112,6 +112,10 @@ GEM
       activesupport (= 3.0.0)
       bundler (~> 1.0.0)
       railties (= 3.0.0)
+    rails-erd (0.4.5)
+      activerecord (~> 3.0)
+      activesupport (~> 3.0)
+      ruby-graphviz (~> 0.9.18)
     railties (3.0.0)
       actionpack (= 3.0.0)
       activesupport (= 3.0.0)
@@ -139,6 +143,7 @@ GEM
       ruby-debug-base (~> 0.10.3.0)
     ruby-debug-base (0.10.3)
       linecache (>= 0.3)
+    ruby-graphviz (0.9.21)
     rubyzip (0.9.4)
     selenium-webdriver (0.2.0)
       childprocess (>= 0.1.7)
@@ -174,6 +179,7 @@ DEPENDENCIES
   nokogiri
   paperclip
   rails (= 3.0.0)
+  rails-erd
   right_aws
   rspec
   rspec-rails
