@@ -13,8 +13,7 @@ Feature: Purchase Deals
 		When I fill in "x_card_num" with "4007000000027"
 		And I fill in "x_exp_date" with "1220"
 		And I press "Purchase"
-		Then show me the page
-		And I should see "Thank you for your purchase!"
+		Then I should see "Thank you for your purchase!"
 		When I press "Coupons"
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
