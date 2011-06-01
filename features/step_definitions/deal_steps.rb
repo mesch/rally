@@ -130,6 +130,10 @@ When /^I upload a file of 0 coupons codes$/ do
   attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '0codes.csv'))
 end
 
+When /^the background process to charge orders is run$/ do
+  Deal.charge_orders
+end
+
 # Then
 Then /^"([^\"]*)" should( not)? be disabled$/ do |label, negate|
   attributes = find_field(label).native.attributes.keys

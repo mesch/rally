@@ -30,13 +30,7 @@ begin
       t.binary = vendored_cucumber_bin
       t.fork = true # You may get faster startup if you set this to false
       t.profile = 'rerun'
-    end
-    
-    Cucumber::Rake::Task.new(:fast, 'Skips db:test:prepare') do |t|
-      t.binary = vendored_cucumber_bin
-      t.fork = true # You may get faster startup if you set this to false
-      t.profile = 'default'
-    end    
+    end   
 
     desc 'Run all features'
     task :all => [:ok, :wip]
