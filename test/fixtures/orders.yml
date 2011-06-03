@@ -17,3 +17,4 @@ current_order:
     deal: current_deal
     quantity: 1
     amount_in_cents: 1000
+    state: <%= OPTIONS[:order_states][:authorized] %>
