@@ -1,6 +1,6 @@
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
-<div id="coupons">
+<div id="deals">
 	<div class="dashboard" id="dashboard">
 		<ul>
 			
@@ -18,7 +18,7 @@
 			</li>
 		</ul>
 	</div>
-    <div id="content" class="coupons-box clear mainwide">
+    <div id="content" class="clear mainwide">
 		<div class="box clear">
             <div class="box-top"></div>
             <div class="box-content">
@@ -35,13 +35,15 @@
 				<% end %>
 				</div>
                 <div class="sect">
-					<table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">					
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">					
 					<tr>
 						<th width="40">Id</th>
-						<th width="400">Title</th>
-						<th width="100">Date</th>
-						<th width="50">Done</th>
-						<th width="60" nowrap>Deal Price</th>
+						<th width="300">Title</th>
+						<th width="60">Start / End</th>
+						<th width="60" nowrap>Price / Value</th>
+						<th width="60" nowrap>Sold</th>
+						<th width="60" nowrap>Min</th>
+						<th width="60" nowrap>Max</th>
 						<th width="140">Actions</th>
 					</tr>
 					<% for deal in @deals %>
@@ -52,11 +54,13 @@
 							<%= deal.start_date.strftime(OPTIONS[:date_format]) %><br/>
 							<%= deal.end_date.strftime(OPTIONS[:date_format]) %>
 						</td>
-						<td nowrap><%= deal.confirmed_coupon_count %>/<%= deal.min %></td>
 						<td nowrap>
 							<%= deal.deal_price.format %><br/>
 							<%= deal.deal_value.format %>
 						</td>
+						<td nowrap><%= deal.confirmed_coupon_count %></td>
+						<td nowrap><%= deal.min %></td>
+						<td nowrap><%= deal.max %></td>
 						<td class="op" nowrap>
 							<%= link_to "View", deal_url(deal.id), :target=>"_blank" %>
 							<% if !deal.is_ended %>

@@ -126,6 +126,17 @@ body.newbie{background-position:50% 326px;}
 dd#bd{position:relative;z-index:1;width:960px;margin:0 auto;padding:30px 0 65px;}
 #bd{position:relative;z-index:1;width:960px;margin:30px auto 65px;}
 
+.general-table{margin:10px 10px 30px;}
+.general-table td,.general-table th{padding:5px;border:1px solid #fff;}
+.general-table td{background:#fff;}
+.general-table .last{white-space:nowrap;}
+.general-table .last form{text-align:center;}
+.general-table .last form p{margin-top:4px;}
+.general-table .last .f-input{width:90px;float:none;margin-bottom:4px;}
+.general-table .alt td{background:#f1f1f1;}
+.general-table .op{font-size:14px; color:gray;}
+.general-table td.author {font-size:12px; color:gray;}
+
 #content{float:left;width:702px;_display:inline;margin-left:8px;margin-right:16px;padding:0;}
 #content.mainwide{float:left;width:944px;_display:inline;margin-left:8px;margin-right:16px;padding:0;}
 

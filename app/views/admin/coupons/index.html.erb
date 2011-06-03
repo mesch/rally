@@ -1,0 +1,42 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Coupons</h2>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" bcoupon="0" class="general-table">
+						<tr><th width="40">Id</th>
+							<th width="40">User Id</th>
+							<th width="40">Deal Id</th>
+							<th width="300">Deal</th>							
+							<th width="40">Order Id</th>							
+							<th width="40">Deal Code</th>
+							<th width="40">Created</th>
+							<th width="60">State</th>
+						</tr>							
+						<% for coupon in @coupons %>
+						<tr>
+							<td><%= coupon.id %></td>
+							<td><%= coupon.user.id %></td>
+							<td><%= coupon.deal.id %></td>
+							<td><%= coupon.deal.title %></td>
+							<td><%= coupon.order.id %></td>
+							<td><%= coupon.deal_code ? coupon.deal_code.code : '' %></td>
+							<td><%= coupon.created_at.strftime(OPTIONS[:date_format]) %></td>
+							<td><%= coupon.state %></td>
+						</tr>
+						<% end %>
+                    </table>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

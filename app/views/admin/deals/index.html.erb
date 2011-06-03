@@ -1,0 +1,50 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Deals</h2>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">					
+					<tr>
+						<th width="40">Id</th>
+						<th width="100" nowrap>Merchant</th>
+						<th width="300">Title</th>
+						<th width="60" nowrap>Start / End</th>
+						<th width="60" nowrap>Price / Value</th>
+						<th width="60" nowrap>Sold</th>
+						<th width="60" nowrap>Min</th>
+						<th width="60" nowrap>Max</th>
+					</tr>
+					<% for deal in @deals %>
+					<tr class="alt">
+						<td><%= deal.id %></td>
+						<td><%= deal.merchant.name %></td>						
+						<td><%= deal.title %></td>
+						<td nowrap>
+							<%= deal.start_date.strftime(OPTIONS[:date_format]) %><br/>
+							<%= deal.end_date.strftime(OPTIONS[:date_format]) %>
+						</td>
+						<td nowrap>
+							<%= deal.deal_price.format %><br/>
+							<%= deal.deal_value.format %>
+						</td>
+						<td nowrap><%= deal.confirmed_coupon_count %></td>
+						<td nowrap><%= deal.min %></td>
+						<td nowrap><%= deal.max %></td>
+
+					</tr>
+					<% end %>
+                    </table>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

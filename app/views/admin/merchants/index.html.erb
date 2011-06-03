@@ -1,0 +1,42 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Merchants</h2>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">
+						<tr><th width="40">Id</th>
+							<th width="200">Name</th>
+							<th width="40">Username</th>
+							<th width="40">Email</th>
+							<th width="40">Activated</th>
+							<th width="40">Active</th>
+							<th width="60">Created</th>
+							<th width="40">Deals</th>
+						</tr>							
+						<% for merchant in @merchants %>
+						<tr>
+							<td><%= merchant.id %></td>
+							<td><%= merchant.name %></td>
+							<td><%= merchant.username %></td>
+							<td><%= merchant.email %></td>
+							<td><%= merchant.activated %></td>
+							<td><%= merchant.active %></td>
+							<td><%= merchant.created_at.strftime(OPTIONS[:date_format]) %></td>
+							<td><%= merchant.deals.size %></td>
+						</tr>
+						<% end %>
+                    </table>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

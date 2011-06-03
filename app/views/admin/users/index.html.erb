@@ -1,0 +1,44 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Users</h2>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">
+						<tr><th width="40">Id</th>
+							<th width="200">Email</th>
+							<th width="40">Name</th>
+							<th width="40">Facebook Id</th>							
+							<th width="30">Activated</th>
+							<th width="30">Active</th>
+							<th width="60">Created</th>
+							<th width="40">Orders</th>
+							<th width="40">Coupons</th>
+						</tr>							
+						<% for user in @users %>
+						<tr>
+							<td><%= user.id %></td>
+							<td><%= user.email %></td>
+							<td><%= user.full_name %></td>
+							<td><%= user.facebook_id %></td>
+							<td><%= user.activated %></td>
+							<td><%= user.active %></td>
+							<td><%= user.created_at.strftime(OPTIONS[:date_format]) %></td>
+							<td><%= user.orders.size %></td>
+							<td><%= user.coupons.size %></td>
+						</tr>
+						<% end %>
+                    </table>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

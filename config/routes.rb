@@ -3,46 +3,7 @@ require 'subdomain'
 Rally::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
-
-  # Merchant
-  namespace :merchant do
-    scope :via => :get do
-      match '/' => :home
-      match :home
-      match :login
-      match :logout
-      match :signup
-      match :activate
-      match :reactivate
-      match :account
-      match :change_email
-      match :change_password
-      match :forgot_password
-      match :deals
-      match '/deal' => :new_deal, :as => :new_deal
-      match '/deal/:id' => :edit_deal, :as => :edit_deal
-      match '/deal/publish/:id' => :publish_deal, :as => :publish_deal
-    end
-    scope :via => :post do
-      match :home
-      match :login
-      match :signup
-      match :reactivate
-      match :account
-      match :change_email
-      match :change_password
-      match :forgot_password
-      match '/deal' => :create_deal, :as => :create_deal
-      match '/deal/:id' => :update_deal, :as => :update_deal
-    end
-  end
   
-  # Admin
-  namespace :admin do
-    match '/' => :home, :via => :get
-    match :home, :via => :get
-  end
-
   # User
   controller :user do
     scope :via => :get do
@@ -99,6 +60,52 @@ Rally::Application.routes.draw do
       match 'tour'
     end
   end
+
+  # Merchant
+  namespace :merchant do
+    scope :via => :get do
+      match '/' => :home
+      match :home
+      match :login
+      match :logout
+      match :signup
+      match :activate
+      match :reactivate
+      match :account
+      match :change_email
+      match :change_password
+      match :forgot_password
+      match :deals
+      match '/deal' => :new_deal, :as => :new_deal
+      match '/deal/:id' => :edit_deal, :as => :edit_deal
+      match '/deal/publish/:id' => :publish_deal, :as => :publish_deal
+    end
+    scope :via => :post do
+      match :home
+      match :login
+      match :signup
+      match :reactivate
+      match :account
+      match :change_email
+      match :change_password
+      match :forgot_password
+      match '/deal' => :create_deal, :as => :create_deal
+      match '/deal/:id' => :update_deal, :as => :update_deal
+    end
+  end
+
+  # Admin
+  namespace :admin do
+    match '/' => :home, :via => :get
+    match :home, :via => :get
+    resources :merchants
+    resources :users
+    resources :deals
+    resources :coupons
+    resources :orders
+    resources :payments  
+  end
+
   
   root :to => "site#home"
 
