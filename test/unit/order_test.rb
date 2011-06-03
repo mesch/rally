@@ -116,7 +116,7 @@ class OrderTest < ActiveSupport::TestCase
   # leaving maxed out checks to testing of reserve_coupons
   def test_create_coupons
     # create user
-    u = User.new(:username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234")
+    u = User.new(:email => "test@abc.com", :salt => "1000", :activation_code => "1234")
     u.password = u.password_confirmation = "bobs_secure_password"
     assert u.save
     # create deal
@@ -179,7 +179,7 @@ class OrderTest < ActiveSupport::TestCase
 
   def test_process_authorization
     # create user
-    u = User.new(:username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234")
+    u = User.new(:email => "test@abc.com", :salt => "1000", :activation_code => "1234")
     u.password = u.password_confirmation = "bobs_secure_password"
     assert u.save
     # create deal

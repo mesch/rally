@@ -48,9 +48,9 @@ Rally::Application.configure do
   OPTIONS[:order_timeout] = 10
   
   # Facebook logins
-  #OPTIONS[:facebook_app_id] = "119734331414282"
-  #OPTIONS[:facebook_api_key] = "dbfeafcc9193578f91de5639360c4002"
-  #OPTIONS[:facebook_secret_key] = "3ea381caf8e5ad492d84b57aa1049fe7"
+  OPTIONS[:facebook_app_id] = "173164266077466"
+  OPTIONS[:facebook_api_key] = "894f73409e969af403ec258c8725439e"
+  OPTIONS[:facebook_secret_key] = "5b85f9a44b39de7b48314531765d88f4"
   
   # Used for "some" calls to fb. Really confusing. Not really sure why it works.
   # See http://forum.developers.facebook.net/viewtopic.php?pid=280400#p280400

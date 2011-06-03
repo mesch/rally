@@ -18,29 +18,23 @@ class UserControllerTest < ActionController::TestCase
   end
 
   def login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
   end
 
   def test_auth
     #check we can login
-    # valid username
-    post :login, :username => @test_user.username, :password => "test"
-    assert session[:user_id]
-    assert_equal @test_user, User.find(session[:user_id])
-    assert_response :redirect
-    assert_redirected_to :action=>'home'
     # valid email
-    post :login, :username => @test_user.email, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert session[:user_id]
     assert_equal @test_user, User.find(session[:user_id])
     assert_response :redirect
-    assert_redirected_to :action=>'home'    
+    assert_redirected_to :action=>'home'  
   end
 
   def test_set_time_zone
     old_time_zone = Time.zone.name
     # Time zone should be different than local time (as set in users.yml)
-    post :login, :username => @existing_user.username, :password => "test"
+    post :login, :email => @existing_user.email, :password => "test"
     get :home
     assert_equal Time.zone.name, @existing_user.time_zone
     assert_not_equal Time.zone.name, old_time_zone
@@ -48,7 +42,7 @@ class UserControllerTest < ActionController::TestCase
 
   def test_signup
     #unfortunately can't test passing captcha - this will fail for now
-    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", :email => "newbob@mcbob.com" 
+    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "newpassword"  
     assert_response :success
     assert_nil session[:user_id]
     assert flash[:error]
@@ -57,17 +51,17 @@ class UserControllerTest < ActionController::TestCase
 
   def test_bad_signup
     #check we can't signup without all required fields
-    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "wrong" , :email => "newbob@mcbob.com"
+    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "wrong"
     assert_response :success
     assert_template "user/signup"
     assert_nil session[:user_id]
 
-    post :signup, :username => "yo", :password => "newpassword", :password_confirmation => "newpassword" , :email => "newbob@mcbob.com"
+    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "newpassword"
     assert_response :success
     assert_template "user/signup"
     assert_nil session[:user_id]
 
-    post :signup, :username => "yo", :password => "newpassword", :password_confirmation => "wrong" , :email => "newbob@mcbob.com"
+    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "wrong"
     assert_response :success
     assert_template "user/signup"
     assert_nil session[:user_id]
@@ -75,7 +69,7 @@ class UserControllerTest < ActionController::TestCase
 
   def test_invalid_login
     #can't login with incorrect password
-    post :login, :username => @test_user.username, :password => "not_correct"
+    post :login, :email => @test_user.email, :password => "not_correct"
     assert_response :success
     assert_nil session[:user_id]
     assert flash[:error]
@@ -84,7 +78,7 @@ class UserControllerTest < ActionController::TestCase
 
   def test_inactive_login
     #can't login if user is not active
-    post :login, :username => @inactive_user.username, :password => "test"
+    post :login, :email => @inactive_user.email, :password => "test"
     assert_response :success
     assert_nil session[:user_id]
     assert flash[:error]
@@ -93,7 +87,7 @@ class UserControllerTest < ActionController::TestCase
 
   def test_inactivated_login
     #redirected to activate account
-    post :login, :username => @inactivated_user.username, :password => "test"
+    post :login, :email => @inactivated_user.email, :password => "test"
     assert_response :redirect
     assert_nil session[:user_id]
     assert flash[:error]
@@ -102,7 +96,7 @@ class UserControllerTest < ActionController::TestCase
 
   def test_login_logoff
     #login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     assert session[:user_id]
     #then logoff
@@ -114,38 +108,21 @@ class UserControllerTest < ActionController::TestCase
 
   def test_forgot_password
     #we can login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     assert session[:user_id]
     #logout
     get :logout
     assert_response :redirect
     assert_nil session[:user_id]
-    #enter a username (or email) that doesn't exist
-    post :forgot_password, :username => "testtesttest"
-    assert_response :success
-    assert_nil session[:user_id]
-    assert flash[:error]
-    assert_template "user/forgot_password"
-    #enter a username that doesn't exist
-    post :forgot_password, :username => "testtesttest"
-    assert_response :success
-    assert_nil session[:user_id]
-    assert flash[:error]
-    assert_template "user/forgot_password"
     #enter an email that doesn't exist
-    post :forgot_password, :username => "notauser@doesntexist.com"
+    post :forgot_password, :email => "notauser@doesntexist.com"
     assert_response :success
     assert_nil session[:user_id]
     assert flash[:error]
     assert_template "user/forgot_password"
-    #enter valid username
-    post :forgot_password, :username => @test_user.username   
-    assert_response :redirect
-    assert flash[:notice]
-    assert_redirected_to :action=>'login'
     #enter valid email
-    post :forgot_password, :username => @test_user.email 
+    post :forgot_password, :email => @test_user.email 
     assert_response :redirect
     assert flash[:notice]
     assert_redirected_to :action=>'login'    
@@ -157,7 +134,7 @@ class UserControllerTest < ActionController::TestCase
     assert_response :redirect
     assert_redirected_to :action=>'login'
     #login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     assert session[:user_id]
     #can access it now
@@ -169,7 +146,7 @@ class UserControllerTest < ActionController::TestCase
 
   def test_change_password
     #can login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     assert session[:user_id]
     #try to change password
@@ -191,47 +168,31 @@ class UserControllerTest < ActionController::TestCase
     assert_response :redirect
     assert_nil session[:user_id]
     #old password no longer works
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :success
     assert_nil session[:user_id]
     assert flash[:error]
     #new password works
-    post :login, :username => @test_user.username, :password => "newpass"
+    post :login, :email => @test_user.email, :password => "newpass"
     assert_response :redirect
     assert session[:user_id]
   end
 
   def test_reactivate_email
     #email sent from reactivate page
-    #enter a username that doesn't exist
-    post :reactivate, :username => "testertesterson"
-    assert_response :success
-    assert_nil session[:user_id]
-    assert_template "user/reactivate"
-    assert flash[:error]
     #enter an email that doesn't exist
-    post :reactivate, :username => "test@abc.com"
+    post :reactivate, :email => "test@abc.com"
     assert_response :success
     assert_nil session[:user_id]
     assert_template "user/reactivate"
     assert flash[:error]
-    #enter an activated username
-    post :reactivate, :username => @test_user.username
-    assert_response :redirect
-    assert flash[:notice]
-    assert_redirected_to :action=>'login'
     #enter an activated email
-    post :reactivate, :username => @test_user.email
-    assert_response :redirect
-    assert flash[:notice]
-    assert_redirected_to :action=>'login'  
-    #enter an inactivated username
-    post :reactivate, :username => @inactivated_user.username
+    post :reactivate, :email => @test_user.email
     assert_response :redirect
     assert flash[:notice]
     assert_redirected_to :action=>'login'
     #enter an inactivated email
-    post :reactivate, :username => @inactivated_user.email
+    post :reactivate, :email => @inactivated_user.email
     assert_response :redirect
     assert flash[:notice]
     assert_redirected_to :action=>'login'
@@ -276,7 +237,7 @@ class UserControllerTest < ActionController::TestCase
   def test_change_email
     old_email = @test_user.email
     #can login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     assert session[:user_id]
     #wrong email format
@@ -292,12 +253,12 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action => 'logout'
     assert_equal User.find(@test_user.id).email, "test@abc.com"
     #can't find old_email
-    post :forgot_password, :username => old_email
+    post :forgot_password, :email => old_email
     assert_response :success
     assert flash[:error]
     assert_template "user/forgot_password"
     #can find new email
-    post :forgot_password, :username=>"test@abc.com"   
+    post :forgot_password, :email=>"test@abc.com"   
     assert_response :redirect
     assert flash[:notice]
     assert_redirected_to :action=>'login'
@@ -306,7 +267,7 @@ class UserControllerTest < ActionController::TestCase
   def test_change_account_basic
     #just changing name
     #can login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     assert session[:user_id]
     #name too long
@@ -326,23 +287,22 @@ class UserControllerTest < ActionController::TestCase
   
   def test_change_account_full
     #can login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     assert session[:user_id]
     #success
-    post :account, :first_name => 'tester', :last_name => 'testerson', :mobile_number => '4155551213'
+    post :account, :first_name => 'tester', :last_name => 'testerson'
     assert_response :success
     assert flash[:notice]
     assert_template "user/account"
     assert_equal User.find(@test_user.id).first_name, 'tester'
     assert_equal User.find(@test_user.id).last_name, 'testerson'
-    assert_equal User.find(@test_user.id).mobile_number, '4155551213'
   end
 
   # cannot change time zone for user (yet)
   def test_change_time_zone
     #can login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     assert session[:user_id]
     #success
@@ -357,6 +317,22 @@ class UserControllerTest < ActionController::TestCase
     assert_not_equal Time.zone.name, 'Hawaii'
   end
 
+  def test_deals_page
+    # can access the deals page without logging in (but session isn't set)
+    get :deals
+    assert_response :success
+    assert_template "user/deals"
+    assert_nil session[:user_id]
+    # session will be set if we login first
+    post :login, :email => @test_user.email, :password => "test"
+    assert_response :redirect
+    assert session[:user_id]
+    get :deals
+    assert_response :success
+    assert_template "user/deals"
+    assert session[:user_id]
+  end   
+  
 ## unable to test due to @request not getting set in ApplicationController
 =begin
   def test_return_to
@@ -366,7 +342,7 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action=>'login'
     assert session[:user_return_to]
     #login
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     #redirected to account
     assert_redirected_to :action=>'account'
@@ -376,7 +352,7 @@ class UserControllerTest < ActionController::TestCase
     #logout and login again
     get :logout
     assert_nil session[:user_id]
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     assert_response :redirect
     #this time we were redirected to home
     assert_redirected_to :action=>'home'

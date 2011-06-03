@@ -7,44 +7,45 @@
         <div class="clear box">
             <div class="box-top"></div>
             <div class="box-content">
-                <div class="head"><h2>Signup</h2></div>
+                <div class="head"><h2>Sign Up</h2></div>
                 <div class="sect">
-                        <div class="field">
-							<%= label_tag 'Username' %> 
-							<%= text_field_tag :username, @user.username, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
-                        </div>
-                        <div class="field">
-							<%= label_tag 'Password' %>
-							<%= password_field_tag :password, @user.password, :class=>"f-input", :datatype=>"require", :require=>"true" %>
-                        </div>
-                        <div class="field">
-							<%= label_tag 'Confirm Password', 'Confirm Password' %> 
-							<%= password_field_tag :password_confirmation, @user.password_confirmation, :class=>"f-input", :datatype=>"require", :require=>"true" %>
-						</div>
-						<div class="field">
-							<%= label_tag 'Email' %> 
-							<%= text_field_tag :email, @user.email, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
-                        </div>
-
-						<div class="field">
-							<div class="note">
-								<%= check_box_tag :tos, 1, false %>
-								I agree to the <%= link_to 'Terms of Service', tos_url, :target=>"_blank" %>.</div>
-						</div>
-						<div id="recaptcha_container" class="field">
-							<%= raw recaptcha_tags :public_key => OPTIONS[:recaptcha_public_key], 
-								:display => { :theme => "clean" } %>
-						</div>
-                        <div class="act">
-							<%= submit_tag :submit, :value=>"Signup", :class=>"formbutton"%>
-							or <%= link_to "cancel", login_url %>
-                        </div>
+					<div class="field">
+						<%= label_tag 'Email' %> 
+						<%= text_field_tag :email, @user.email, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Password' %>
+						<%= password_field_tag :password, @user.password, :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Confirm Password', 'Confirm Password' %> 
+						<%= password_field_tag :password_confirmation, @user.password_confirmation, :class=>"f-input", :datatype=>"require", :require=>"true" %>
+					</div>
+					<div class="field">
+						<%= label_tag 'First Name', 'First Name' %> 
+						<%= text_field_tag :first_name, @user.last_name, :size=>"30", :class=>"f-input" %>
+                    </div>
+					<div class="field">
+						<%= label_tag 'Last Name', 'Last Name' %> 
+						<%= text_field_tag :last_name, @user.last_name, :size=>"30", :class=>"f-input" %>
+                    </div>					
+					<div class="field">
+						<div class="note">
+						<%= check_box_tag :tos, 1, false %>
+						I agree to the <%= link_to 'Terms of Service', tos_url, :target=>"_blank" %>.</div>
+					</div>
+					<div id="recaptcha_container" class="field">
+						<%= raw recaptcha_tags :public_key => OPTIONS[:recaptcha_public_key], :display => { :theme => "clean" } %>
+					</div>
+                    <div class="act">
+						<%= submit_tag :submit, :value=>"Sign Up", :class=>"formbutton"%>
+						or <%= link_to "cancel", login_url %>
+                    </div>
                 </div>
             </div>
             <div class="box-bottom"></div>
         </div>
 	</div>
-
 <div id="sidebar">
 </div>
 

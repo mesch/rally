@@ -1,13 +1,11 @@
 require "digest"
 
 class User < ActiveRecord::Base
-  validates_length_of :username, :within => 3..40
   validates_length_of :first_name, :maximum => 50
   validates_length_of :last_name, :maximum => 50
   validates_length_of :email, :maximum => 50
-  validates_uniqueness_of :username
   validates_uniqueness_of :email
-  validates_presence_of :username, :email, :salt
+  validates_presence_of :email, :salt
   validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "Invalid email."
 
   # info fields
@@ -53,13 +51,8 @@ class User < ActiveRecord::Base
   end
 
   # Authentication methods
-  def self.authenticate(username, password)
-    # first check username
-    u = find(:first, :conditions=>["username = ?", username])
-    # then try email
-    if u.nil?
-      u = find(:first, :conditions=>["email = ?", username])
-    end       
+  def self.authenticate(email, password)
+    u = find(:first, :conditions=>["email = ?", email])     
     return nil if u.nil?
     return u if User.encrypt(password, u.salt)==u.hashed_password
     return nil
@@ -73,20 +66,20 @@ class User < ActiveRecord::Base
 
   # Mailer methods
   def send_new_password
-    new_pass = User.random_string(5)
+    new_pass = User.generate_password
     self.password = self.password_confirmation = new_pass
     if self.save
       # Send the user email through a delayed job
-      UserMailer.delay.send_forgot_password(self.email, self.username, new_pass)
+      UserMailer.delay.send_forgot_password(self.email, self.email, new_pass)
       return true
     end
     return false
   end
-
+  
   def send_activation
     if self.update_attributes(:activation_code => User.generate_activation_code)
       # Send the user email through a delayed job
-      UserMailer.delay.send_activation(self.email, self.username, self.id, self.activation_code)
+      UserMailer.delay.send_activation(self.email, self.email, self.id, self.activation_code)
       return true
     end
     return false
@@ -94,7 +87,7 @@ class User < ActiveRecord::Base
 
   def send_email_change(old_email)
     # Send the user email through a delayed job
-    UserMailer.delay.send_changed_email(old_email, self.username, old_email, self.email)
+    UserMailer.delay.send_changed_email(old_email, old_email, self.email)
     return true
   end
 
@@ -122,6 +115,10 @@ class User < ActiveRecord::Base
     User.secure_digest(Time.now, (1..10).map{ rand.to_s })
   end
 
+  def self.generate_password
+    return User.random_string(5)
+  end
+
   protected
 
   def password_required?
@@ -142,6 +139,6 @@ class User < ActiveRecord::Base
     newpass = ""
     1.upto(len) { |i| newpass << chars[rand(chars.size-1)] }
     return newpass
-  end  
-
+  end
+  
 end

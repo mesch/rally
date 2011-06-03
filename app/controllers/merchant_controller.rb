@@ -165,6 +165,7 @@ class MerchantController < ApplicationController
         :account_number => params[:account_number], :paypal_account => params[:paypal_account])
         flash.now[:notice] = "Your account has been updated."
       else
+        logger.error "Merchant.account: Couldn't update Merchant #{@merchant}"
         flash.now[:error] = "Could not update account. Please try again."
       end
     end
@@ -199,6 +200,7 @@ class MerchantController < ApplicationController
           flash[:notice] = "Signup successful. An activation code has been sent."
           redirect_to :controller => 'merchant', :action =>'login'
       else
+        logger.error "Merchant.signup: Couldn't create Merchant #{@merchant}"
         flash.now[:error] = "Signup unsuccessful."
         render(:action => :signup)
       end
@@ -257,6 +259,7 @@ class MerchantController < ApplicationController
           flash[:notice] = "Password changed."
           redirect_to :controller => 'merchant', :action => 'account'
         else
+          logger.error "Merchant.change_password: Couldn't update password for Merchant #{@merchant}"
           flash[:error] = "Password not changed. Passwords must be at least 3 characters and match the confirmation field."
           redirect_to :controller => 'merchant', :action => 'change_password'
         end
@@ -271,6 +274,7 @@ class MerchantController < ApplicationController
         flash[:notice]  = "Your email has been updated."
         redirect_to :controller => 'merchant', :action => 'logout'
       else
+        logger.error "Merchant.change_email: Couldn't update email for Merchant #{@merchant}"
         flash.now[:error]  = "Could not update email. Please try again."
       end
     end

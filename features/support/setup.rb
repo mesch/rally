@@ -11,7 +11,7 @@ end
 # default session-based variables
 Before do
   @current_merchant = Merchant.find_by_username(:emptybob)
-  @current_user = User.find_by_username(:empty_user)
+  @current_user = User.find_by_email("empty_user@rallycommerce.com")
 end
 
 

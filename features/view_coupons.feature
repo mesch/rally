@@ -6,12 +6,12 @@ Feature: View Coupons
 	Scenario: Coupon List (Not Logged In)
 		Given a merchant has published a deal titled "Cool New Deal"
 		When I go to the list of coupons
-		Then I should see "User Login"
+		Then I should see "Log In"
 	
 	Scenario: Coupon List (Active, With Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
@@ -20,7 +20,7 @@ Feature: View Coupons
 	Scenario: Coupon List (Pending, With Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
@@ -29,7 +29,7 @@ Feature: View Coupons
 	Scenario: Coupon List (Active, Without Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 paid coupon
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
@@ -38,7 +38,7 @@ Feature: View Coupons
 	Scenario: Coupon List (Pending, Without Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 authorized coupon
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
@@ -48,7 +48,7 @@ Feature: View Coupons
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the min of deal "Cool New Deal" to 2
 		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
@@ -58,7 +58,7 @@ Feature: View Coupons
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the expiration date of deal "Cool New Deal" to yesterday
 		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the list of coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
@@ -67,7 +67,7 @@ Feature: View Coupons
 	Scenario: Coupon Page (Active, With Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the list of coupons
 		When I follow "View"
 		Then I should see "Coupon"
@@ -79,7 +79,7 @@ Feature: View Coupons
 	Scenario: Coupon Page (Pending, With Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the list of coupons
 		When I follow "View"
 		Then I should see "Coupon"
@@ -90,7 +90,7 @@ Feature: View Coupons
 	Scenario: Coupon Page (Active, Without Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 paid coupon
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the list of coupons
 		When I follow "View"
 		Then I should see "Coupon"
@@ -102,7 +102,7 @@ Feature: View Coupons
 	Scenario: Coupon Page (Pending, Without Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 authorized coupon
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the list of coupons
 		When I follow "View"
 		Then I should see "Coupon"
@@ -114,7 +114,7 @@ Feature: View Coupons
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the min of deal "Cool New Deal" to 2
 		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the list of coupons
 		When I follow "View"
 		Then I should see "Coupon"
@@ -126,7 +126,7 @@ Feature: View Coupons
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the expiration date of deal "Cool New Deal" to yesterday
 		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the list of coupons
 		When I follow "View"
 		Then I should see "Coupon"

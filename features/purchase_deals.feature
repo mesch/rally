@@ -6,7 +6,7 @@ Feature: Purchase Deals
 	@deploy
 	Scenario: Full Purchase 
 		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
 		Then I should see "Purchase"
@@ -22,7 +22,7 @@ Feature: Purchase Deals
 	@deploy
 	Scenario: Full Purchase (invalid credit card)
 		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
 		Then I should see "Purchase"
@@ -35,7 +35,7 @@ Feature: Purchase Deals
 	@deploy
 	Scenario: Full Purchase (invalid expiration date)
 		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
 		Then I should see "Purchase"
@@ -48,7 +48,7 @@ Feature: Purchase Deals
 	@deploy
 	Scenario: Full Purchase (with background process)
 		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
 		Then I should see "Purchase"
@@ -66,7 +66,7 @@ Feature: Purchase Deals
 	Scenario: Full Purchase (not-tipped with background process)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the min of deal "Cool New Deal" to 2
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
 		Then I should see "Purchase"

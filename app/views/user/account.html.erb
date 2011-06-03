@@ -12,22 +12,22 @@
 					<%= link_to "Change Email", change_email_url %>
 				</div>
                 <div class="sect">
-                        <div class="field">
-							<%= label_tag 'Username' %>
-							<%= text_field_tag :username, @user.username, :size=>"30", :class=>"f-input", :disabled => true %>					
-                        </div>
-						<div class="field">
-							<%= label_tag 'Email' %>
-							<%= text_field_tag :email, @user.email, :size=>"30", :class=>"f-input", :disabled => true %>
-                        </div>		
-                        <div class="field">
-							<%= label_tag 'Mobile Number', 'Mobile Number' %> 
-							<%= text_field_tag :mobile_number, @user.mobile_number, :size=>"30", :class=>"f-input" %>
-                        </div>
-                        <div class="act">
-							<%= submit_tag :submit, :value=>"Update Account", :class=>"formbutton"%>
-							or <%= link_to "cancel", home_url %>
-                        </div>
+					<div class="field">
+						<%= label_tag 'Email' %>
+						<%= text_field_tag :email, @user.email, :size=>"30", :class=>"f-input", :disabled => true %>
+	                 </div>
+					<div class="field">
+						<%= label_tag 'First Name', 'First Name' %>
+						<%= text_field_tag :first_name, @user.first_name, :size=>"30", :class=>"f-input" %>
+	                 </div>
+					<div class="field">
+						<%= label_tag 'Last Name', 'Last Name' %>
+						<%= text_field_tag :last_name, @user.last_name, :size=>"30", :class=>"f-input" %>
+	                 </div>					
+	                 <div class="act">
+						<%= submit_tag :submit, :value=>"Update Account", :class=>"formbutton"%>
+						or <%= link_to "cancel", home_url %>
+	                 </div>
                 </div>
             </div>
             <div class="box-bottom"></div>

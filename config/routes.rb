@@ -48,6 +48,7 @@ Rally::Application.routes.draw do
     scope :via => :get do
       match '/' => :home
       match :home
+      match :connect
       match :login
       match :logout
       match :signup
@@ -87,7 +88,10 @@ Rally::Application.routes.draw do
   end
 
   controller :site do
-    match 'tos' => :tos, :via => :get
+    match '/tos' => :tos, :via => :get
+    match '/privacy' => :privacy, :via => :get
+    match '/canvas' => :canvas, :via => :get
+    match '/canvas' => :canvas, :via => :post
   end
   
   namespace :help do

@@ -1,7 +1,9 @@
 require "facebook"
 
 class ApplicationController < ActionController::Base
-  protect_from_forgery
+  protect_from_forgery :except => :canvas
+
+  include Facebook
 
   # Merchant methods
   def require_merchant
@@ -25,18 +27,60 @@ class ApplicationController < ActionController::Base
   end
   
   # User methods
+  # Require that a user is present
   def require_user
+    # Get the user if they exist
+    user = get_user
+    
+    if user
+      # We found a user... Set them in the session
+      set_user(user)
+      return true
+    else
+      # No user.. redirect to login
+      flash[:notice] = "Login required."
+      session[:user_return_to] = request.path
+      redirect_to :controller => 'user', :action => 'login'
+    end
+    return false
+  end
+  
+  # Sets session information if a user is present
+  def check_for_user
+    user = get_user
+    if user
+      set_user(user)
+      return true
+    end
+    return false
+  end
+    
+  # Gets the fb user and checks if they exist in our system
+  def get_user    
+    # Short circuit user with a session user if they exist
     if session[:user_id]
-      @current_user = User.find(session[:user_id])
+      return User.find_by_id(session[:user_id])
+    end
+    
+    # Else see if there is a facebook connection...
+    fb_user = get_fb_user
+    if fb_user
+      return User.find_by_facebook_id(fb_user["id"])
+    end
+    return nil 
+  end
+  
+  # Sets the session information
+  def set_user(user)
+    if user
+      @current_user = user
+      session[:user_id] = user.id
       Time.zone = @current_user.time_zone
       return true
     end
-    flash[:notice] = "Login required."
-    session[:user_return_to] = request.path
-    redirect_to :controller => "user", :action => "login"
-    return false 
+    return false
   end
-
+  
   def redirect_user_to_stored
     if return_to = session[:user_return_to]
       session[:user_return_to]=nil
@@ -45,50 +89,8 @@ class ApplicationController < ActionController::Base
       redirect_to :controller=>'user', :action=>'home'
     end
   end
-  
-  def set_user
-    if session[:user_id]
-      @current_user = User.find(session[:user_id])
-      Time.zone = @current_user.time_zone
-      return true
-    end
-    return false
-  end
-  
-## FB-related user methods
-=begin
-  def require_user
-    # Require that one of users is in the session
-    
-    # Get the user if they exist
-    user = get_user
-    p user
-    
-    if user
-      # We found a user... Set them in the session
-      set_user(user)
-    else
-      # No user.. redirect to login
-      redirect_to user_login_url
-    end
-  end
-    
-  # Gets the fb user and checks if they exist in our system
-  def get_user    
-    # Make sure there is a facebook connection...
-    fb_user = get_fb_user
-    p fb_user
-    return unless fb_user
-        
-    # Short circuit user with a session user if they exist
-    return User.find(session[:user_id]) if session[:user_id]
-        
-    # Find the base user and use them
-    User.find_by_facebook_id(fb_user["id"])  
-  end
-=end
 
-  # Helper methods
+  # Helper methods - better place for this?
   def verify_date(string)
     begin
       return Time.zone.parse(string) ? true : false

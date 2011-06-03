@@ -24,7 +24,7 @@ class PaymentControllerTest < ActionController::TestCase
 
   def login
     @controller = UserController.new
-    post :login, :username => @test_user.username, :password => "test"
+    post :login, :email => @test_user.email, :password => "test"
     @controller = PaymentController.new
   end
   

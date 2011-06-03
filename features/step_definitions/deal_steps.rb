@@ -32,9 +32,6 @@ Given /^(?:I have|a merchant has) published (?:a deal|deals) titled (.+)$/ do |t
   expiration_date = Time.zone.today + 1.months
   titles.split(', ').each do |title|
     title = title.sub(/^"(.*)"$/,'\1')
-    unless @current_merchant
-      @current_merchant = Merchant.find_by_username(:emptybob)
-    end
     Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
       :start_date => start_date, :end_date => end_date, :expiration_date => expiration_date, 
       :deal_price => '10.00', :deal_value => '20.00', :published => true)
@@ -100,13 +97,13 @@ end
       
 
 # User Givens
-Given /^I am logged in as user "(.+?)" with password "(.+?)"/ do |username, password|
+Given /^I am logged in as user "(.+?)" with password "(.+?)"/ do |email, password|
   visit login_url
-  fill_in "Username", :with => username
+  fill_in "Email", :with => email
   fill_in "Password", :with => password
   click_button "Log In"
   # switch user
-  @current_user = User.find_by_username(username)
+  @current_user = User.find_by_email(email)
 end
 
 # When

@@ -1,14 +1,12 @@
 test_user:
-    username: test_user
-    email: "matt.esch+1@gmail.com"
+    email: "test_user@rallycommerce.com"
     salt: 1000
     hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
     activation_code: 1234567890
     activated: true
 
 existing_user:
-    username: existing_user
-    email: "matt.esch+2@gmail.com"
+    email: "existing_user@rallycommerce.com"
     salt: 1000
     hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
     activation_code: 1234567890
@@ -16,32 +14,28 @@ existing_user:
     time_zone: "Hawaii"
 
 long_user:
-    username: long_user
-    email: "matt.esch+3@gmail.com"
+    email: "long_user@rallycommerce.com"
     salt: 1000
     hashed_password: 00728d3362c26746ec25963f71be022b152237a9 # longtest
     activation_code: 1234567890
     activated: true
 
 inactive_user:
-    username: inactive_user
-    email: "matt.esch+4@gmail.com"
+    email: "inactive_user@rallycommerce.com"
     salt: 1000
     hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
     activation_code: 1234567890
     active: false
     
 inactivated_user:
-    username: inactivated_user
-    email: "matt.esch+5@gmail.com"
+    email: "inactivated_user@rallycommerce.com"
     salt: 1000
     hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
     activation_code: 1234567890
     activated: false
 
 empty_user:
-    username: empty_user
-    email: "matt.esch+6@gmail.com"
+    email: "empty_user@rallycommerce.com"
     salt: 1000
     hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
     activation_code: 1234567890

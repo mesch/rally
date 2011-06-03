@@ -129,7 +129,6 @@ dd#bd{position:relative;z-index:1;width:960px;margin:0 auto;padding:30px 0 65px;
 #content{float:left;width:702px;_display:inline;margin-left:8px;margin-right:16px;padding:0;}
 #content.mainwide{float:left;width:944px;_display:inline;margin-left:8px;margin-right:16px;padding:0;}
 
-
 .box-top{background:url(i/bg-box-702.gif) no-repeat 0 0;height:20px;overflow:hidden;}
 .box-content{background:#fff;border-left:2px solid #89b4d6;border-right:2px solid #89b4d6;}
 .box-bottom{background:url(i/bg-box-702.gif) no-repeat 0 -21px;height:20px;overflow:hidden;}
@@ -187,6 +186,7 @@ dd#bd{position:relative;z-index:1;width:960px;margin:0 auto;padding:30px 0 65px;
 #content .title{padding:0 10px;}
 #content .title h3{display:inline;padding-left:10px;font-size:1.5em;}
 #content .sect{width:678px;padding:20px 10px 50px;border-top:1px solid #def;}
+#content .subsect{width:678px;padding:20px 10px 20px;border-top:1px solid #def;}
 #content.mainwide .sect{width:920px;padding:20px 10px 50px;border-top:1px solid #def;}
 #content .field{clear:left;float:left;*float:none;_display:inline;width:650px;padding:0 10px 2px;margin:5px auto 10px;}
 #content.mainwide .field{clear:left;float:left;*float:none;_display:inline;width:892px;padding:0 10px 2px;margin:5px auto 10px;}
@@ -220,6 +220,7 @@ dd#bd{position:relative;z-index:1;width:960px;margin:0 auto;padding:30px 0 65px;
 #content .notice{padding:10px;}
 #content .notice-special{margin:10px;padding:10px;border:1px dashed #ccc;background:#f1f1f1;}
 #content .wholetip h3{padding:8px 18px;font-size:16px;}
+#content .wholetip p{padding:8px 18px;}
 #content .inputtip{float:left;margin-left:10px;margin-top:5px;font-size:12px;color:#666;}
 #content .city_list a{ margin-right: 12px; }
 

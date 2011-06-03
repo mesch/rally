@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110527210156) do
+ActiveRecord::Schema.define(:version => 20110602041410) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -143,23 +143,22 @@ ActiveRecord::Schema.define(:version => 20110527210156) do
   add_index "orders", ["user_id", "deal_id"], :name => "orders_by_user_deal"
 
   create_table "users", :force => true do |t|
-    t.string   "username"
     t.string   "hashed_password"
     t.string   "salt"
     t.string   "email"
     t.string   "first_name"
     t.string   "last_name"
     t.string   "activation_code"
-    t.boolean  "activated",        :default => false
-    t.boolean  "active",           :default => true
-    t.string   "time_zone",        :default => "Pacific Time (US & Canada)"
+    t.boolean  "activated",                     :default => false
+    t.boolean  "active",                        :default => true
+    t.string   "time_zone",                     :default => "Pacific Time (US & Canada)"
     t.string   "mobile_number"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "balance_in_cents", :default => 0
+    t.integer  "balance_in_cents",              :default => 0
+    t.integer  "facebook_id",      :limit => 8
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
-  add_index "users", ["username"], :name => "index_users_on_username"
 
 end

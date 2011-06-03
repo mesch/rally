@@ -142,18 +142,18 @@ Feature: View Deals
 	Scenario: Order Page (Not Logged In)
 		Given a merchant has published a deal titled "Cool New Deal"
 		When I go to the order page for "Cool New Deal"
-		Then I should see "User Login"
+		Then I should see "Log In"
 	
 	Scenario: Order Page (Logged In)
 		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 
 	Scenario: Order Page (limit = 0, no previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 0
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should not see "Limit 0"
@@ -162,7 +162,7 @@ Feature: View Deals
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 0
 		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should not see "Limit 0"
@@ -170,7 +170,7 @@ Feature: View Deals
 	Scenario: Order Page (limit = 1, no previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 1
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 1"
@@ -179,7 +179,7 @@ Feature: View Deals
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 1
 		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 1"
@@ -187,7 +187,7 @@ Feature: View Deals
 	Scenario: Order Page (limit = 2, no previous order)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 2
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 2"
@@ -196,7 +196,7 @@ Feature: View Deals
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the limit of deal "Cool New Deal" to 2
 		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
-		And I am logged in as user "empty_user" with password "test"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 2"
