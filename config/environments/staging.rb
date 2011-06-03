@@ -50,4 +50,9 @@ Rally::Application.configure do
     :default_url => "/images/missing_thumb.png"
   }
   
+  # Facebook logins
+  OPTIONS[:facebook_app_id] = "166453363417453"
+  OPTIONS[:facebook_api_key] = "e45952395e1533ec122b2772be59ae38"
+  OPTIONS[:facebook_secret_key] = "b412d339a7b119e4d0793a0120cbb4d1"
+  
 end
