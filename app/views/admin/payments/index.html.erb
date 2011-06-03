@@ -25,9 +25,9 @@
 						<tr>
 							<td><%= payment.id %></td>
 							<td><%= payment.user.id %></td>
-							<td><%= payment.order.deal.id %></td>
-							<td><%= payment.order.deal.title %></td>
-							<td><%= payment.order.id %></td>
+							<td><%= payment.order ? payment.order.deal.id : '' %></td>
+							<td><%= payment.order ? payment.order.deal.title : '' %></td>
+							<td><%= payment.order ? payment.order.id : '' %></td>
 							<td><%= payment.amount.format %></td>
 							<td><%= payment.gateway %></td>
 							<td><%= payment.transaction_type %></td>
