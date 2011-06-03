@@ -1,3 +1,5 @@
+require "exception"
+
 class Order < ActiveRecord::Base
   validates_presence_of :user_id, :deal_id, :quantity, :amount
   validates_inclusion_of :state, :in => [OPTIONS[:order_states][:created], OPTIONS[:order_states][:authorized], OPTIONS[:order_states][:paid]]
@@ -77,14 +79,17 @@ class Order < ActiveRecord::Base
         Order.find_by_id(self.id, :lock => true)
         # go through all order_payments
         order_payments = self.order_payments
+        if order_payments.size == 0
+          raise PaymentError, "No order_payments to process."
+        end
         for order_payment in order_payments
           order_payment.capture!
         end
         # update order
         self.update_attributes!(:state => OPTIONS[:order_states][:paid])
       end
-    rescue RuntimeError => e
-      logger.error "Order.capture: Failed for Order #{self}", e
+    rescue PaymentError => pe
+      logger.error "Order.capture: Failed for Order #{self}", pe
     rescue ActiveRecord::RecordInvalid => invalid
       logger.error "Order.capture: Failed for Order #{self}", invalid
     end

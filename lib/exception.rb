@@ -1,0 +1,3 @@
+class PaymentError < RuntimeError
+
+end

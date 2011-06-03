@@ -1,4 +1,5 @@
 require 'authorize_net'
+require "exception"
 
 class OrderPayment < ActiveRecord::Base
   validates_presence_of :user_id, :order_id, :gateway, :amount
@@ -17,12 +18,12 @@ class OrderPayment < ActiveRecord::Base
         self.update_attributes!(:transaction_type => 'capture_only')
       else
         logger.warn "OrderPayment.capture!: CAPTURE_ONLY failed for Order Payment #{self}"
-        raise "AUTHORIZE.NET: AUTH_ONLY FAILED"
+        raise PaymentError, "AUTHORIZE.NET: AUTH_ONLY FAILED."
       end
     else
       # skipping everything else for now
       logger.warn "OrderPayment.capture!: Skipped Order Payment #{self}"
-      raise "SKIPPED ORDER PAYMENT"
+      raise PaymentError, "SKIPPED ORDER PAYMENT."
     end
   end
 
