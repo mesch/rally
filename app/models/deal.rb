@@ -152,17 +152,26 @@ class Deal < ActiveRecord::Base
   end
   
   def self.charge_orders
+    considered = 0
+    successes = 0
+    failures = 0
     # select all deals - tipped, not expired
     deals = Deal.find(:all, :conditions => ["expiration_date >= ?", Time.zone.today])
     for deal in deals
       if deal.is_tipped
         # charge any authorized orders
         orders = Order.find(:all, :conditions => ["deal_id = ? AND state = ?", deal.id, OPTIONS[:order_states][:authorized]])
+        considered = orders.length
         for order in orders
-          order.capture
+          if order.capture
+            successes += 1
+          else
+            failures += 1
+          end
         end
       end
     end
+    return {:considered => considered, :successes => successes, :failures => failures}
   end
   
 end

@@ -80,6 +80,7 @@ class Order < ActiveRecord::Base
         # go through all order_payments
         order_payments = self.order_payments
         if order_payments.size == 0
+          p "No order_payments to process."
           raise PaymentError, "No order_payments to process."
         end
         for order_payment in order_payments
@@ -88,11 +89,15 @@ class Order < ActiveRecord::Base
         # update order
         self.update_attributes!(:state => OPTIONS[:order_states][:paid])
       end
+      return true
     rescue PaymentError => pe
+      p "Order.capture: Failed for Order #{self} #{pe}"
       logger.error "Order.capture: Failed for Order #{self}", pe
     rescue ActiveRecord::RecordInvalid => invalid
+      p "Order.capture: Failed for Order #{self} #{invalid}"
       logger.error "Order.capture: Failed for Order #{self}", invalid
     end
+    return false
   end
   
   def is_timed_out(timeout=nil)
@@ -113,25 +118,30 @@ class Order < ActiveRecord::Base
 
   # Reset quantity and amount (to 0) for unconfirmed orders that have timed out
   def self.reset_orders(timeout=nil)
+    considered = 0
+    successes = 0
+    failures = 0
     unless timeout
       # add some buffer (5 mins)
       timeout = OPTIONS[:order_timeout] + 5*60
     end
     
-    begin
-      Order.transaction do
-        # select order and lock until all are updated
-        orders = Order.find(:all, :conditions => ["updated_at < ? AND state = ? AND quantity > 0", 
-          Time.zone.now - (timeout.seconds), OPTIONS[:order_states][:created]], :lock => true)
-		    # set quantity to 0, amount to 0
-		    for order in orders
-		      order.update_attributes!(:quantity => 0, :amount => 0)
-        end
-        logger.info "#{orders.size} orders reset."
+    Order.transaction do
+      # select order and lock until all are updated
+      orders = Order.find(:all, :conditions => ["updated_at < ? AND state = ? AND quantity > 0", 
+        Time.zone.now - (timeout.seconds), OPTIONS[:order_states][:created]], :lock => true)
+      considered = orders.length
+	    # set quantity to 0, amount to 0
+	    for order in orders
+	      if order.update_attributes(:quantity => 0, :amount => 0)
+	        successes += 1
+	      else
+	        failures += 1
+	      end
       end
-    rescue ActiveRecord::RecordInvalid => invalid
-      logger.error "Order.rest_orders: ", invalid
+      logger.info "#{orders.size} orders reset."
     end
+    return {:considered => considered, :successes => successes, :failures => failures}
   end
 
 end

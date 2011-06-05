@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110602041410) do
+ActiveRecord::Schema.define(:version => 20110605212852) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -141,6 +141,17 @@ ActiveRecord::Schema.define(:version => 20110602041410) do
   end
 
   add_index "orders", ["user_id", "deal_id"], :name => "orders_by_user_deal"
+
+  create_table "process_logs", :force => true do |t|
+    t.string   "name"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.integer  "considered"
+    t.integer  "successes"
+    t.integer  "failures"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "hashed_password"
