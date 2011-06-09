@@ -8,7 +8,7 @@ module Facebook
       begin
         fb_user = graph.get_object(user_info["uid"])
       rescue Koala::Facebook::APIError => fe
-        logger.error "Facebook.get_fb_user: Caught FB error.", fe
+        logger.error "Facebook.get_fb_user: #{fe}"
         return nil
       end
     end
