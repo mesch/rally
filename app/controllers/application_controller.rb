@@ -1,7 +1,7 @@
 require "facebook"
 
 class ApplicationController < ActionController::Base
-  protect_from_forgery :except => :canvas
+  protect_from_forgery
 
   include Facebook
 
@@ -38,9 +38,8 @@ class ApplicationController < ActionController::Base
       return true
     else
       # No user.. redirect to login
-      flash[:notice] = "Login required."
       session[:user_return_to] = request.path
-      redirect_to :controller => 'user', :action => 'login'
+      go_to_login
     end
     return false
   end
@@ -56,7 +55,7 @@ class ApplicationController < ActionController::Base
   end
     
   # Gets the fb user and checks if they exist in our system
-  def get_user    
+  def get_user()  
     # Short circuit user with a session user if they exist
     if session[:user_id]
       return User.find_by_id(session[:user_id])
@@ -86,7 +85,7 @@ class ApplicationController < ActionController::Base
       session[:user_return_to]=nil
       redirect_to(return_to)
     else
-      redirect_to :controller=>'user', :action=>'home'
+      go_home
     end
   end
 

@@ -1,7 +1,7 @@
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div id="coupons">
-    <div id="content" class="box clear mainwide">
+    <div id="content" class="box clear">
 		<div class="box clear">
             <div class="box-top"></div>
             <div class="box-content">
@@ -26,7 +26,8 @@
 								<td><%= coupon.state %></td>
 								<td><%= coupon.created_at.strftime(OPTIONS[:date_format]) %></td>
 								<td><%= coupon.deal.expiration_date.strftime(OPTIONS[:date_format]) %></td>
-								<td><%= link_to "View", coupon_url(coupon.id) %></td>
+								<td><%= link_to "View", 
+									url_for(:controller => controller.controller_name, :action => 'coupon', :id => coupon.id) %></td>
 							</tr>
 						<% end %>
                     </table>

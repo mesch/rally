@@ -1,4 +1,4 @@
-<%= form_tag :controller => :user, :action=>'login', :class=>"validator" %>
+<%= form_tag :controller => controller.controller_name, :action=>'login', :class=>"validator" %>
 
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
@@ -10,27 +10,30 @@
                 <div class="head"><h2>Log In</h2></div>
 					<div class="subsect">
 						<div class="wholetip clear"><h3>Rally Commerce + Facebook</h3></div>
+						<div id="fb-root"></div>
 						<div class="act">
 							<div id="fb-login-button"></div>
 						</div>
 						<div class="wholetip"><p>Skip signup! The easiest way to start with Rally Commerce.</p></div>
 					</div>
-					<div class="sect">
-						<div class="wholetip clear"><h3>Already have an account?</h3></div>
-	                	<div class="field">
-		                	<label for="email">Email</label>
-							<%= text_field_tag :email, nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
-		                </div>
-		                <div class="field">
-		                    <label for="password">Password</label>
-							<%= password_field_tag :password, nil, :class=>"f-input", :datatype=>"require", :require=>"true" %>
-		                </div>
-		                <div class="act">
-							<%= submit_tag :submit, :value => 'Log In', :class=>"formbutton"%>
-							<%= link_to 'Sign Up', signup_url %> |
-		  					<%= link_to 'Forgot my password', forgot_password_url %>
-		               	</div>
-					</div>
+					<% if controller.controller_name == 'user' %>
+						<div class="sect">
+							<div class="wholetip clear"><h3>Already have an account?</h3></div>
+		                	<div class="field">
+			                	<label for="email">Email</label>
+								<%= text_field_tag :email, nil, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
+			                </div>
+			                <div class="field">
+			                    <label for="password">Password</label>
+								<%= password_field_tag :password, nil, :class=>"f-input", :datatype=>"require", :require=>"true" %>
+			                </div>
+			                <div class="act">
+								<%= submit_tag :submit, :value => 'Log In', :class=>"formbutton"%>
+								<%= link_to 'Sign Up', url_for(:controller => controller.controller_name, :action => 'signup') %> |
+			  					<%= link_to 'Forgot my password', url_for(:controller => controller.controller_name, :action => 'forgot_password') %>
+			               	</div>
+						</div>
+					<% end %>
                 </div>
             </div>
             <div class="box-bottom"></div>
@@ -50,13 +53,13 @@
         });
 		// If they log in - redirect_to :connect
         FB.Event.subscribe('auth.login', function() {
-            window.location = "/connect";
+            window.location = '<%= url_for(:controller => controller.controller_name, :action => 'connect') %>';
         });
 		// If they are already logged in - redirect_to :connect
 		// Else - show fb:login-button 
 		FB.getLoginStatus(function(response) {
 	     if (response.status == 'connected') {
-	        document.getElementById('fb-login-button').innerHTML = '<%= link_to image_tag("facebook_login_button.png"), connect_url %>';
+	        document.getElementById('fb-login-button').innerHTML = '<%= link_to image_tag("facebook_login_button.png"), url_for(:controller => controller.controller_name, :action => 'connect') %>';
 	     } else {
 	        document.getElementById('fb-login-button').innerHTML = '<fb:login-button perms="email">Login</fb:login-button>';
 	        FB.XFBML.parse(document.getElementById('fb-login-button'));

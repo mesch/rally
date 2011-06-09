@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" id="">
+<head>
+	<meta http-equiv=content-type content="text/html; charset=UTF-8">
+	<title><%= OPTIONS[:site_name] %></title>
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<!-- ><link rel="shortcut icon" href="/favicon.ico" /> -->
+	<%= raw stylesheet_link_tag 'facebook.css', :media => "screen", :charset => "utf-8" %>	
+	<script type="text/javascript">var WEB_ROOT = '';</script>
+	<%= raw javascript_include_tag "index.js" %>
+	
+</head>
+<body>
+<div id="pagemasker"></div><div id="dialog"></div>
+<div id="doc">
+	<div id="hdw">
+		<div id="hd">
+			<ul class="nav cf">
+				<% if @current_user %>
+					<li <%= controller.action_name == 'home' ? 'class=current' : '' %> >
+						<% if controller.controller_name == 'user' or controller.controller_name == 'payment' %>
+							<%= link_to "Home", home_url %></li>
+						<% else %>
+							<%= link_to "Home", facebook_home_url %></li>
+						<% end %>
+					<li <%= controller.action_name == 'deals' ? 'class=current' : '' %> >
+						<% if controller.controller_name == 'user' or controller.controller_name == 'payment' %>						
+							<%= link_to "Deals", deals_url %></li>
+						<% else %>
+							<%= link_to "Deals", facebook_deals_url %></li>
+						<% end %>
+					<li <%= controller.action_name == 'coupons' ? 'class=current' : '' %> >
+						<% if controller.controller_name == 'user' or controller.controller_name == 'payment' %>
+							<%= link_to "Coupons", coupons_url %></li>
+						<% else %>
+							<%= link_to "Coupons", facebook_coupons_url %></li>	
+						<% end %>		
+				<% else %>
+					<li <%= controller.action_name == 'tour' ? 'class=current' : '' %> >
+						<%= link_to "Tour", help_tour_url %></li>
+				<% end %>
+			</ul>
+	
+			<% if @current_user %>
+			<div class="logins">
+				<ul id="account">
+					<li class="username">Welcome<%= @current_user.first_name ? ", #{@current_user.first_name}" : "!" %></li>				
+				</ul>
+				<div class="line islogin"></div>
+			</div>
+			<% else %>
+			<div class="logins">
+				<ul id="account">
+					<li class="login"><%= link_to "Log In", 
+						url_for(:controller => controller.controller_name, :action => 'logout') %></li>
+					</ul>
+				<div class="line "></div>
+			</div>
+			<% end %>
+		</div>
+	</div>
+
+	<% if flash[:notice] %>
+	<div class="sysmsgw" id="sysmsg-success"><div class="sysmsg"><p><%= flash[:notice] %></p><span class="close">Close</span></div></div>
+	<% end %>
+	<% if flash[:error] %>
+	<div class="sysmsgw" id="sysmsg-error"><div class="sysmsg"><p><%= flash[:error] %></p><span class="close">Close</span></div></div> 
+	<% end %>
+
+	<%= yield %>
+	
+	<% if @current_user %>
+		<script type="text/javascript">
+			/* Useful info when doing javascript queries */
+			var fb_id = <%= @current_user.facebook_id %>;
+		</script>
+	<% end %>
+
+</div>
+</body>
+</html>

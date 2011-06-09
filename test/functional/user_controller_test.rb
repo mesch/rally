@@ -11,9 +11,6 @@ class UserControllerTest < ActionController::TestCase
   fixtures :users
 
   def setup
-    @controller = UserController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
     @request.host = "localhost"
   end
 
@@ -334,7 +331,6 @@ class UserControllerTest < ActionController::TestCase
   end   
   
 ## unable to test due to @request not getting set in ApplicationController
-=begin
   def test_return_to
     #cant access account without being logged in
     get :account
@@ -348,7 +344,6 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action=>'account'
     assert_nil session[:user_return_to]
     assert session[:user_id]
-    assert flash[:notice]
     #logout and login again
     get :logout
     assert_nil session[:user_id]
@@ -357,5 +352,4 @@ class UserControllerTest < ActionController::TestCase
     #this time we were redirected to home
     assert_redirected_to :action=>'home'
   end
-=end
 end

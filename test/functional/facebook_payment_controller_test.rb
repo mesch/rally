@@ -1,10 +1,10 @@
 require 'test_helper'
-require 'payment_controller'
+require 'facebook_payment_controller'
 
 # Re-raise errors caught by the controller.
-class PaymentController; def rescue_action(e) raise e end; end
+class FacebookPaymentController; def rescue_action(e) raise e end; end
 
-class PaymentControllerTest < ActionController::TestCase
+class FacebookPaymentControllerTest < ActionController::TestCase
 
   self.use_instantiated_fixtures  = true
 
@@ -12,7 +12,7 @@ class PaymentControllerTest < ActionController::TestCase
   fixtures :deals
 
   def setup
-    @controller = PaymentController.new
+    @controller = FacebookPaymentController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
     @request.host = "localhost"
@@ -20,13 +20,14 @@ class PaymentControllerTest < ActionController::TestCase
     @deal = @burger_deal
     @order = @test_user.unconfirmed_order(@deal.id)
     @order.update_attributes(:quantity => '1', :amount => '20.00')
-    @user_controller_name = 'user'
+    @user_controller_name = 'facebook'   
   end
 
   def login
+    # faking FB login for now
     @controller = UserController.new
     post :login, :email => @test_user.email, :password => "test"
-    @controller = PaymentController.new
+    @controller = FacebookPaymentController.new
   end
   
   # order page

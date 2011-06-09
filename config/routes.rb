@@ -47,12 +47,42 @@ Rally::Application.routes.draw do
     match '/relay_response' =>  :relay_response,  :via => :post
     match '/receipt'        =>  :receipt,         :via => :get
   end
-
+  
+  # Facebook
+  namespace :facebook do
+    scope :via => :get do
+      match '/' => :home
+      match :home
+      match :connect
+      match :login
+      match :logout
+      match :invite
+      match :deals
+      match '/deal/:id' => :deal, :as => :deal
+      match :coupons
+      match '/coupon/:id' => :coupon, :as => :coupon
+    end
+    scope :via => :post do
+      match '/' => :home
+      match :home
+      match :home
+      match :login
+      match :invite
+    end
+  end
+  
+  # Facebook Payments?
+  namespace :facebook_payment do
+    match '/order'          =>  :order,           :via => :get
+    match '/order'          =>  :order,           :via => :post    
+    match '/purchase'       =>  :purchase,        :via => :get
+    match '/relay_response' =>  :relay_response,  :via => :post
+    match '/receipt'        =>  :receipt,         :via => :get
+  end
+  
   controller :site do
     match '/tos' => :tos, :via => :get
     match '/privacy' => :privacy, :via => :get
-    match '/canvas' => :canvas, :via => :get
-    match '/canvas' => :canvas, :via => :post
   end
   
   namespace :help do

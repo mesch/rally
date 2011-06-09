@@ -9,6 +9,10 @@ class PaymentController < ApplicationController
     redirect_to :controller => 'user', :action => 'home'
   end
   
+  def go_to_login
+    redirect_to :controller => 'user', :action => 'login'
+  end
+  
   # order form
   def order
     # number of checks to see if coming out of context
@@ -27,7 +31,7 @@ class PaymentController < ApplicationController
     # check if deal has ended
     if @deal.is_ended
       flash[:notice] = "This deal has ended. Checkout out some of our other deals!"
-      redirect_to :controller => 'user', :action => 'home'
+      go_home()
       return
     end
     
@@ -42,7 +46,9 @@ class PaymentController < ApplicationController
       if quantity != 0
         # try to reserve the quantity - update order
         if @order.reserve_quantity(quantity)
-          redirect_to :controller => 'payment', :action => 'purchase', :order_id => @order.id
+          p self.controller_name
+          redirect_to :controller => self.controller_name, :action => 'purchase', :order_id => @order.id
+          return
         else
           flash.now[:error] = "There are not enough coupons available. Reduce your quantity and try again."
         end
@@ -50,6 +56,7 @@ class PaymentController < ApplicationController
         flash.now[:error] = "Select at least one coupon."
       end
     end
+    render "payment/#{self.action_name}"
   end
 
 
@@ -88,14 +95,14 @@ class PaymentController < ApplicationController
     # check if deal has ended
     if deal.is_ended
       flash[:error] = "This deal has ended. Checkout out some of our other deals!"
-      redirect_to :controller => 'user', :action => 'home'
+      go_home()
       return
     end
     
     # check if order is timed out
     if @order.is_timed_out
       flash[:error] = "Your order has timed out. Please restart your transaction."
-      redirect_to :controller => 'payment', :action => 'order', :deal_id => @order.deal.id
+      redirect_to :controller => self.controller_name, :action => 'order', :deal_id => @order.deal.id
       return
     end
    
@@ -109,8 +116,9 @@ class PaymentController < ApplicationController
         AUTHORIZE_NET_CONFIG['api_transaction_key'], 
         @order.amount.to_f,
         :type => AuthorizeNet::SIM::Transaction::Type::AUTHORIZE_ONLY,
-        :relay_url => payment_relay_response_url(:only_path => false))
+        :relay_url => url_for(:controller => self.controller_name, :action => 'relay_response', :only_path => false))
     @timeout = OPTIONS[:order_timeout]
+    render "payment/#{self.action_name}"
   end
 
   # POST
@@ -119,12 +127,14 @@ class PaymentController < ApplicationController
     sim_response = AuthorizeNet::SIM::Response.new(params)
     if sim_response.success?(AUTHORIZE_NET_CONFIG['api_login_id'], AUTHORIZE_NET_CONFIG['merchant_hash_value'])
       render :text => sim_response.direct_post_reply(
-                        payment_receipt_url(:only_path => false, :gateway => OPTIONS[:gateways][:authorize_net]), 
+                        url_for(:controller => self.controller_name, :action => 'receipt', :only_path => false, 
+                                :gateway => OPTIONS[:gateways][:authorize_net]), 
                         :include => true)
     else
       # return back to purchase page - will display error message there
       render :text => sim_response.direct_post_reply(
-                        payment_purchase_url(:only_path => false, :order_id => params[:x_invoice_num], :failure => true), 
+                        url_for(:controller => self.controller_name, :action => 'purchase', :only_path => false, 
+                                :order_id => params[:x_invoice_num], :failure => true), 
                         :include => true)
     end
   end
@@ -149,6 +159,7 @@ class PaymentController < ApplicationController
       :amount => amount, :confirmation_code => @confirmation_code)
       flash.now[:error] = "Your transaction was approved. However, there was a problem creating your coupons. Please contact Customer Service."
     end 
+    render "payment/#{self.action_name}"
   end
 
 end

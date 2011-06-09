@@ -7,10 +7,19 @@ class UserController < ApplicationController
 
   include Facebook
   
+  def go_home
+    redirect_to :controller => self.controller_name, :action => 'home'
+  end
+  
+  def go_to_login
+    redirect_to :controller => self.controller_name, :action => 'login'
+  end
+  
   # Deals
   def deals
     # TODO: Move this query into deal.rb? or user.rb?
     @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
+    render "user/#{self.action_name}"
   end
   
   def deal
@@ -32,27 +41,32 @@ class UserController < ApplicationController
       :all, 
       :conditions => [ "published = ? AND start_date <= ? AND end_date >= ? AND id != ?", true, Time.zone.today, Time.zone.today, @deal.id], 
       :limit => 3)
+    render "user/#{self.action_name}"
   end
 
+  # Coupons
   def coupons
     @coupons = @current_user.coupons
+    render "user/#{self.action_name}"
   end
   
   def coupon
     @coupon = Coupon.find_by_id(params[:id])
+    render "user/#{self.action_name}"
   end
 
+  
   def subscribe
-    
+    render "user/#{self.action_name}"
   end
 
   def invite
-    
+    render "user/#{self.action_name}"
   end
 
   def home
     # just go to deals, for now?
-    redirect_to :controller => 'user', :action => 'deals'
+    redirect_to :controller => self.controller_name, :action => 'deals'
   end
 
   # Account methods
@@ -61,7 +75,7 @@ class UserController < ApplicationController
     fb = get_fb_user
 
     unless fb
-      redirect_to :controller => 'user', :action => 'login'
+      redirect_to :controller => self.controller_name, :action => 'login'
       return
     end
     
@@ -73,16 +87,16 @@ class UserController < ApplicationController
     end
     # Try creating new user
     unless user
-      user = User.new(:facebook_id => fb["id"], :first_name => fb["first_name"], :last_name => fb["last_name"], :email => fb["email"])
+      user = User.new(:facebook_id => fb["id"], :first_name => fb["first_name"], :last_name => fb["last_name"], :email => fb["email"], :activated => true)
       user.password = user.password_confirmation = User.generate_password
       unless user.save
         logger.error "UserController.connect: Can't create User #{user}"
-        redirect_to :controller => 'user', :action => 'login'
+        redirect_to :controller => self.controller_name, :action => 'login'
         return
       end       
     end
     set_user(user)
-    redirect_to :controller => 'user', :action => 'home'
+    redirect_to :controller => self.controller_name, :action => 'home'
   end
   
   def account
@@ -95,6 +109,7 @@ class UserController < ApplicationController
         flash.now[:error] = "Could not update account. Please try again."
       end
     end
+    render "user/#{self.action_name}"
   end
 
   def signup    
@@ -107,22 +122,23 @@ class UserController < ApplicationController
       # Check TOS
       unless params[:tos]     
         flash.now[:error] = "You must agree to the Terms of Service."
-        render(:action => :signup)
+        render "user/#{self.action_name}"
         return
       end
       # Captcha validation
       unless verify_recaptcha(:private_key => OPTIONS[:recaptcha_private_key])      
         flash.now[:error] = "Invalid captcha results. Please try again."
-        render(:action => :signup)
+        render "user/#{self.action_name}"
         return
       end
       if @user.save and @user.send_activation()
-          flash[:notice] = "Signup successful. An activation code has been sent."
-          redirect_to :controller => 'user', :action =>'login'
+        flash[:notice] = "Signup successful. An activation code has been sent."
+        redirect_to :controller => self.controller_name, :action =>'login'
+        return
       else
         logger.error "User.signup: Couldn't create User #{@user}"
         flash.now[:error] = "Signup unsuccessful."
-        render(:action => :signup)
+        render "user/#{self.action_name}"
       end
     end
   end
@@ -138,21 +154,24 @@ class UserController < ApplicationController
           if u.activated
             session[:user_id] = u.id
             redirect_user_to_stored
+            return
           else
             flash[:error] = "You must activate your account."
-            redirect_to :controller => 'user', :action => :reactivate
+            redirect_to :controller => self.controller_name, :action => :reactivate
+            return
           end
         else
           flash.now[:error] = "Your account is no longer active. Please contact customer support."
         end
       end
     end
+    render "user/#{self.action_name}"
   end
 
   def logout
     @current_user = nil
     reset_session
-    redirect_to :controller => 'user', :action => 'login'
+    redirect_to :controller => self.controller_name, :action => 'login'
   end
 
   def forgot_password
@@ -160,11 +179,13 @@ class UserController < ApplicationController
       u = User.find_by_email(params[:email])
       if u and u.send_new_password
         flash[:notice]  = "A new password has been sent."
-        redirect_to :controller => 'user', :action =>'login'
+        redirect_to :controller => self.controller_name, :action =>'login'
+        return
       else
         flash.now[:error]  = "Could not find your account. Please enter a valid email."
       end
     end
+    render "user/#{self.action_name}"
   end
 
   def change_password
@@ -172,19 +193,23 @@ class UserController < ApplicationController
     if request.post?
       if params[:password].blank?
         flash[:error] = "Passwords cannot be empty."
-        redirect_to :controller => 'user', :action => 'change_password'
+        redirect_to :controller => self.controller_name, :action => 'change_password'
+        return
       else
         @user.update_attributes(:password => params[:password], :password_confirmation => params[:password_confirmation])
         if @user.save
           flash[:notice] = "Password changed."
-          redirect_to :controller => 'user', :action => 'account'
+          redirect_to :controller => self.controller_name, :action => 'account'
+          return
         else
           logger.error "User.change_password: Couldn't update password for User #{@user}"
           flash[:error] = "Password not changed. Passwords must be at least 3 characters and match the confirmation field."
-          redirect_to :controller => 'user', :action => 'change_password'
+          redirect_to :controller => self.controller_name, :action => 'change_password'
+          return
         end
       end
     end
+    render "user/#{self.action_name}"
   end
   
   def change_email
@@ -192,18 +217,21 @@ class UserController < ApplicationController
     if request.post?
       if @user.update_email(params[:email])
         flash[:notice]  = "Your email has been updated."
-        redirect_to :controller => 'user', :action => 'logout'
+        redirect_to :controller => self.controller_name, :action => 'logout'
+        return
       else
         logger.error "User.change_email: Couldn't update email for User #{@user}"
         flash.now[:error]  = "Could not update email. Please try again."
       end
     end
+    render "user/#{self.action_name}"
   end
   
   def activate
     if params[:activation_code].blank? or params[:user_id].blank?
       flash[:error] = "The activation code was missing.  Please follow the URL from your email."
-      redirect_to :controller => 'user', :action => :reactivate
+      redirect_to :controller => self.controller_name, :action => :reactivate
+      return
     else      
       activation_code = params[:activation_code] 
       user = User.find(:first, :conditions => {:id => params[:user_id]})
@@ -211,10 +239,12 @@ class UserController < ApplicationController
         # Activate the user
         user.activate
         flash[:notice] = "Congratulations! Your account is now active. Please login."
-        redirect_to :controller => 'user', :action => :login
+        redirect_to :controller => self.controller_name, :action => :login
+        return
       else 
         flash[:error]  = "Invalid activation code. Maybe you've already activated. Try signing in."
-        redirect_to :controller => 'user', :action => :login
+        redirect_to :controller => self.controller_name, :action => :login
+        return
       end
     end
   end
@@ -224,11 +254,13 @@ class UserController < ApplicationController
       u = User.find(:first, :conditions => {:email => params[:email]})
       if u and u.send_activation
         flash[:notice]  = "An activation code has been sent by email."
-        redirect_to :controller => 'user', :action =>'login'
+        redirect_to :controller => self.controller_name, :action =>'login'
+        return
       else
         flash.now[:error]  = "Could not find your account. Please enter a valid email."
       end
-    end    
+    end
+    render "user/#{self.action_name}"   
   end
   
 end

@@ -32,7 +32,11 @@
 	<div class="sysmsg-tip-top"></div>
 	<div class="sysmsg-tip-content">
 		You have ordered, but not paid yet.
-		<%= link_to "Check your order and make a payment", payment_order_url(:deal_id => @deal.id) %>
+		<% if controller.controller_name == 'user' %>
+			<%= link_to "Check your order and make a payment", payment_order_url(:deal_id => @deal.id) %>
+		<% else %>
+			<%= link_to "Check your order and make a payment", facebook_payment_order_url(:deal_id => @deal.id) %>
+		<% end %>			
 		<span id="sysmsg-tip-close" class="sysmsg-tip-close">Close</span>
 	</div>
 	<div class="sysmsg-tip-bottom"></div>
@@ -43,7 +47,10 @@
 	<%= render :partial => 'layouts/block/team_share' %>
 	<div id="content">
 		<div id="deal-intro" class="cf">
-        <h1><%= link_to "Today's Deal:", deal_url(@deal.id), :class => "deal-today-link" %><%= @deal.title %></h1>
+        <h1><%= link_to "Today's Deal:", 
+			url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id), :class => "deal-today-link" %>
+			<%= @deal.title %>
+		</h1>
         <div class="main">
             <div class="deal-buy">
             	<div class="deal-price-tag"></div>
@@ -60,7 +67,15 @@
 				<% else %>
 					<p class="deal-price">
 						<strong><%= @deal.deal_price.format(:no_cents) %></strong>
-						<span><%= link_to image_tag("/stylesheets/i/button-deal-buy.png"), payment_order_url(:deal_id => @deal.id) %></span>
+						<% if controller.controller_name == 'user' %>
+							<span>
+								<%= link_to image_tag("/stylesheets/i/button-deal-buy.png"), payment_order_url(:deal_id => @deal.id) %>
+							</span>
+						<% else %>
+							<span>
+								<%= link_to image_tag("/stylesheets/i/button-deal-buy.png"), facebook_payment_order_url(:deal_id => @deal.id) %>
+							</span>	
+						<% end %>					
 					</p>
 				<% end %>
                 </div>
@@ -191,13 +206,10 @@
 		</div>
 	</div>
 	<div id="sidebar">
-<!--		<% render :partial => 'layouts/block/side_bulletin' %> -->
-		<%= render :partial => 'layouts/block/side_flv' %>
-<!--		<% render :partial => 'layouts/block/side_invite' %> -->
-<!--		<% render :partial => 'layouts/block/side_ask' %> -->
-		<%= render :partial => 'layouts/block/side_others' %>
-<!--		<% render :partial => 'layouts/block/side_business' %> -->
-<!--		<% render :partial => 'layouts/block/side_subscribe' %> -->
+		<% if controller.controller_name == 'user' %>		
+			<%= render :partial => 'layouts/block/side_flv' %>
+			<%= render :partial => 'layouts/block/side_others' %>
+		<% end %>
 	</div>
 </div>
 </div> <!-- bd end -->

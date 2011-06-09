@@ -1,4 +1,4 @@
-<%= form_tag :controller => :user, :action => "account" %>
+<%= form_tag :controller => controller.controller_name, :action => "account" %>
 
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
@@ -8,8 +8,8 @@
             <div class="box-top"></div>
             <div class="box-content">
                 <div class="head"><h2>Account</h2>
-					<%= link_to "Change Password", change_password_url %>
-					<%= link_to "Change Email", change_email_url %>
+					<%= link_to "Change Password", url_for(:controller => controller.controller_name, :action => 'change_password') %>
+					<%= link_to "Change Email", url_for(:controller => controller.controller_name, :action => 'change_email') %>
 				</div>
                 <div class="sect">
 					<div class="field">
@@ -26,7 +26,7 @@
 	                 </div>					
 	                 <div class="act">
 						<%= submit_tag :submit, :value=>"Update Account", :class=>"formbutton"%>
-						or <%= link_to "cancel", home_url %>
+						or <%= link_to "cancel", url_for(:controller => controller.controller_name, :action => 'home') %>
 	                 </div>
                 </div>
             </div>

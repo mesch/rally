@@ -1,7 +1,7 @@
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div id="deals">
-    <div id="content" class="clear mainwide">
+    <div id="content" class="clear">
 		<div class="box clear">
             <div class="box-top"></div>
             <div class="box-content">
@@ -21,7 +21,8 @@
 						<% for deal in @deals %>
 						<tr>
 							<td><%= deal.merchant.name %></td>
-							<td><%= link_to deal.title, deal_url(deal.id) %></td>
+							<td><%= link_to deal.title, 
+								url_for(:controller => controller.controller_name, :action => 'deal', :id => deal.id) %></td>
 							<td><%= deal.deal_price %></td>
 							<td><%= deal.deal_value %></td>
 							<td><%= deal.start_date.strftime(OPTIONS[:date_format]) %></td>
