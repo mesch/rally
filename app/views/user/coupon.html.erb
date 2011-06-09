@@ -1,56 +1,93 @@
-<div id="bdw" class="bdw">
-<div id="bd" class="cf">
-<div>
-	<div id="content" class="box clear">
-        <div class="clear box">
-            <div class="box-top"></div>
-            <div class="box-content">
-                <div class="head"><h2>Coupon</h2></div>
-                <div class="sect">
-					<div class="wholetip clear"><h3>1. Deal Info</h3></div>			
-					<div class="field">
-						<%= label_tag 'Merchant' %> 
-						<%= text_field_tag :merchant, @coupon.deal.merchant.name, :size=>"30", :class=>"f-input", :disabled => true %>
-					</div>
-					<div class="field">
-						<%= label_tag 'Title' %>
-						<%= text_field_tag :title, @coupon.deal.title, :size=>"30", :class=>"f-input", :disabled => true %>
-					</div>
-					<div class="field">
-						<%= label_tag 'Description' %>
-						<%= text_area_tag :description, @coupon.deal.description, :size=>"30", :class=>"f-input", :disabled => true %>
-					</div>
-					<div class="field">
-						<%= label_tag 'Terms' %>
-						<%= text_area_tag :terms, @coupon.deal.terms, :size=>"30", :class=>"f-input", :disabled => true %>
-					</div>
-					<div class="wholetip clear"><h3>2. Coupon Info</h3></div>
-					<div class="field">
-						<%= label_tag 'State' %>
-						<%= text_field_tag :state, @coupon.state, :size=>"30", :class=>"f-input", :disabled => true %>
-					</div>
-					<div class="field">
-						<%= label_tag 'Value' %>
-						<%= text_field_tag :deal_value, @coupon.deal.deal_value, :size=>"10", :class=>"number", :disabled => true %>
-						<%= label_tag 'Price' %> 
-						<%= text_field_tag :deal_price, @coupon.deal.deal_price, :size=>"10", :class=>"number", :disabled => true %>
-					</div>
-					<div class="field">
-						<% if @coupon.state == 'Active' or @coupon.state == 'Expired' %>
-							<%= label_tag 'Redemption Code', 'Redemption Code' %>
-							<% if @coupon.deal_code %>
-								<%= text_field_tag :code, @coupon.deal_code.code, :size=>"30", :class=>"f-input", :disabled => true %>
-							<% else %>
-								<%= text_field_tag :code, '', :size=>"30", :class=>"f-input", :disabled => true %>
-							<% end %>
-						<% end %>
-					</div>
-					<div class="clear"></div>
-				</div>
-            </div>
-			<div class="box-bottom"></div>
-		</div>
-	</div>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" id="{$INI['sn']['sn']}">
+<head>
+	<meta http-equiv=content-type content="text/html; charset=UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<title>Coupon <% @coupon.id %></title>
+</head>
+<style type="text/css">
+body{ background:#fff;}
+*{ margin: 0 auto;}
+#ecard{ width:660px; clear:both; border:1px solid #000; margin-top:40px;}
+#econ{ width:620px; margin:0 auto; margin-bottom:10px; overflow:hidden;}
+#etop{ height:80px; border-bottom:1px solid #000;}
+#logo{ width:320px; height:80px; float:left; background:url(/.jpg) no-repeat;}
+#welcome{ float:left; font-family:"黑体"; font-size:28px; margin-top:20px; text-align:right; width:280px;}
+#teamtitle{ width:620px; text-align:left; font-size:20px; font-weight:bold; margin-top:8px; margin-bottom:10px; }
+#main{ width:620px; margin-bottom:20px;}
+#mleft{ float:left; width:320px; line-height:150%; }
+#name{ font-size:20px; font-weight:bold; margin-top:10px;}
+#relname{ font-size:14px; padding-left:8px;}
+#coupon{ margin-top:20px; font-size:26px; font-family:"黑体"; font-weight:bold; text-align:left;}
+#coupon p { line-height:120%; }
+#mright{ float:right; width:300px;}
+#notice{font-size:14px;padding-top:8px;}
+#notice ul{ margin:0px; list-style:none; padding-left:0px;}
+#notice ul li{ line-height:26px;}
+#server{ background-color:#dcdcdc; width:600px; height:20px; font-size:14px; color:#000; margin-top:20px; line-height:20px; text-align:center; clear:both;}
+
+@media print { 
+	.noprint{display:none;}
+}
+</style>
+
+<body>
+<div id="ecard">
+<div id="econ">
+<!--top -->
+<div id="etop">
+<div id="logo"><%= image_tag("logo.gif") %></div>
+<div id="welcome">Coupon # <%= @coupon.id %></div>
 </div>
-</div> <!-- bd end -->
-</div> <!-- bdw end -->
+<!--endtop -->
+<div id="teamtitle"><%= @coupon.deal.title %></div>
+<!--main -->
+<div id="main">
+
+<div id="mleft">
+<div id="name">VIP</div>
+<div id="relname"><%= @coupon.user.full_name %>: <%= @coupon.user.email %></div>
+
+<div id="name">Expiration Date</div>
+<div id="relname">Valid till: <%= @coupon.deal.expiration_date %></div>
+
+<% if @coupon.deal_code %>
+	<div id="name">Redemption Code</div>
+	<div id="relname"><%= @coupon.deal_code.code %></div>
+<% else %>
+	<div id="name">Coupon Id</div>
+	<div id="relname">Valid till: <%= @coupon.deal.expiration_date %></div>
+<% end %>
+
+</div>
+<!--right -->
+<div id="mright">
+<div id="name">Description</div>
+<div id="notice"><%= @coupon.deal.description %></div>
+<div id="name">Terms</div>
+<div id="notice"><%= @coupon.deal.terms %></div>
+<div id="name">How to use</div>
+<div id="notice">
+<ul>
+	<li>1. This coupon is only valid at <%= @coupon.deal.merchant.name %>.</li>
+	<li>2. Shop at <%= @coupon.deal.merchant.website %>.</li>
+	<% if @coupon.deal_code %>
+		<li>3. On checkout enter your Redemption Code.</li>
+	<% else %>
+		<li>3. On checkout enter the Coupon ID.</li>
+	<% end %>
+</ul>
+</div>
+
+</div>
+
+<div style="clear:both;"></div>
+</div>
+<!--endmain -->
+
+</div>
+
+</div>
+
+<div class="noprint" style="text-align:center; margin:20px;"><button style="padding:10px 20px; font-size:16px; cursor:pointer;" onclick="window.print();">Print Coupon <% @coupon.id %></button></div>
+</body></html>

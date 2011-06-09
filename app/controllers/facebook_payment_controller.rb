@@ -11,4 +11,8 @@ class FacebookPaymentController < PaymentController
     redirect_to :controller => 'facebook', :action => 'login'
   end
   
+  def next_controller
+    "facebook"
+  end
+  
 end

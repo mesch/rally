@@ -26,8 +26,15 @@
 								<td><%= coupon.state %></td>
 								<td><%= coupon.created_at.strftime(OPTIONS[:date_format]) %></td>
 								<td><%= coupon.deal.expiration_date.strftime(OPTIONS[:date_format]) %></td>
-								<td><%= link_to "View", 
-									url_for(:controller => controller.controller_name, :action => 'coupon', :id => coupon.id) %></td>
+								<td>
+								<% if coupon.state == 'Active' or coupon.state == 'Expired' %>
+									<%= link_to "Print", 
+										url_for(:controller => controller.controller_name, 
+												:action => 'coupon', :id => coupon.id), 
+												:target=>"_blank" %>
+									
+								<% end %>
+								</td>
 							</tr>
 						<% end %>
                     </table>

@@ -51,8 +51,9 @@ class UserController < ApplicationController
   end
   
   def coupon
+    
     @coupon = Coupon.find_by_id(params[:id])
-    render "user/#{self.action_name}"
+    render "user/#{self.action_name}", :layout => false
   end
 
   

@@ -13,6 +13,10 @@ class PaymentController < ApplicationController
     redirect_to :controller => 'user', :action => 'login'
   end
   
+  def next_controller
+    "user"
+  end
+  
   # order form
   def order
     # number of checks to see if coming out of context
@@ -144,21 +148,29 @@ class PaymentController < ApplicationController
   def receipt
     gateway = params[:gateway]
     
+    p gateway
     # only handling authorize.net transactions now
     if gateway == OPTIONS[:gateways][:authorize_net]
+      p "here"
       order = Order.find_by_id(params[:x_invoice_num])
+      p order
       transaction_type = params[:x_type]
+      p transaction_type
       amount = params[:x_amount]
+      p amount
       @confirmation_code = params[:x_auth_code]
+      p @confirmation_code
+      
+      # process payment
+      unless order.process_authorization(:gateway => gateway, :transaction_type => transaction_type, 
+        :amount => amount, :confirmation_code => @confirmation_code)
+        flash.now[:error] = "There was a problem creating your coupons."
+      end
     else
-      # coming from some other context? refreshing the receipt page? render (or redirect?) and return?
+      go_home
+      return
     end
-          
-    # process payment
-    unless order.process_authorization(:gateway => gateway, :transaction_type => transaction_type, 
-      :amount => amount, :confirmation_code => @confirmation_code)
-      flash.now[:error] = "Your transaction was approved. However, there was a problem creating your coupons. Please contact Customer Service."
-    end 
+    @next_controller = next_controller
     render "payment/#{self.action_name}"
   end
 

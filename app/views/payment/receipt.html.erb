@@ -1,1 +1,24 @@
-Thank you for your purchase! Your confirmation code is <%=h @confirmation_code %>.
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="content">
+    <div id="deal-buy" class="box">
+        <div class="box-top"></div>
+        <div class="box-content">
+            <div class="head"><h2>Receipt</h2></div>
+            <div class="sect">
+
+			<% if flash[:error] %>
+			Your transaction was approved. However, there was a problem creating your coupons. Please contact Customer Support.<br><br>
+			The confirmation code for your order is <%= @confirmation_code %>.
+			<% else %>
+			Thank you for your purchase! Your confirmation code is <%= @confirmation_code %>.<br><br>
+			Go to the <%= link_to "Coupons Page", url_for(:controller => @next_controller, :action => "coupons") %> to
+			review the status of your coupons.
+			<% end %>
+			</div>
+		</div>
+		<div class="box-bottom"></div>
+	</div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

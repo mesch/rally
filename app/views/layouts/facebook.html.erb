@@ -18,23 +18,11 @@
 			<ul class="nav cf">
 				<% if @current_user %>
 					<li <%= controller.action_name == 'home' ? 'class=current' : '' %> >
-						<% if controller.controller_name == 'user' or controller.controller_name == 'payment' %>
-							<%= link_to "Home", home_url %></li>
-						<% else %>
 							<%= link_to "Home", facebook_home_url %></li>
-						<% end %>
 					<li <%= controller.action_name == 'deals' ? 'class=current' : '' %> >
-						<% if controller.controller_name == 'user' or controller.controller_name == 'payment' %>						
-							<%= link_to "Deals", deals_url %></li>
-						<% else %>
 							<%= link_to "Deals", facebook_deals_url %></li>
-						<% end %>
 					<li <%= controller.action_name == 'coupons' ? 'class=current' : '' %> >
-						<% if controller.controller_name == 'user' or controller.controller_name == 'payment' %>
-							<%= link_to "Coupons", coupons_url %></li>
-						<% else %>
-							<%= link_to "Coupons", facebook_coupons_url %></li>	
-						<% end %>		
+							<%= link_to "Coupons", facebook_coupons_url %></li>		
 				<% else %>
 					<li <%= controller.action_name == 'tour' ? 'class=current' : '' %> >
 						<%= link_to "Tour", help_tour_url %></li>
