@@ -52,6 +52,8 @@ Rally::Application.configure do
   OPTIONS[:facebook_api_key] = "894f73409e969af403ec258c8725439e"
   OPTIONS[:facebook_secret_key] = "5b85f9a44b39de7b48314531765d88f4"
   
+  OPTIONS[:facebook_ap_url] = "http://apps.facebook.com/rc_deals_dev/"
+  
   # Used for "some" calls to fb. Really confusing. Not really sure why it works.
   # See http://forum.developers.facebook.net/viewtopic.php?pid=280400#p280400
   # See http://developers.facebook.com/docs/authentication/ Authenticating as an Application

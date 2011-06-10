@@ -62,4 +62,5 @@ Rally::Application.configure do
   OPTIONS[:facebook_app_id] = "213793915317881"
   OPTIONS[:facebook_api_key] = "3314342ac8dacfb238f977316f1a0bc5"
   OPTIONS[:facebook_secret_key] = "6c652039cde19d2762657b268b24a38c"
+  
 end

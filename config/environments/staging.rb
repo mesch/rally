@@ -55,4 +55,6 @@ Rally::Application.configure do
   OPTIONS[:facebook_api_key] = "e45952395e1533ec122b2772be59ae38"
   OPTIONS[:facebook_secret_key] = "b412d339a7b119e4d0793a0120cbb4d1"
   
+  OPTIONS[:facebook_ap_url] = "http://apps.facebook.com/rc_deals/"
+  
 end

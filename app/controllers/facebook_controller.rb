@@ -12,7 +12,11 @@ class FacebookController < UserController
   end
   
   def splash
-    @app_url = 'http://apps.facebook.com/rc_deals/'
+    if params[:signed_request]
+      @signed_request = parse_signed_request(params[:signed_request])
+    end
+    p @signed_request
+    @app_url = OPTIONS[:facebook_ap_url]
     render :layout => false
   end
   

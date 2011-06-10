@@ -1,4 +1,5 @@
 module Facebook
+  
 
   def get_fb_user
     oauth = Koala::Facebook::OAuth.new(OPTIONS[:facebook_app_id], OPTIONS[:facebook_secret_key])
@@ -18,6 +19,11 @@ module Facebook
   def get_fb_picture(id)
     graph = Koala::Facebook::GraphAPI.new
     return graph.get_picture(id, :type => "large")
+  end
+  
+  def parse_signed_request(signed_request)
+    oauth = Koala::Facebook::OAuth.new(OPTIONS[:facebook_app_id], OPTIONS[:facebook_secret_key])
+    return oauth.parse_signed_request(signed_request)
   end
   
 end
