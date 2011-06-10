@@ -62,7 +62,7 @@
 						<td nowrap><%= deal.min %></td>
 						<td nowrap><%= deal.max %></td>
 						<td class="op" nowrap>
-							<%= link_to "View", deal_url(deal.id), :target=>"_blank" %>
+							<%= link_to "View", deal_url(deal.id), :target=> "_blank" %>
 							<% if !deal.is_ended %>
 							| <%= link_to "Edit", merchant_edit_deal_url(deal.id) %>
 							<% end %>
