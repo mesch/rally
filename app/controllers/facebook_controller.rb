@@ -11,4 +11,9 @@ class FacebookController < UserController
     redirect_to :controller => self.controller_name, :action => 'login'
   end
   
+  def splash
+    @app_url = 'http://apps.facebook.com/rc_deals/'
+    render :layout => false
+  end
+  
 end

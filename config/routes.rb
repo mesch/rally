@@ -53,6 +53,7 @@ Rally::Application.routes.draw do
     scope :via => :get do
       match '/' => :home
       match :home
+      match :splash
       match :connect
       match :login
       match :logout
@@ -65,7 +66,7 @@ Rally::Application.routes.draw do
     scope :via => :post do
       match '/' => :home
       match :home
-      match :home
+      match :splash
       match :login
       match :invite
     end
