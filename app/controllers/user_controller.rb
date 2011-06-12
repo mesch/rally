@@ -16,9 +16,17 @@ class UserController < ApplicationController
   end
   
   # Deals
-  def deals
+  def deals(options={})
     # TODO: Move this query into deal.rb? or user.rb?
     @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
+
+    if options[:merchant_id]
+      @deals.delete_if {|deal| deal.merchant_id != options[:merchant_id]}
+    end
+    if @deals.size == 1
+      redirect_to :controller => self.controller_name, :action => 'deal', :id => @deals[0].id
+      return
+    end
     render "user/#{self.action_name}"
   end
   
@@ -45,13 +53,15 @@ class UserController < ApplicationController
   end
 
   # Coupons
-  def coupons
+  def coupons(options={})
     @coupons = @current_user.coupons
+    if options[:merchant_id]
+      @coupons.delete_if {|coupon| coupon.deal.merchant_id != options[:merchant_id]}
+    end
     render "user/#{self.action_name}"
   end
   
   def coupon
-    
     @coupon = Coupon.find_by_id(params[:id])
     render "user/#{self.action_name}", :layout => false
   end

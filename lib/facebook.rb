@@ -23,7 +23,8 @@ module Facebook
   
   def parse_signed_request(signed_request)
     oauth = Koala::Facebook::OAuth.new(OPTIONS[:facebook_app_id], OPTIONS[:facebook_secret_key])
-    return oauth.parse_signed_request(signed_request)
+    results = oauth.parse_signed_request(signed_request)
+    return results
   end
   
 end

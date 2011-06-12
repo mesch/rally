@@ -51,10 +51,10 @@ Rally::Application.configure do
   }
   
   # Facebook logins
-  OPTIONS[:facebook_app_id] = "166453363417453"
-  OPTIONS[:facebook_api_key] = "e45952395e1533ec122b2772be59ae38"
-  OPTIONS[:facebook_secret_key] = "b412d339a7b119e4d0793a0120cbb4d1"
+  OPTIONS[:facebook_app_id] = "218320038188280"
+  OPTIONS[:facebook_api_key] = "347577002d2940ab5c2842910a19d688"
+  OPTIONS[:facebook_secret_key] = "c7ca4cc510a913e03f7fdd6ccb10026e"
   
-  OPTIONS[:facebook_ap_url] = "http://apps.facebook.com/rc_deals/"
+  OPTIONS[:facebook_app_url] = "http://apps.facebook.com/rc_deals/"
   
 end

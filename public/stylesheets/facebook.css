@@ -65,6 +65,7 @@ dd.formbutton:focus{border-color:#000;}
 /* end sysmsg */
 
 body{background-image:url(i/bg-bd-fb.jpg)}
+#logo{height:60px;}
 #hdw{height:47px;background:url(i/bg-hd-fb.gif) repeat-x 0 0;}
 #bdw{min-height:300px;_height:500px;}
 #hd{position:relative;z-index:2;width:740px;margin:0 auto;}

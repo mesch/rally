@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" id="">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head>
 	<meta http-equiv=content-type content="text/html; charset=UTF-8">
 	<title><%= OPTIONS[:site_name] %></title>
@@ -13,14 +13,20 @@
 <body>
 <div id="pagemasker"></div><div id="dialog"></div>
 <div id="doc">
+	<div id="logo">
+		<% if session[:fb_page_id] %>
+			<%= image_tag("merchant_logo.png") %>
+		<% end %>
+	</div>
 	<div id="hdw">
 		<div id="hd">
 			<ul class="nav cf">
 				<% if @current_user %>
-					<li <%= controller.action_name == 'home' ? 'class=current' : '' %> >
-							<%= link_to "Home", facebook_home_url %></li>
-					<li <%= controller.action_name == 'deals' ? 'class=current' : '' %> >
-							<%= link_to "Deals", facebook_deals_url %></li>
+					<li <% if controller.action_name == 'deals' or controller.action_name == 'deal' %>
+							<%= 'class=current' %>
+						<% end %> 
+					>
+						<%= link_to "Deals", facebook_deals_url %></li>
 					<li <%= controller.action_name == 'coupons' ? 'class=current' : '' %> >
 							<%= link_to "Coupons", facebook_coupons_url %></li>		
 				<% else %>

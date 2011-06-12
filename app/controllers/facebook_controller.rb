@@ -13,11 +13,24 @@ class FacebookController < UserController
   
   def splash
     if params[:signed_request]
-      @signed_request = parse_signed_request(params[:signed_request])
+      p params[:signed_request]
+      signed_request = parse_signed_request(params[:signed_request])
+      if signed_request and signed_request["page"] and signed_request["page"]["id"]
+        fb_page_id = signed_request["page"]["id"]
+      end
     end
-    p @signed_request
-    @app_url = OPTIONS[:facebook_ap_url]
+    
+    session[:fb_page_id] = fb_page_id
+    @app_url = OPTIONS[:facebook_app_url]
     render :layout => false
+  end
+  
+  def deals
+    super(:merchant_id => 902541635)
+  end
+  
+  def coupons
+    super(:merchant_id => 902541635)
   end
   
 end
