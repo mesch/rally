@@ -1,5 +1,7 @@
 class FacebookController < UserController
+  before_filter :set_merchant
   skip_before_filter :verify_authenticity_token
+  skip_before_filter :require_user, :only => [:splash]
   
   layout "facebook"
   
@@ -9,6 +11,12 @@ class FacebookController < UserController
   
   def go_to_login
     redirect_to :controller => self.controller_name, :action => 'login'
+  end
+  
+  def set_merchant
+    if session[:fb_page_id]
+      @merchant = Merchant.find_by_facebook_page_id(session[:fb_page_id])
+    end
   end
   
   def splash
@@ -26,11 +34,19 @@ class FacebookController < UserController
   end
   
   def deals
-    super(:merchant_id => 902541635)
+    if @merchant
+      super(:merchant_id => @merchant.id)
+    else
+      super
+    end
   end
   
   def coupons
-    super(:merchant_id => 902541635)
+    if @merchant
+      super(:merchant_id => @merchant.id)
+    else
+      super
+    end
   end
   
 end

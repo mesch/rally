@@ -4,6 +4,9 @@ test_user:
     hashed_password: 77a0d943cdbace52716a9ef9fae12e45e2788d39 # test
     activation_code: 1234567890
     activated: true
+    facebook_id: 100002551356712
+    first_name: Kilgore
+    last_name: Trout
 
 existing_user:
     email: "existing_user@rallycommerce.com"

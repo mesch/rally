@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110605212852) do
+ActiveRecord::Schema.define(:version => 20110612202120) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -91,10 +91,10 @@ ActiveRecord::Schema.define(:version => 20110605212852) do
     t.string   "email"
     t.string   "salt"
     t.string   "activation_code"
-    t.boolean  "activated",       :default => false
+    t.boolean  "activated",                      :default => false
     t.string   "api_key"
-    t.boolean  "active",          :default => true
-    t.string   "time_zone",       :default => "Pacific Time (US & Canada)"
+    t.boolean  "active",                         :default => true
+    t.string   "time_zone",                      :default => "Pacific Time (US & Canada)"
     t.string   "website"
     t.string   "contact_name"
     t.string   "address1"
@@ -112,6 +112,10 @@ ActiveRecord::Schema.define(:version => 20110605212852) do
     t.string   "paypal_account"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.integer  "facebook_page_id",  :limit => 8
   end
 
   add_index "merchants", ["username"], :name => "index_merchants_on_username"

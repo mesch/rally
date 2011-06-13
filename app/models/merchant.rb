@@ -31,6 +31,21 @@ class Merchant < ActiveRecord::Base
   validates_confirmation_of :password, :on => :update, :if => :password_required?
   validates_presence_of :password, :password_confirmation, :on => :update, :if => :password_required?
 
+  # logo
+  MAX_IMAGE_SIZE = 3145728 # Max bytes (3 MB)
+  CONTENT_TYPES = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png']
+  THUMB_SIZE = "100x100!"
+
+  #validates_attachment_presence :logo
+  #validates_attachment_size :logo, :less_than => MAX_IMAGE_SIZE
+  #validates_attachment_content_type :logo, { :content_type => CONTENT_TYPES }
+  
+  has_attached_file :logo, {
+    :styles => { 
+      :thumb => THUMB_SIZE,
+    }
+  }.merge(OPTIONS[:paperclip_storage_options])
+
   attr_protected :id, :salt
   attr_accessor :password, :password_confirmation
   

@@ -1,4 +1,5 @@
 bob:
+    id: 1
     name: "Bob's Burgers"
     username: bob
     email: "matt.esch@gmail.com"
@@ -7,6 +8,10 @@ bob:
     website: "http://www.fox.com/bobsburgers/"
     activation_code: 1234567890
     activated: true
+    facebook_page_id: 225337260827894
+    logo_file_name: logo.png
+    logo_content_type: image/png
+    logo_file_size: 26062
 
 emptybob:
     name: "Bob's Burgers"

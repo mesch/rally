@@ -10,17 +10,16 @@
 				</div>
                 <div class="sect">
 					<table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">
-						<tr><th width="40" nowrap>Id</th>
+						<tr>
 							<th width="100">Merchant</th>
 							<th width="200">Title</th>
 							<th width="60" nowrap>State</th>
-							<th width="60" nowrap>Purchased</th>
-							<th width="60" nowrap>Expiration</th>
+							<th width="80" nowrap>Purchased</th>
+							<th width="80" nowrap>Expiration</th>
 							<th width="60" nowrap>Action</th>
 						</tr>							
 						<% for coupon in @coupons %>
 							<tr>
-								<td><%= coupon.id %></td>
 								<td><%= coupon.deal.merchant.name %></td>
 								<td><%= coupon.deal.title %></td>
 								<td><%= coupon.state %></td>

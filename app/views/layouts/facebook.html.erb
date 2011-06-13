@@ -14,8 +14,8 @@
 <div id="pagemasker"></div><div id="dialog"></div>
 <div id="doc">
 	<div id="logo">
-		<% if session[:fb_page_id] %>
-			<%= image_tag("merchant_logo.png") %>
+		<% if @merchant and @merchant.logo %>
+			<%= image_tag(@merchant.logo.url(:original)) %>
 		<% end %>
 	</div>
 	<div id="hdw">
