@@ -758,7 +758,7 @@ dd#consult .deal-info .link h2 span{font-family:arial,sans-serif;}
 #maillist .welcome .detail{margin-top:8px;color:#666;font-size:12px;}
 
 #recent-deals .sect{width:auto;padding:10px 20px 40px;}
-#recent-deals .deals-list li{float:left;width:400px;height:206px;border-bottom:1px dashed #ccc;border-right:1px dashed #ccc;}
+#recent-deals .deals-list li{float:left;width:700px;height:206px;border-bottom:1px dashed #ccc;border-right:1px dashed #ccc;}
 #recent-deals .deals-list li.first{height:213px;}
 #recent-deals .deals-list li.alt{padding-left:20px;border-right:none;}
 #recent-deals .deals-list .time{margin-top:15px;font-size:12px;font-weight:bold;color:#000;}
@@ -771,7 +771,8 @@ dd#consult .deal-info .link h2 span{font-family:arial,sans-serif;}
 #recent-deals .pic .isopen{position:absolute;z-index:1;right:-13px;bottom:-7px;width:65px;height:66px;background:url(i/bg-deals-default-isopen.png) no-repeat 0 0;_background:transparent;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/static/css/i/bg-deals-default-isopen.png');}
 #recent-deals .pic .isopenlink{display:block;position:absolute;z-index:2;right:-13px;bottom:-7px;width:65px;height:66px;outline:0;text-indent:-999em;}
 #recent-deals .pic img{display:block;}
-#recent-deals .info{float:left;padding-top:5px;padding-left:15px;width:200px;color:#666;font-size:12px;}
+#recent-deals .info{float:left;padding-top:5px;padding-left:15px;width:160px;height:180px;color:#666;font-size:12px;}
+#recent-deals .description{float:left;padding-top:5px;padding-left:15px;width:200px;height:180px;color:#666;font-size:12px;}
 #recent-deals .total strong{color:#c33;font-size:20px;}
 #recent-deals .price{margin-top:10px;*margin-top:6px;font-size:12px;line-height:1.5;}
 #recent-deals .price strong{color:#000;font-size:14px;font-weight:bold;}

@@ -11,7 +11,7 @@
 					<% for deal in @deals %>
 						<li class="alt">
 							<p class="time">Ends on <%= deal.end_date.strftime(OPTIONS[:date_format]) %>!</p>
-							<h4><%= link_to deal.title, 
+							<h4><%= deal.merchant.name %> - <%= link_to deal.title, 
 								url_for(:controller => controller.controller_name, :action => 'deal', :id => deal.id) %></h4>
 							<div class="pic">
 								<div class="<%= deal.is_maxed ? 'soldout' : 'isopen' %>"></div>
@@ -20,6 +20,9 @@
 											url_for(:controller => controller.controller_name, :action => 'deal', :id => deal.id), 
 											:title => deal.title, :target => "_blank" %>									
 								<% end %>
+							</div>
+							<div class="description">
+								<%= deal.description %>
 							</div>
 							<div class="info">
 								<p class="total"><strong class="count"><%= deal.confirmed_coupon_count %></strong> Buyers&nbsp;
