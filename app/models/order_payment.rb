@@ -4,6 +4,8 @@ require "exception"
 class OrderPayment < ActiveRecord::Base
   validates_presence_of :user_id, :order_id, :gateway, :amount
 
+  attr_protected :id
+
   belongs_to :order
   belongs_to :user
 

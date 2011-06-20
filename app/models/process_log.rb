@@ -1,7 +1,8 @@
 class ProcessLog < ActiveRecord::Base
-
   validates_length_of :name, :maximum => 50
   validates_presence_of :name, :start_time, :end_time, :considered, :successes, :failures
+  
+  attr_protected :id
   
   def run_time
     return (self.end_time - self.start_time).round(1)

@@ -6,6 +6,8 @@ class Order < ActiveRecord::Base
   
   money :amount, :currency => false
   
+  attr_protected :id
+  
   belongs_to :deal
   belongs_to :user
   has_many :order_payments

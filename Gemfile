@@ -4,6 +4,7 @@ gem 'rails', '3.0.0'
 gem 'mysql'
 gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'ruby-debug'
+gem 'bartt-ssl_requirement', :require => 'ssl_requirement'
 
 gem 'compass', ">=0.10.6"
 gem 'delayed_job'

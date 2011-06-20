@@ -42,7 +42,7 @@ class Deal < ActiveRecord::Base
   # returns all purchased coupons
   def confirmed_coupon_count
     count = Order.sum(:quantity, :conditions => ["deal_id = ? AND state != ?", self.id, OPTIONS[:order_states][:created]])
-  end  
+  end
 
   def publish
     begin

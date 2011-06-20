@@ -111,7 +111,7 @@
 					</div>
 					<div class="wholetip clear"><h3>3. Coupon Codes</h3></div>
 					<div class="field">
-						<%= label_tag 'Upload Codes' %>
+						<%= label_tag 'Upload Codes', 'Upload Codes' %>
 						<% if @deal.published %>
 							<%= file_field_tag :codes_file, :size=>"30", :class=>"f-input", :disabled=>true %>
 						<% else %>

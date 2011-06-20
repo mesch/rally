@@ -37,10 +37,10 @@ body{ background:#fff;}
 <!--top -->
 <div id="etop">
 <div id="logo">
-	<% if @merchant and @merchant.logo %>
-		<%= image_tag(@merchant.logo.url(:original)) %>
+	<% if @merchant_subdomain and @merchant_subdomain.get_logo %>
+		<%= image_tag(@merchant_subdomain.get_logo) %>
 	<% else %>
-		<%= image_tag("logo.gif") %>
+		<%= image_tag("logo_original.gif") %>
 	<% end %>
 </div>
 <div id="welcome">Coupon # <%= @coupon.id %></div>

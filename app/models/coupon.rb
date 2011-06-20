@@ -3,6 +3,8 @@ class Coupon < ActiveRecord::Base
 
   # todo: a way to make :deal_code_id unique, even though field is nullable?
   
+  attr_protected :id
+  
   belongs_to :deal
   belongs_to :user
   belongs_to :order

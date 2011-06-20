@@ -1,6 +1,8 @@
 class UserController < ApplicationController
-  before_filter :require_user, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :deals, :deal]
+  before_filter :require_user, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :deals, :deal, :splash]
   before_filter :check_for_user, :only => [:deals, :deal]
+  ssl_required :login, :account, :change_password, :change_email
+  ssl_allowed :home
   
   # Use the user layout
   layout "user"
@@ -16,13 +18,15 @@ class UserController < ApplicationController
   end
   
   # Deals
-  def deals(options={})
+  def deals()
     # TODO: Move this query into deal.rb? or user.rb?
     @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
 
-    if options[:merchant_id]
-      @deals.delete_if {|deal| deal.merchant_id != options[:merchant_id]}
+    # filter out other merchants if on a merchant subdomain
+    if @merchant_subdomain and @merchant_subdomain.merchant
+      @deals.delete_if {|deal| deal.merchant_id != @merchant_subdomain.merchant.id}
     end
+    
     if @deals.size == 1
       redirect_to :controller => self.controller_name, :action => 'deal', :id => @deals[0].id
       return
@@ -49,15 +53,23 @@ class UserController < ApplicationController
       :all, 
       :conditions => [ "published = ? AND start_date <= ? AND end_date >= ? AND id != ?", true, Time.zone.today, Time.zone.today, @deal.id], 
       :limit => 3)
+    # filter out other merchants if on a merchant subdomain
+    if @merchant_subdomain and @merchant_subdomain.merchant
+      @others.delete_if {|other| other.merchant_id != @merchant_subdomain.merchant.id}
+    end
+      
     render "user/#{self.action_name}"
   end
 
   # Coupons
-  def coupons(options={})
+  def coupons()
     @coupons = @current_user.coupons
-    if options[:merchant_id]
-      @coupons.delete_if {|coupon| coupon.deal.merchant_id != options[:merchant_id]}
+    
+    # filter out other merchants if on a merchant subdomain
+    if @merchant_subdomain and @merchant_subdomain.merchant
+      @coupons.delete_if {|coupon| coupon.deal.merchant_id != @merchant_subdomain.merchant.id}
     end
+
     render "user/#{self.action_name}"
   end
   
@@ -136,11 +148,13 @@ class UserController < ApplicationController
         render "user/#{self.action_name}"
         return
       end
-      # Captcha validation
-      unless verify_recaptcha(:private_key => OPTIONS[:recaptcha_private_key])      
-        flash.now[:error] = "Invalid captcha results. Please try again."
-        render "user/#{self.action_name}"
-        return
+      # Captcha validation (allowing an out for test environment)
+      unless Rails.env.test?
+        unless verify_recaptcha(:private_key => OPTIONS[:recaptcha_private_key])      
+          flash.now[:error] = "Invalid captcha results. Please try again."
+          render "user/#{self.action_name}"
+          return
+        end
       end
       if @user.save and @user.send_activation()
         flash[:notice] = "Signup successful. An activation code has been sent."

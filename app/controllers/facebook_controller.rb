@@ -1,7 +1,6 @@
 class FacebookController < UserController
-  before_filter :set_merchant
   skip_before_filter :verify_authenticity_token
-  skip_before_filter :require_user, :only => [:splash]
+  ssl_allowed :home
   
   layout "facebook"
   
@@ -13,40 +12,41 @@ class FacebookController < UserController
     redirect_to :controller => self.controller_name, :action => 'login'
   end
   
-  def set_merchant
-    if session[:fb_page_id]
-      @merchant = Merchant.find_by_facebook_page_id(session[:fb_page_id])
-    end
-  end
-  
   def splash
+    @app_url = OPTIONS[:facebook_app_url]
+    
     if params[:signed_request]
-      p params[:signed_request]
       signed_request = parse_signed_request(params[:signed_request])
+      p signed_request
       if signed_request and signed_request["page"] and signed_request["page"]["id"]
-        fb_page_id = signed_request["page"]["id"]
+        facebook_page_id = signed_request["page"]["id"]
+        if merchant = Merchant.find_by_facebook_page_id(facebook_page_id)
+          @merchant_subdomain = MerchantSubdomain.find_by_merchant_id(merchant.id)
+          p @merchant_subdomain
+          if @merchant_subdomain
+            @app_url += "?sd=#{@merchant_subdomain.subdomain}"
+          end
+        end
       end
     end
     
-    session[:fb_page_id] = fb_page_id
-    @app_url = OPTIONS[:facebook_app_url]
     render :layout => false
   end
   
-  def deals
-    if @merchant
-      super(:merchant_id => @merchant.id)
-    else
-      super
+  def home
+    # merchant connect - any better way to tell?
+    if params[:fb_page_id] and !Merchant.find_by_facebook_page_id(params[:fb_page_id])
+      redirect_to :controller => 'merchant', :action => 'connect', :fb_page_id => params[:fb_page_id]
+      return
     end
-  end
-  
-  def coupons
-    if @merchant
-      super(:merchant_id => @merchant.id)
-    else
-      super
+    
+    # check for subdomain passed in
+    if params[:sd] and merchant_subdomain = MerchantSubdomain.find_by_subdomain(params[:sd]) and merchant_subdomain.merchant_id
+      redirect_to :host => "#{params[:sd]}." + request.host_with_port, :controller => self.controller_name, :action => self.action_name, :sd => nil
+      return
     end
+    
+    super
   end
   
 end

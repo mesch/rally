@@ -11,9 +11,6 @@ class MerchantControllerTest < ActionController::TestCase
   fixtures :merchants
 
   def setup
-    @controller = MerchantController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
     @request.host = "localhost"
     
     @start = Time.zone.today
@@ -43,33 +40,103 @@ class MerchantControllerTest < ActionController::TestCase
     assert_not_equal Time.zone.name, old_time_zone
   end
   
-  def test_signup
-    #unfortunately can't test passing captcha - this will fail for now
-    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", :email => "newbob@mcbob.com" 
-    assert_response :success
-    assert_nil session[:merchant_id]
-    assert flash[:error]
-    assert_template "merchant/signup"
+  def test_basic_signup
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => true
+    assert_response :redirect
+    assert_nil flash[:error]
+    assert_redirected_to :action=>'login'
   end
 
   def test_bad_signup
+    #check we can't signup if password_confirmation is different
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "wrong", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => true
+    assert_response :success
+    assert flash[:error]
+    assert_template "merchant/signup"
+    assert_nil session[:merchant_id]    
+    
     #check we can't signup without all required fields
-    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "wrong" , :email => "newbob@mcbob.com"
+    post :signup, :username => "", :password => "newpassword", :password_confirmation => "newpassword" , 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => true
     assert_response :success
+    assert flash[:error]
     assert_template "merchant/signup"
     assert_nil session[:merchant_id]
 
-    post :signup, :username => "yo", :password => "newpassword", :password_confirmation => "newpassword" , :email => "newbob@mcbob.com"
+    # password can't be nil to create the merchant object to being with
+    post :signup, :username => "newbob", :password => "", :password_confirmation => "newpassword", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => true
     assert_response :success
+    assert flash[:error]
     assert_template "merchant/signup"
     assert_nil session[:merchant_id]
 
-    post :signup, :username => "yo", :password => "newpassword", :password_confirmation => "wrong" , :email => "newbob@mcbob.com"
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => true
     assert_response :success
+    assert flash[:error]
+    assert_template "merchant/signup"
+    assert_nil session[:merchant_id]
+    
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", 
+      :email => "", :name => 'bobs', :time_zone => 'Hawaii', :tos => true
+    assert_response :success
+    assert flash[:error]
+    assert_template "merchant/signup"
+    assert_nil session[:merchant_id]
+    
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", 
+      :email => "newbob@mcbob.com", :name => "", :time_zone => 'Hawaii', :tos => true
+    assert_response :success
+    assert flash[:error]
+    assert_template "merchant/signup"
+    assert_nil session[:merchant_id]
+    
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => "", :tos => true
+    assert_response :success
+    assert flash[:error]
+    assert_template "merchant/signup"
+    assert_nil session[:merchant_id]
+    
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => nil
+    assert_response :success
+    assert flash[:error]
     assert_template "merchant/signup"
     assert_nil session[:merchant_id]
   end
-
+  
+  def test_signup_subdomain
+    # subdomain already exists - fail
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => true, :subdomain => "www"
+    assert_response :success
+    assert flash[:error]
+    assert_template "merchant/signup"
+    assert_nil session[:merchant_id]
+    
+    # subdomain empty - ok, but no subdomain added
+    post :signup, :username => "newbob", :password => "newpassword", :password_confirmation => "newpassword", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => true, :subdomain => ""
+    assert_response :redirect
+    assert_nil flash[:error]
+    assert_redirected_to :action=>'login'
+    m = Merchant.find_by_username("newbob")
+    assert_nil m.merchant_subdomain
+          
+    # new subdomain - ok
+    post :signup, :username => "newnewbob", :password => "newpassword", :password_confirmation => "newpassword", 
+      :email => "newbob@mcbob.com", :name => 'bobs', :time_zone => 'Hawaii', :tos => true, :subdomain => "newbob"
+    assert_response :redirect
+    assert_nil flash[:error]
+    assert_redirected_to :action=>'login'
+    m = Merchant.find_by_username("newnewbob")
+    assert_equal m.merchant_subdomain.subdomain, "newbob"
+  end
+  
   def test_invalid_login
     #can't login with incorrect password
     post :login, :username => "bob", :password => "not_correct"
@@ -305,6 +372,47 @@ class MerchantControllerTest < ActionController::TestCase
     assert_equal Merchant.find(@bob.id).name, '1234567890' 
   end
 
+  def test_change_subdomain
+    #assuming existingbob doesn't have subdomain set
+    #can login
+    post :login, :username => @existingbob.username, :password => "test"
+    assert_response :redirect
+    assert session[:merchant_id]
+    # no subdomain set
+    m = Merchant.find_by_id(session[:merchant_id])
+    assert_nil m.merchant_subdomain
+    # empty subdomain - do nothing
+    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => ""
+    assert_response :success
+    assert flash[:notice]
+    m = Merchant.find_by_id(session[:merchant_id])
+    assert_nil m.merchant_subdomain
+    # taken subdomain - fail
+    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "www"
+    assert_response :success
+    assert flash[:error]
+    m = Merchant.find_by_id(session[:merchant_id])
+    assert_nil m.merchant_subdomain
+    # new subdomain - save
+    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "existingbob"
+    assert_response :success
+    assert flash[:notice]
+    m = Merchant.find_by_id(session[:merchant_id])
+    assert m.merchant_subdomain.subdomain, "existingbob"
+    # same subdomain - do nothing
+    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "existingbob"
+    assert_response :success
+    assert flash[:notice]
+    m = Merchant.find_by_id(session[:merchant_id])
+    assert m.merchant_subdomain.subdomain, "existingbob"
+    # empty subdomain - do nothing (for now?)
+    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => ""
+    assert_response :success
+    assert flash[:notice]
+    m = Merchant.find_by_id(session[:merchant_id])
+    assert m.merchant_subdomain.subdomain, "existingbob"
+  end
+
   # cannot change time zone after creation ...
   def test_change_time_zone
     #can login
@@ -323,8 +431,6 @@ class MerchantControllerTest < ActionController::TestCase
     assert_not_equal Time.zone.name, 'Hawaii'
   end
 
-## unable to test due to @request not getting set in ApplicationController
-=begin
   def test_return_to
     #cant access account without being logged in
     get :account
@@ -338,7 +444,6 @@ class MerchantControllerTest < ActionController::TestCase
     assert_redirected_to :action=>'account'
     assert_nil session[:merchant_return_to]
     assert session[:merchant_id]
-    assert flash[:notice]
     #logout and login again
     get :logout
     assert_nil session[:merchant_id]
@@ -347,8 +452,8 @@ class MerchantControllerTest < ActionController::TestCase
     #this time we were redirected to home
     assert_redirected_to :action=>'home'
   end
-=end
 
+  # Deal methods
   def test_get_to_deals
     self.login
     get :deals
@@ -481,17 +586,6 @@ class MerchantControllerTest < ActionController::TestCase
     deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
     assert_equal deals.size, 1
   end
-
-# Behavioral Testing? In order to upload files?  
-=begin
-  def test_create_deal_images
-    
-  end
-
-  def test_create_deal_codes
-    
-  end
-=end
 
   def test_update_deal
     self.login

@@ -40,8 +40,7 @@ Rally::Application.configure do
 
   OPTIONS[:paperclip_storage_options] = {
     :path => ":rails_root/public/system/#{Rails.env}/:class/:attachment/:id/:style.:extension",
-    :url => "/system/#{Rails.env}/:class/:attachment/:id/:style.:extension",
-    :default_url => "/images/missing_thumb.png"
+    :url => "/system/#{Rails.env}/:class/:attachment/:id/:style.:extension"
   }
 
   # Order Timout

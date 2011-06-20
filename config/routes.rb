@@ -110,6 +110,8 @@ Rally::Application.routes.draw do
       match '/deal' => :new_deal, :as => :new_deal
       match '/deal/:id' => :edit_deal, :as => :edit_deal
       match '/deal/publish/:id' => :publish_deal, :as => :publish_deal
+      match :connect
+      match :connect_success
     end
     scope :via => :post do
       match :home
@@ -122,6 +124,7 @@ Rally::Application.routes.draw do
       match :forgot_password
       match '/deal' => :create_deal, :as => :create_deal
       match '/deal/:id' => :update_deal, :as => :update_deal
+      match :connect
     end
   end
 

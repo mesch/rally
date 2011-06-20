@@ -11,7 +11,7 @@ class UserControllerTest < ActionController::TestCase
   fixtures :users
 
   def setup
-    @request.host = "localhost"
+    @request.host = "rcom.com"
   end
 
   def login
@@ -41,25 +41,28 @@ class UserControllerTest < ActionController::TestCase
     #unfortunately can't test passing captcha - this will fail for now
     post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "newpassword"  
     assert_response :success
-    assert_nil session[:user_id]
     assert flash[:error]
     assert_template "user/signup"
+    assert_nil session[:user_id]
   end
 
   def test_bad_signup
     #check we can't signup without all required fields
     post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "wrong"
     assert_response :success
+    assert flash[:error]
     assert_template "user/signup"
     assert_nil session[:user_id]
 
     post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "newpassword"
     assert_response :success
+    assert flash[:error]
     assert_template "user/signup"
     assert_nil session[:user_id]
 
     post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "wrong"
     assert_response :success
+    assert flash[:error]
     assert_template "user/signup"
     assert_nil session[:user_id]
   end
@@ -314,7 +317,7 @@ class UserControllerTest < ActionController::TestCase
     assert_not_equal Time.zone.name, 'Hawaii'
   end
 
-  def test_deals_page
+  def test_deals_page_basic
     # can access the deals page without logging in (but session isn't set)
     get :deals
     assert_response :success
@@ -328,9 +331,56 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
     assert_template "user/deals"
     assert session[:user_id]
-  end   
+  end
+
+  def test_deals_page_multiple_deals
+    Deal.delete_all
+    m = @bob
+    # no deals - stay on deals
+    get :deals
+    assert_response :success
+    assert_template "user/deals"        
+    # one deal - go directly to deal
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert d.publish
+    get :deals
+    assert_response :redirect
+    assert_redirected_to :action=>'deal', :id => d.id
+    # two deals - stay on deals
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert d.publish
+    get :deals
+    assert_response :success
+    assert_template "user/deals"        
+  end
   
-## unable to test due to @request not getting set in ApplicationController
+  def test_deals_page_subdomain
+    Deal.delete_all
+    m = @existingbob
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert d.publish
+    m = @bob
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert d.publish
+    # no subdomain - multiple deals - stay on deals
+    get :deals
+    assert_response :success
+    assert_template "user/deals"    
+    # subdomain "bob" - one deal - go to deal
+    @request.host = "#{@bob.merchant_subdomain.subdomain}.#{@request.host}"
+    get :deals
+    assert_response :redirect
+    assert_redirected_to :action=>'deal', :id => d.id
+  end
+  
   def test_return_to
     #cant access account without being logged in
     get :account
@@ -352,4 +402,32 @@ class UserControllerTest < ActionController::TestCase
     #this time we were redirected to home
     assert_redirected_to :action=>'home'
   end
+  
+  def test_template_layout
+    self.login
+    assert_response :redirect
+    assert session[:user_id]
+    # get correct template and layout
+    get :deals
+    assert_response :success
+    assert_template "user/deals"
+    assert_template "layouts/user"
+    get :deal, :id => Deal.find(:first).id
+    assert_response :success
+    assert_template "user/deal"
+    assert_template "layouts/user"
+    get :coupons
+    assert_response :success
+    assert_template 'user/coupons'
+    assert_template "layouts/user"
+    get :coupon, :id => @test_user.coupons[0]
+    assert_response :success
+    assert_template 'user/coupon'
+    assert_template "layouts/user"
+    get :login
+    assert_response :success
+    assert_template 'user/login'
+    assert_template "layouts/user"    
+  end
+  
 end

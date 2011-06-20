@@ -1,15 +1,15 @@
-<%= form_tag :controller => :merchant, :action=> "signup" %>
+<%= form_tag(merchant_signup_url, :multipart => true) %>
 
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
-<div id="partner">
+<div>
 	<div id="content" class="clear mainwide">
         <div class="clear box">
             <div class="box-top"></div>
             <div class="box-content">
                 <div class="head"><h2>Sign Up</h2></div>
                 <div class="sect">
-						<div class="wholetip clear"><h3>1. Login Info</h3></div>
+						<div class="wholetip clear"><h3>1. Login</h3></div>
                         <div class="field">
 							<%= label_tag 'Username' %> 
 							<%= text_field_tag :username, @merchant.username, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
@@ -27,7 +27,23 @@
 							<%= text_field_tag :email, @merchant.email, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
                         </div>
 
-						<div class="wholetip clear"><h3>2. Company Info</h3></div>
+						<div class="wholetip clear"><h3>2. Deal Store</h3></div>
+						<div class="field">
+							<%= label_tag 'Subdomain' %>
+							<%= text_field_tag :subdomain, @merchant.merchant_subdomain ? @merchant.merchant_subdomain.subdomain : '', :size=>"30", :class=>"f-input" %>
+							<% if @merchant.merchant_subdomain %>
+								<span class="hint"><%= @merchant.merchant_subdomain.subdomain + '.' + request.host_with_port %></span>
+							<% else %>
+								<span class="hint">Your personalized deal store will be located at [Subdomain].<%= request.host_with_port %>.</span>
+							<% end %>
+                        </div>
+						<div class="field">
+							<%= label_tag 'Logo' %>
+							<%= file_field_tag :logo_file, :size=>"30", :class =>"f-input" %>
+							<span class="hint">Upload a logo for your personalized deal store.</span>
+						</div>
+
+						<div class="wholetip clear"><h3>3. Company</h3></div>
                         <div class="field">
 							<%= label_tag 'Company Name', 'Company Name' %> 
 							<%= text_field_tag :name, @merchant.name, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
@@ -39,10 +55,10 @@
                         <div class="field">
 							<%= label_tag 'Time Zone', 'Time Zone' %> 
 							<%= select_tag :time_zone, time_zone_options_for_select(@merchant.time_zone) %>
-							<div class="note">NOTE: You will not be able to edit your time zone later.</div>
+							<div class="hint">NOTE: You will not be able to edit your time zone later.</div>
                         </div>
 
-						<div class="wholetip clear"><h3>3. Contact Info</h3></div>
+						<div class="wholetip clear"><h3>4. Contact</h3></div>
                         <div class="field">
 							<%= label_tag 'Contact Name', 'Contact Name' %> 
 							<%= text_field_tag :contact_name, @merchant.contact_name, :size=>"30", :class=>"f-input" %>
@@ -76,7 +92,7 @@
 							<%= text_field_tag :phone_number, @merchant.phone_number, :size=>"30", :class=>"f-input" %>
                         </div>
 
-						<div class="wholetip clear"><h3>4. Bank Account Info</h3></div>
+						<div class="wholetip clear"><h3>5. Bank Account</h3></div>
                         <div class="field">
 							<%= label_tag 'Tax Id', 'Tax Id' %> 
 							<%= text_field_tag :tax_id, @merchant.tax_id, :size=>"30", :class=>"f-input" %>

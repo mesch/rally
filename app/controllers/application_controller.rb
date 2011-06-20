@@ -1,9 +1,17 @@
 require "facebook"
 
 class ApplicationController < ActionController::Base
+  before_filter :set_merchant_subdomains
   protect_from_forgery
 
   include Facebook
+  include DateHelper
+  include SslRequirement
+
+  # Subdomain
+  def set_merchant_subdomains
+    @merchant_subdomain = MerchantSubdomain.find_by_subdomain(request.subdomain)
+  end
 
   # Merchant methods
   def require_merchant
@@ -89,13 +97,16 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Helper methods - better place for this?
-  def verify_date(string)
-    begin
-      return Time.zone.parse(string) ? true : false
-    rescue
-      return false
-    end
+  def ssl_required?
+    # (Comment this one line out if you want to test ssl locally)
+    #return false if local_request? 
+
+    # always return false for tests
+    return false if RAILS_ENV == 'test'
+
+    # otherwise, use the filters.
+    super
   end
+  
 
 end

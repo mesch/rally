@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110612202120) do
+ActiveRecord::Schema.define(:version => 20110613222801) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -83,6 +83,13 @@ ActiveRecord::Schema.define(:version => 20110612202120) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
+  create_table "merchant_subdomains", :force => true do |t|
+    t.string   "subdomain"
+    t.integer  "merchant_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "merchants", :force => true do |t|
     t.string   "name"

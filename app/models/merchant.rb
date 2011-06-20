@@ -34,22 +34,37 @@ class Merchant < ActiveRecord::Base
   # logo
   MAX_IMAGE_SIZE = 3145728 # Max bytes (3 MB)
   CONTENT_TYPES = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png']
-  THUMB_SIZE = "100x100!"
+  FOOTER_SIZE = "150x40>"
 
   #validates_attachment_presence :logo
   #validates_attachment_size :logo, :less_than => MAX_IMAGE_SIZE
   #validates_attachment_content_type :logo, { :content_type => CONTENT_TYPES }
   
   has_attached_file :logo, {
-    :styles => { 
-      :thumb => THUMB_SIZE,
-    }
+    :styles => { :footer => FOOTER_SIZE },
+    :default_url => OPTIONS[:logo_default_url]
   }.merge(OPTIONS[:paperclip_storage_options])
 
   attr_protected :id, :salt
   attr_accessor :password, :password_confirmation
   
   has_many :deals
+  has_one :merchant_subdomain
+  
+  # Logo methods
+  def get_logo
+    if self.logo
+      return self.logo.url(:original)
+    end
+    return nil
+  end
+  
+  def get_logo_footer
+    if self.logo
+      return self.logo.url(:footer)
+    end
+    return nil
+  end
   
   # Deal methods
   def drafts

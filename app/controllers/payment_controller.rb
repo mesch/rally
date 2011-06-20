@@ -1,5 +1,7 @@
 class PaymentController < ApplicationController
   before_filter :require_user, :except => [ :relay_response ]
+  ssl_required :purchase
+  ssl_allowed :relay_response
 
   layout "user"
   helper :authorize_net

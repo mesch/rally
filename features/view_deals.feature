@@ -31,8 +31,7 @@ Feature: View Deals
 		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
 		And the deal "Cool New Deal" has 1 created order of 1 quantity
 		And a merchant has changed the min of deal "Cool New Deal" to 2
-		And I am on the list of deals
-		When I follow "Cool New Deal"		
+		When I go to the deal page for "Cool New Deal"		
 		Then I should see the Buy button
 		And I should see "Buy 1 More To Tip This Deal!"			
 
@@ -40,16 +39,14 @@ Feature: View Deals
 		Given there are no deals
 		And a merchant has published a deal titled "Dealio"
 		And a merchant has published a deal titled "Cool New Deal"
-		And I am on the list of deals
-		When I follow "Cool New Deal"
+		When I go to the deal page for "Cool New Deal"
 		Then I should see "Dealio"
 
 	Scenario: Deal page - Other Deals (Unpublished)
 		Given there are no deals
 		And a merchant has created a deal titled "Dealio"
 		And a merchant has published a deal titled "Cool New Deal"
-		And I am on the list of deals
-		When I follow "Cool New Deal"
+		When I go to the deal page for "Cool New Deal"
 		Then I should not see "Dealio"
 
 	Scenario: Deal page - Other Deals (Hasn't started)
@@ -57,8 +54,7 @@ Feature: View Deals
 		And a merchant has published a deal titled "Dealio"
 		And a merchant has changed the start date of deal "Dealio" to tomorrow
 		And a merchant has published a deal titled "Cool New Deal"
-		And I am on the list of deals
-		When I follow "Cool New Deal"
+		When I go to the deal page for "Cool New Deal"
 		Then I should not see "Dealio"
 			
 	Scenario: Deal page - Other Deals (Has ended)
@@ -66,8 +62,7 @@ Feature: View Deals
 		And a merchant has published a deal titled "Dealio"
 		And a merchant has changed the end date of deal "Dealio" to yesterday
 		And a merchant has published a deal titled "Cool New Deal"
-		And I am on the list of deals
-		When I follow "Cool New Deal"
+		When I go to the deal page for "Cool New Deal"
 		Then I should not see "Dealio"
 
 	Scenario: Deal Page (Not Tipped, Not Maxed, Not Ended)

@@ -107,6 +107,14 @@ Given /^I am logged in as user "(.+?)" with password "(.+?)"/ do |email, passwor
 end
 
 # When
+When /^(?:|I )go to "(.+)"$/ do |url|
+  visit url
+end
+
+When /^I switch to the "([^"]*)" subdomain$/ do |subdomain|
+  Capybara.default_host = "#{subdomain}.#{@base_host}"
+end
+
 When /^I upload a valid image for Image 1$/ do 
   attach_file('image1', File.join(::Rails.root.to_s, 'features', 'upload-files', 'valid_image.jpg'))
 end
@@ -125,6 +133,10 @@ end
 
 When /^I upload a file of 0 coupons codes$/ do
   attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '0codes.csv'))
+end
+
+When /^I upload a logo$/ do
+  attach_file('logo_file', File.join(::Rails.root.to_s, 'features', 'upload-files', 'logo.png'))
 end
 
 When /^the background process to charge orders is run$/ do
@@ -167,3 +179,10 @@ Then /^I should see the limit is (\d)$/ do |limit|
   find_field("deal-per-number", :hidden => true).value.should == limit
 end
 
+Then /^I should see the generic logo$/ do
+    page.should have_xpath("//img[@alt=\"Logo_original\"]")
+end
+
+Then /^I should see the merchant logo$/ do
+    page.should have_xpath("//img[@alt=\"Original\"]")
+end

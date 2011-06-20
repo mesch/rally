@@ -118,3 +118,19 @@ Feature: View Coupons
 		And I should see "Cool New Deal"
 		And I should see "abc123"
 	
+	# uses test_user - so this may break if fixture data is removed
+	Scenario: Coupon List (non-subdomain)
+		Given I am logged in as user "test_user@rallycommerce.com" with password "test"
+		When I go to the list of coupons
+		Then I should see "Burger Deal!"
+		And I should see "Current Deal" 
+
+	# uses test_user - so this may break if fixture data is removed
+	Scenario: Coupon List (non-subdomain)
+		Given I switch to the "bob" subdomain
+		And I am logged in as user "test_user@rallycommerce.com" with password "test"
+		When I go to the list of coupons
+		Then I should see "Burger Deal!"
+		And I should not see "Current Deal"
+	
+	

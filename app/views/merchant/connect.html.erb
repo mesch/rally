@@ -1,0 +1,46 @@
+<%= form_tag :controller => :merchant, :action=>'connect', :class=>"validator" %>
+
+<% if flash[:reactivate_error] %>
+	<div class="sysmsgw" id="sysmsg-error">
+		<div class="sysmsg">
+			<p>You must activate your account. Go <%= link_to "here", merchant_reactivate_url, :target => "_blank" %> to reactivate.</p>
+			<span class="close">Close</span>
+		</div>
+	</div> 
+<% end %>
+
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="biz">
+    <div id="content" class="biz">
+        <div class="box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head"><h2>Connect</h2></div>
+                <div class="subsect">
+					Log in to connect the <%= link_to @page_name, @page_link, :target => "_blank" %> page to your <%= OPTIONS[:site_name] %> account.
+	                <div class="field">
+	                    <label for="username">Username</label>
+						<%= text_field_tag :username, nil, :class=>"f-input", :datatype=>"require", :require=>"true" %>
+	                </div>
+	                <div class="field">
+	                    <label for="password">Password</label>
+						<%= password_field_tag :password, nil, :class=>"f-input", :datatype=>"require", :require=>"true" %>
+	                </div>
+					<%= hidden_field_tag :fb_page_id, @fb_page_id %>
+	                <div class="act">
+						<%= submit_tag :submit, :value => 'Connect', :class=>"formbutton"%>
+	                </div>
+                </div>
+				<div class="sect">
+					Don't have a merchant account, yet? <%= link_to 'Sign Up!', merchant_signup_url, :target => "_blank" %>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+    <div id="sidebar">
+	</div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

@@ -1,4 +1,5 @@
 Capybara.ignore_hidden_elements = false
+Capybara.default_host = 'rcom.com'
 
 # load fixtures - before each scenario
 Before do
@@ -12,8 +13,11 @@ end
 Before do
   @current_merchant = Merchant.find_by_username(:emptybob)
   @current_user = User.find_by_email("empty_user@rallycommerce.com")
+  @base_host = "rcom.com"
 end
-
+After do
+  Capybara.default_host = @base_host
+end
 
 # Helper methods
 def get_date(value)

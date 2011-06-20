@@ -16,7 +16,11 @@
 	<div id="hdw">
 		<div id="hd">
 			<div id="logo">
-			<%= link_to image_tag("logo.gif"), root_url, :class => "link", :target => "_blank" %>
+				<% if @merchant_subdomain and @merchant_subdomain.get_logo %>
+					<%= image_tag(@merchant_subdomain.get_logo) %>
+				<% else %>
+					<%= image_tag("logo_original.gif") %>
+				<% end %>
 			</div>
 			<div class="guides">
 				<div class="city">
@@ -104,9 +108,13 @@
 					</ul>
 				</li>
 				<li class="col end">
-						<div class="logo-footer">
-							<%= link_to image_tag("logo-footer.gif"), root_url %>
-						</div>
+					<div class="logo-footer">
+						<% if @merchant_subdomain and @merchant_subdomain.get_logo_footer %>
+							<%= image_tag(@merchant_subdomain.get_logo_footer) %>
+						<% else %>
+							<%= image_tag("logo_footer.gif") %>
+						<% end %>
+					</div>
 				</li>
 			</ul>
 			<div class="copyright">

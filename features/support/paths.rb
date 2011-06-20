@@ -8,6 +8,11 @@ module NavigationHelpers
   def path_to(page_name)
     case page_name
 
+    # merchant
+    when /the merchant signup page/
+      merchant_signup_path
+    when /the merchant account page/
+      merchant_account_path
     when /the merchant home\s?page/
       merchant_home_path
     when /the merchant list of deals/
@@ -17,6 +22,7 @@ module NavigationHelpers
     when /the edit deal page for "([^"]*)"/
       deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
       merchant_edit_deal_path(deal.id)
+    # user
     when /the list of deals/
       deals_path
     when /the deal page for "([^"]*)"/
@@ -26,8 +32,17 @@ module NavigationHelpers
       deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
       payment_order_path(:deal_id => deal.id)    
     when /the list of coupons/
-      coupons_path    
-
+      coupons_path
+    # subdomain
+    when /the "([^"]*)" subdomain/       
+      url = "http://#{$1}.#{@base_host}"
+    # facebook
+    when /the list of deals from facebook/
+      facebook_deals_path
+    when /the order page from facebook for "([^"]*)"/
+      deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
+      facebook_payment_order_deal_path(:deal_id => deal.id)
+      
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

@@ -1,5 +1,4 @@
 class FacebookPaymentController < PaymentController
-  before_filter :set_merchant
   skip_before_filter :verify_authenticity_token
   
   layout "facebook"
@@ -13,13 +12,7 @@ class FacebookPaymentController < PaymentController
   end
   
   def next_controller
-    "facebook"
-  end
-  
-  def set_merchant
-    if session[:fb_page_id]
-      @merchant = Merchant.find_by_facebook_page_id(session[:fb_page_id])
-    end
+    return "facebook"
   end
   
 end

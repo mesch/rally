@@ -14,7 +14,11 @@ body{ background:#fff;}
 </style>
 
 <div id="logo">
-<%= image_tag("merchant_logo.png") %>
+	<% if @merchant_subdomain and @merchant_subdomain.get_logo %>
+		<%= image_tag(@merchant_subdomain.get_logo) %>
+	<% else %>
+		<%= image_tag("logo_original.gif") %>
+	<% end %>
 </div>
 
 <div id="goto">

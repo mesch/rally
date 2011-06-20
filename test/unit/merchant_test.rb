@@ -131,6 +131,7 @@ class MerchantTest < ActiveSupport::TestCase
     #check that we can create with all fields
     #note - this may get out of sync if new fields are added   
     m = Merchant.new(:name => "test", :username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234",
+    :logo_file_name => 'logo.png', :logo_content_type => 'image/png', :logo_file_size => 1000,
     :time_zone => "Pacific Time (US & Canada)", :website => "abc.com", :contact_name => "Bobby Smith",
     :address1 => "Pier 38", :address2 => "Suite 201", :city => "San Francisco", :state => "CA", :zip => "94103", :country => "USA",
     :phone_number => "4155551212", :tax_id => "123456789", :bank => "BofA", :account_name => "Bob Smith",
@@ -141,13 +142,15 @@ class MerchantTest < ActiveSupport::TestCase
     assert m.save
     assert_equal 10, m.salt.length
     assert equal?(m, Merchant.authenticate(m.username, m.password), 
-      [:name, :username, :email, :hashed_password, :salt, :activation_code, :activate, :time_zone, :website, :contact_name,
+      [:name, :username, :email, :hashed_password, :salt, :logo_file_name, :logo_content_type, :logo_file_size,
+        :activation_code, :activate, :time_zone, :website, :contact_name,
         :address1, :address2, :city, :state, :zip, :country, :phone_number, :tax_id, :bank, :account_name,
         :routing_number, :account_number, :paypal_account])
     #check that changing a local field fails match
     m.contact_name = "Bob Smith"
     assert !equal?(m, Merchant.authenticate(m.username, m.password), 
-      [:name, :username, :email, :hashed_password, :salt, :activation_code, :activate, :time_zone, :website, :contact_name,
+      [:name, :username, :email, :hashed_password, :salt, :logo_file_name, :logo_content_type, :logo_file_size,
+        :activation_code, :activate, :time_zone, :website, :contact_name,
         :address1, :address2, :city, :state, :zip, :country, :phone_number, :tax_id, :bank, :account_name,
         :routing_number, :account_number, :paypal_account])
   end
@@ -220,17 +223,17 @@ class MerchantTest < ActiveSupport::TestCase
   
   def test_inactivate
     assert @bob.activated
-    m = Merchant.find(@bob)
+    m = Merchant.find(@bob.id)
     assert m.inactivate
     assert !m.activated
     assert equal?(m, @bob, [:name, :username, :hashed_password, :salt, :email, :activation_code, :active])
   end
   
   def test_update_email
-    m = Merchant.find(@bob)
+    m = Merchant.find(@bob.id)
     # bad format
     assert !m.update_email("bad_format")
-    m = Merchant.find(@bob)
+    m = Merchant.find(@bob.id)
     assert m.activated
     assert equal?(m, @bob, [:name, :username, :email, :hashed_password, :salt, :active, :activation_code, :activated])
     # success
@@ -238,6 +241,19 @@ class MerchantTest < ActiveSupport::TestCase
     assert_equal m.email, "test@abc.com"
     assert !m.activated
     assert equal?(m, @bob, [:name, :username, :hashed_password, :salt, :active])
+  end
+  
+  def test_get_logo
+    #assuming @bob has logo set
+    m = Merchant.find(@bob.id)
+    assert_equal m.get_logo, m.logo.url(:original)
+    assert_equal m.get_logo_footer, m.logo.url(:footer)
+    #merchant from scratch uses default logo
+    m = Merchant.new(:name => "test", :username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234")
+    m.password = m.password_confirmation = "bobs_secure_password"
+    assert m.save
+    assert_equal m.get_logo, OPTIONS[:logo_default_url].sub(':style', 'original')
+    assert_equal m.get_logo_footer, OPTIONS[:logo_default_url].sub(':style', 'footer')
   end
   
 end

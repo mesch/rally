@@ -10,7 +10,7 @@ OPTIONS[:recaptcha_public_key] = "6Lc7G8QSAAAAAIErQb-7rMDJ-2vVL2BbIqKN_fHk"
 OPTIONS[:recaptcha_private_key] = "6Lc7G8QSAAAAADTgEYoxR2cG2HbaBUFVwaUEggfn"
 
 # UI stuff
-OPTIONS[:site_name] = "Rally"
+OPTIONS[:site_name] = "Rally Commerce"
 
 # Use the same from address and return-path for all emails
 OPTIONS[:email_from] = "Rally Commerce <support@rallycommerce.com>"
@@ -44,3 +44,6 @@ OPTIONS[:order_states] = {:created => 'CREATED', :authorized => 'AUTHORIZED', :p
 # Order Payment Gateways
 OPTIONS[:gateways] = {:authorize_net  => 'AUTHORIZE_NET'}
 
+# Paperclip defaults
+OPTIONS[:logo_default_url] = '/images/logo_:style.gif'
+OPTIONS[:deal_image_default_url] = '/images/missing_deal_image.gif'

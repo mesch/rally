@@ -11,7 +11,7 @@ class FacebookControllerTest < ActionController::TestCase
   fixtures :users
 
   def setup
-    @request.host = "localhost"
+    @request.host = "rc.com"
   end
 
   def login(user=@test_user)
@@ -99,7 +99,11 @@ class FacebookControllerTest < ActionController::TestCase
     get :deal, :id => Deal.find(:first).id
     assert_response :success
     assert_template "user/deal"
-    assert_nil session[:user_id]    
+    assert_nil session[:user_id]
+    get :splash
+    assert_response :success
+    assert_template "facebook/splash"
+    assert_nil session[:user_id]     
     # session will be set if we login first
     self.login
     assert_response :redirect
@@ -112,8 +116,49 @@ class FacebookControllerTest < ActionController::TestCase
     get :deal, :id => Deal.find(:first).id
     assert_response :success
     assert_template "user/deal"
-    assert_template "layouts/facebook"
     assert session[:user_id]
+    get :splash
+    assert_response :success
+    assert_template "facebook/splash"
+    assert session[:user_id]
+  end
+  
+  def test_home_subdomain
+    old_host = @request.host
+    self.login
+    assert_response :redirect
+    assert session[:user_id]
+    # no params - go to deals
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action => 'deals'
+    # invalid subdomain - host doesn't change
+    get :home, :sd => 'testing'
+    assert_response :redirect
+    assert_redirected_to :action => 'deals'
+    assert_equal @request.host, old_host 
+    # invalid subdomain - host doesn't change
+    get :home, :sd => 'bob'
+    assert_response :redirect
+    assert_redirected_to :action => :home, :host => "bob.#{old_host}"
+  end
+  
+  def test_home_fb_page_id
+    self.login
+    assert_response :redirect
+    assert session[:user_id]
+    # no params - go to deals
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action => 'deals'
+    # fb_page_id already configured for a client - still goes to deals
+    get :home, :fb_page_id => @bob.facebook_page_id
+    assert_response :redirect
+    assert_redirected_to :action => 'deals'
+    # new fb_page_id - go to merchant connect
+    get :home, :fb_page_id => 0
+    assert_response :redirect
+    assert_redirected_to :controller => 'merchant', :action => 'connect', :fb_page_id => 0    
   end
   
 end

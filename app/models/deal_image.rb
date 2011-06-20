@@ -19,7 +19,8 @@ class DealImage < ActiveRecord::Base
     :styles => { 
       :thumb => THUMB_SIZE,
       :display => DISPLAY_SIZE
-    }
+    },
+    :default_url => OPTIONS[:deal_image_default_url]
   }.merge(OPTIONS[:paperclip_storage_options])
   
 end

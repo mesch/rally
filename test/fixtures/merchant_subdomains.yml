@@ -1,0 +1,15 @@
+bob_subdomain:
+    merchant_id: 1
+    subdomain: "bob"
+
+www_subdomain:
+    subdomain: "www"
+
+api_subdomain:
+    subdomain: "api"
+        
+admin_subdomain:
+    subdomain: "admin"
+    
+empty_subdomain:
+    subdomain: ""

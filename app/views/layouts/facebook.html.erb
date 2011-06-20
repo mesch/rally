@@ -14,8 +14,10 @@
 <div id="pagemasker"></div><div id="dialog"></div>
 <div id="doc">
 	<div id="logo">
-		<% if @merchant and @merchant.logo %>
-			<%= image_tag(@merchant.logo.url(:original)) %>
+		<% if @merchant_subdomain and @merchant_subdomain.get_logo %>
+			<%= image_tag(@merchant_subdomain.get_logo) %>
+		<% else %>
+			<%= image_tag("logo_original.gif") %>
 		<% end %>
 	</div>
 	<div id="hdw">
