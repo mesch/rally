@@ -8,6 +8,7 @@
 	<%= raw stylesheet_link_tag 'index.css', :media => "screen", :charset => "utf-8" %>	
 	<script type="text/javascript">var WEB_ROOT = '';</script>
 	<%= raw javascript_include_tag "index.js" %>
+	<%= render :partial => 'layouts/block/google_analytics' %>
 </head>
 <body class="<%= controller.action_name == 'index' ? 'bg-alt' : 'newbie' %>">
 <div id="pagemasker"></div><div id="dialog"></div>

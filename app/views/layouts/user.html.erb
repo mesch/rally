@@ -8,6 +8,7 @@
 	<%= raw stylesheet_link_tag 'index.css', :media => "screen", :charset => "utf-8" %>	
 	<script type="text/javascript">var WEB_ROOT = '';</script>
 	<%= raw javascript_include_tag "index.js" %>
+	<%= render :partial => 'layouts/block/google_analytics' %>
 </head>
 <body class="<%= request.method == 'index' ? 'bg-alt' : 'newbie' %>">
 <div id="pagemasker"></div><div id="dialog"></div>
@@ -29,7 +30,6 @@
 			</div>
 			<ul class="nav cf">
 				<% if @current_user %>
-					<li <%= controller.action_name == 'home' ? 'class=current' : '' %> ><%= link_to "Home", home_url %></li>
 					<li <%= controller.action_name == 'deals' ? 'class=current' : '' %> ><%= link_to "Deals", deals_url %></li>
 					<li <%= controller.action_name == 'coupons' ? 'class=current' : '' %> ><%= link_to "Coupons", coupons_url %></li>					
 				<% else %>
