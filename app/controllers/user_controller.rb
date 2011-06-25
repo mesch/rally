@@ -1,6 +1,8 @@
 class UserController < ApplicationController
   before_filter :require_user, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :deals, :deal, :splash]
   before_filter :check_for_user, :only => [:deals, :deal]
+  before_filter :check_for_visitor
+  after_filter :log_user_action
   ssl_required :login, :account, :change_password, :change_email
   ssl_allowed :home
   

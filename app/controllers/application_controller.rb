@@ -8,12 +8,21 @@ class ApplicationController < ActionController::Base
   include DateHelper
   include SslRequirement
 
-  # Subdomain
+  ### Subdomain methods
   def set_merchant_subdomains
     @merchant_subdomain = MerchantSubdomain.find_by_subdomain(request.subdomain)
   end
+  
+  ### SSL methods
+  def ssl_required?
+    # always return false for tests
+    return false if Rails.env.test?
 
-  # Merchant methods
+    # otherwise, use the filters.
+    super
+  end
+
+  ### Merchant methods
   def require_merchant
     if session[:merchant_id]
       @current_merchant = Merchant.find(session[:merchant_id])
@@ -34,7 +43,7 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  # User methods
+  ### User methods
   # Require that a user is present
   def require_user
     # Get the user if they exist
@@ -88,6 +97,7 @@ class ApplicationController < ActionController::Base
     return false
   end
   
+  # Redirect back to the url before login
   def redirect_user_to_stored
     if return_to = session[:user_return_to]
       session[:user_return_to]=nil
@@ -97,16 +107,72 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def ssl_required?
-    # (Comment this one line out if you want to test ssl locally)
-    #return false if local_request? 
+  ### Visitor methods
+  # Sets session information for a visitor
+  def check_for_visitor
+    visitor_id = get_visitor_id
+    
+    if visitor_id
+      set_visitor(visitor_id)
+      return true
+    end
+    return false
+  end
 
-    # always return false for tests
-    return false if RAILS_ENV == 'test'
-
-    # otherwise, use the filters.
-    super
+  # Gets the visitor_id 
+  def get_visitor_id()
+    # short circuit if already in the session
+    visitor_id = session[:visitor_id]
+    if visitor_id
+      return visitor_id
+    end
+  
+    # check cookies
+    visitor_id = cookies['visitor_id']
+    if visitor_id
+      return visitor_id
+    end
+    
+    # create a new visitor
+    v = Visitor.new
+    if v.save
+      cookies['visitor_id'] = v.id
+      return v.id
+    end
+    
+    return nil
   end
   
-
+  # Sets the session visitor information
+  def set_visitor(visitor_id)
+    if visitor_id
+      session[:visitor_id] = visitor_id
+      return true
+    end
+    return false
+  end  
+  
+  ### Logging methods
+  def log_user_action
+    # only include the final location
+    unless response.location
+      visitor_id = cookies['visitor_id']
+      user_id = @current_user ? @current_user.id : nil
+      merchant_id = @merchant_subdomain ? @merchant_subdomain.merchant_id : nil
+      if @deal
+        deal_id = @deal.id
+      elsif @order and @order.deal
+        deal_id = @order.deal.id
+      else
+        deal_id = nil
+      end
+    
+      ua = UserAction.new(:controller => self.controller_name, :action => self.action_name, :method => request.method,
+        :visitor_id => visitor_id, :user_id => user_id, :merchant_id => merchant_id, :deal_id => deal_id)
+      unless ua.delay.save
+        logger.error "log_user_action: Couldn't log User Action: #{ua}"
+      end
+    end
+  end
+  
 end

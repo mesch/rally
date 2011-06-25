@@ -190,6 +190,7 @@ class OrderTest < ActiveSupport::TestCase
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save
     assert o.state = OPTIONS[:order_states][:created]
+    assert !o.authorized_at
     assert o.reserve_quantity(1)
     assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => '10.00', 
       :confirmation_code => 'XYZ123')
@@ -202,6 +203,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal ops[0].amount, 10.to_money
     assert_equal ops[0].confirmation_code, 'XYZ123'
     assert o.state = OPTIONS[:order_states][:authorized]
+    assert o.authorized_at
     # can't be missing any fields in the method call
     assert !o.process_authorization(:gateway => nil, :transaction_type => 'auth_only', :amount => '10.00', 
       :confirmation_code => 'XYZ123')

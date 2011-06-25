@@ -1,5 +1,8 @@
 class PaymentController < ApplicationController
   before_filter :require_user, :except => [ :relay_response ]
+  before_filter :check_for_visitor
+  after_filter :log_user_action
+  
   ssl_required :purchase
   ssl_allowed :relay_response
 
@@ -52,7 +55,6 @@ class PaymentController < ApplicationController
       if quantity != 0
         # try to reserve the quantity - update order
         if @order.reserve_quantity(quantity)
-          p self.controller_name
           redirect_to :controller => self.controller_name, :action => 'purchase', :order_id => @order.id
           return
         else
@@ -149,19 +151,12 @@ class PaymentController < ApplicationController
   # Displays a receipt.
   def receipt
     gateway = params[:gateway]
-    
-    p gateway
     # only handling authorize.net transactions now
     if gateway == OPTIONS[:gateways][:authorize_net]
-      p "here"
       order = Order.find_by_id(params[:x_invoice_num])
-      p order
       transaction_type = params[:x_type]
-      p transaction_type
       amount = params[:x_amount]
-      p amount
       @confirmation_code = params[:x_auth_code]
-      p @confirmation_code
       
       # process payment
       unless order.process_authorization(:gateway => gateway, :transaction_type => transaction_type, 

@@ -430,4 +430,166 @@ class UserControllerTest < ActionController::TestCase
     assert_template "layouts/user"    
   end
   
+  def test_visitor
+    # cookies are a little strange
+    # - can't be access by cookies[:key], needs to be ['key']
+    # - always stores value as string
+    Visitor.delete_all
+    assert_equal Visitor.find(:all).size, 0
+    assert_nil session[:visitor_id]
+    assert_nil cookies['visitor_id']
+    # go to a page (login) - create a visitor
+    get :login
+    assert session[:visitor_id]
+    assert cookies['visitor_id']
+    assert_equal Visitor.find(:all).size, 1
+    v = Visitor.find_by_id(cookies['visitor_id'])
+    assert v
+    assert_equal session[:visitor_id], v.id
+    assert_equal cookies['visitor_id'].to_i, v.id
+    # login - no change
+    self.login
+    assert session[:visitor_id]
+    assert cookies['visitor_id']
+    assert_equal Visitor.find(:all).size, 1
+    v = Visitor.find_by_id(cookies['visitor_id'])
+    assert v
+    assert_equal session[:visitor_id], v.id
+    assert_equal cookies['visitor_id'].to_i, v.id    
+    # go to another page - no change
+    get :home
+    assert session[:visitor_id]
+    assert cookies['visitor_id']
+    assert_equal Visitor.find(:all).size, 1
+    v = Visitor.find_by_id(cookies['visitor_id'])
+    assert v
+    assert_equal session[:visitor_id], v.id
+    assert_equal cookies['visitor_id'].to_i, v.id    
+    # logout - session cleared
+    get :logout
+    assert_nil session[:visitor_id]
+    assert cookies['visitor_id']
+    assert_equal Visitor.find(:all).size, 1
+    v = Visitor.find_by_id(cookies['visitor_id'])
+    assert v
+    assert_equal cookies['visitor_id'].to_i, v.id    
+    # go to a page (login) - session populated
+    get :login
+    assert session[:visitor_id]
+    assert cookies['visitor_id']
+    assert_equal Visitor.find(:all).size, 1
+    v = Visitor.find_by_id(cookies['visitor_id'])
+    assert v
+    assert_equal session[:visitor_id], v.id
+    assert_equal cookies['visitor_id'].to_i, v.id    
+  end
+  
+  def test_logging_basic
+    Visitor.delete_all
+    UserAction.delete_all
+    ua = UserAction.find(:first)
+    assert_nil ua
+    # go to a page (login) - not logged in
+    UserAction.delete_all
+    get :login
+    ua = UserAction.find(:first)
+    assert ua
+    assert ua.visitor, Visitor.find(:first)
+    assert_nil ua.user
+    assert_nil ua.merchant
+    assert_nil ua.deal
+    assert_equal ua.controller,  'user'
+    assert_equal ua.action, 'login'
+    assert_equal ua.method, 'GET'
+    # login - won't log - redirected
+    UserAction.delete_all
+    self.login 
+    ua = UserAction.find(:first)
+    assert_nil ua
+    # go to another page - now have user 
+    UserAction.delete_all
+    get :deals
+    ua = UserAction.find(:first)
+    assert ua
+    assert ua.visitor, Visitor.find(:first)
+    assert_equal ua.user, @test_user
+    assert_nil ua.merchant
+    assert_nil ua.deal
+    assert_equal ua.controller, 'user'
+    assert_equal ua.action, 'deals'
+    assert_equal ua.method, 'GET'
+    # logout - won't log - redirected
+    UserAction.delete_all
+    get :logout
+    ua = UserAction.find(:first)
+    assert_nil ua
+    # got to another page - no more user
+    UserAction.delete_all
+    get :deals
+    ua = UserAction.find(:first)
+    assert ua   
+    assert ua.visitor, Visitor.find(:first)
+    assert_nil ua.user
+    assert_nil ua.merchant
+    assert_nil ua.deal
+    assert_equal ua.controller, 'user'
+    assert_equal ua.action, 'deals'
+    assert_equal ua.method, 'GET'
+  end
+
+  def test_logging_multiple
+    UserAction.delete_all
+    user_actions = UserAction.find(:all)
+    assert_equal user_actions.size, 0
+    # go to a page (login) - not logged in
+    get :login
+    user_actions = UserAction.find(:all)
+    assert_equal user_actions.size, 1
+    # login - won't log - redirected
+    self.login    
+    user_actions = UserAction.find(:all)
+    assert_equal user_actions.size, 1
+    # go to another page
+    get :deals
+    user_actions = UserAction.find(:all)
+    assert_equal user_actions.size, 2
+  end
+
+  def test_logging_subdomain
+    UserAction.delete_all
+    ua = UserAction.find(:first)
+    assert_nil ua
+    # go to a page (login) - no subdomain
+    UserAction.delete_all
+    get :login
+    ua = UserAction.find(:first)
+    assert ua
+    assert_nil ua.merchant
+    # go to a page (login) - with subdomain
+    UserAction.delete_all
+    @request.host = "#{@bob.merchant_subdomain.subdomain}.#{@request.host}"
+    get :login
+    ua = UserAction.find(:first)
+    assert ua
+    assert_equal ua.merchant, @bob   
+  end
+  
+  def test_logging_deal
+    UserAction.delete_all
+    ua = UserAction.find(:first)
+    assert_nil ua
+    # go to a non-deal page (login) - no deal id
+    UserAction.delete_all
+    get :login
+    ua = UserAction.find(:first)
+    assert ua
+    assert_nil ua.deal    
+    # go to a deal page
+    UserAction.delete_all
+    get :deal, :id => @burger_deal.id
+    ua = UserAction.find(:first)
+    assert ua
+    assert_equal ua.deal, @burger_deal   
+  end
+  
 end

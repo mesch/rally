@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110613222801) do
+ActiveRecord::Schema.define(:version => 20110623223313) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -149,6 +149,8 @@ ActiveRecord::Schema.define(:version => 20110613222801) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "state",           :default => "CREATED"
+    t.datetime "authorized_at"
+    t.datetime "paid_at"
   end
 
   add_index "orders", ["user_id", "deal_id"], :name => "orders_by_user_deal"
@@ -160,6 +162,18 @@ ActiveRecord::Schema.define(:version => 20110613222801) do
     t.integer  "considered"
     t.integer  "successes"
     t.integer  "failures"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "user_actions", :force => true do |t|
+    t.integer  "visitor_id"
+    t.integer  "user_id"
+    t.integer  "merchant_id"
+    t.integer  "deal_id"
+    t.string   "controller"
+    t.string   "action"
+    t.string   "method"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -182,5 +196,10 @@ ActiveRecord::Schema.define(:version => 20110613222801) do
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
+
+  create_table "visitors", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

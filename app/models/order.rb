@@ -46,7 +46,7 @@ class Order < ActiveRecord::Base
         # create coupons
         self.create_coupons!
         # update order
-        self.update_attributes!(:state => OPTIONS[:order_states][:authorized])
+        self.update_attributes!(:state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
       end
       return true
     rescue ActiveRecord::RecordInvalid => invalid
@@ -89,7 +89,7 @@ class Order < ActiveRecord::Base
           order_payment.capture!
         end
         # update order
-        self.update_attributes!(:state => OPTIONS[:order_states][:paid])
+        self.update_attributes!(:state => OPTIONS[:order_states][:paid], :paid_at => Time.zone.now)
       end
       return true
     rescue PaymentError => pe

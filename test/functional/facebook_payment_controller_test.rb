@@ -12,10 +12,7 @@ class FacebookPaymentControllerTest < ActionController::TestCase
   fixtures :deals
 
   def setup
-    @controller = FacebookPaymentController.new
-    @request    = ActionController::TestRequest.new
-    @response   = ActionController::TestResponse.new
-    @request.host = "localhost"
+    @request.host = "rcom.com"
     
     @deal = @burger_deal
     @order = @test_user.unconfirmed_order(@deal.id)
@@ -138,6 +135,75 @@ class FacebookPaymentControllerTest < ActionController::TestCase
     get :purchase, :order_id => @order.id
     assert_response :redirect
     assert_redirected_to :controller => @user_controller_name, :action=>'home'    
+  end
+
+  def test_logging_deal
+    Visitor.delete_all
+    self.login
+    UserAction.delete_all
+    ua = UserAction.find(:first)
+    assert_nil ua 
+    # go to order page
+    Order.delete_all
+    UserAction.delete_all
+    get :order, :deal_id => @deal.id
+    ua = UserAction.find(:first)
+    assert ua
+    assert ua.visitor, Visitor.find(:first)
+    assert_equal ua.user, @test_user
+    assert_nil ua.merchant
+    assert_equal ua.deal, @deal
+    assert_equal ua.controller, 'facebook_payment'
+    assert_equal ua.action, 'order'
+    assert_equal ua.method, 'GET'
+    # complete order 
+    post :order, :deal_id => @deal.id, :quantity => 1
+    # go to payment page
+    UserAction.delete_all
+    get :purchase, :order_id => Order.find(:first).id
+    ua = UserAction.find(:first)
+    assert ua    
+    assert ua.visitor, Visitor.find(:first)
+    assert_equal ua.user, @test_user
+    assert_nil ua.merchant
+    assert_equal ua.deal, @deal
+    assert_equal ua.controller, 'facebook_payment'
+    assert_equal ua.action, 'purchase'
+    assert_equal ua.method, 'GET'
+    # go to receipt page
+    UserAction.delete_all
+    get :receipt, :gateway => OPTIONS[:gateways][:authorize_net], :x_invoice_num => Order.find(:first).id,
+      :x_type => 'AUTHORIZE', :x_amount => '10.00', :x_auth_code => 'xyz123'
+    ua = UserAction.find(:first)
+    assert ua
+    assert ua.visitor, Visitor.find(:first)
+    assert_equal ua.user, @test_user
+    assert_nil ua.merchant
+    assert_equal ua.deal, @deal
+    assert_equal ua.controller, 'facebook_payment'
+    assert_equal ua.action, 'receipt'
+    assert_equal ua.method, 'GET'
+  end
+
+  def test_logging_subdomain
+    Visitor.delete_all
+    self.login
+    UserAction.delete_all
+    ua = UserAction.find(:first)
+    assert_nil ua
+    # go to an order page - no subdomain
+    UserAction.delete_all
+    get :order, :deal_id => @burger_deal.id
+    ua = UserAction.find(:first)
+    assert ua
+    assert_nil ua.merchant
+    # go to an order page - with subdomain
+    UserAction.delete_all
+    @request.host = "#{@bob.merchant_subdomain.subdomain}.#{@request.host}"
+    get :order, :deal_id => @burger_deal.id
+    ua = UserAction.find(:first)
+    assert ua
+    assert_equal ua.merchant, @bob   
   end
 
 end
