@@ -167,11 +167,8 @@ class ApplicationController < ActionController::Base
         deal_id = nil
       end
     
-      ua = UserAction.new(:controller => self.controller_name, :action => self.action_name, :method => request.method,
+      ua = UserAction.delay.log(:controller => self.controller_name, :action => self.action_name, :method => request.method,
         :visitor_id => visitor_id, :user_id => user_id, :merchant_id => merchant_id, :deal_id => deal_id)
-      unless ua.delay.save
-        logger.error "log_user_action: Couldn't log User Action: #{ua}"
-      end
     end
   end
   
