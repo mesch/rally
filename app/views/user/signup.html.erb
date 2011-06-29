@@ -32,7 +32,7 @@
 					<div class="field">
 						<div class="note">
 						<%= check_box_tag :tos, 1, false %>
-						I agree to the <%= link_to 'Terms of Service', tos_url, :target=>"_blank" %>.</div>
+						I agree to the <%= link_to 'Terms and Conditions', terms_url, :target=>"_blank" %>.</div>
 					</div>
 					<div id="recaptcha_container" class="field">
 						<%= raw recaptcha_tags :public_key => OPTIONS[:recaptcha_public_key], :display => { :theme => "clean" } %>

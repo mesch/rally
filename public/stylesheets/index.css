@@ -69,7 +69,7 @@ body.bg-alt{background:#a3dcef url(i/bg-deal.jpg) no-repeat 50% 150px;}
 body.newbie{background-position:50% 326px;}
 #hdw{height:157px;background:url(i/bg-hd.gif) repeat-x 0 0;}
 #bdw{min-height:500px;_height:500px;}
-#ftw{background:url(i/bg-ft.gif) repeat-x 0 0;height:345px;}
+#ftw{background:url(i/bg-ft.gif) repeat-x 0 0;height:90px;}
 #hd{position:relative;z-index:2;width:960px;margin:0 auto;}
 #hd .nav{position:absolute;top:115px;left:0;padding-left:8px;}
 #hd .logins{position:absolute;top:115px;right:0;width:417px;}
@@ -111,8 +111,8 @@ body.newbie{background-position:50% 326px;}
 #myaccount-menu li a{display:block;padding-left:20px;color:#eef9fd;}
 #myaccount-menu li a:hover{color:#0981be;text-decoration:none;}
 #ft{width:960px;margin:0 auto;}
-#ft .contact{height:58px;line-height:58px;font-weight:bold;text-align:right;}
-#ft .contact a{color:#fff;}
+#ft .footer{height:58px;line-height:58px;font-weight:bold;text-align:right;}
+#ft .footer a{color:#fff;}
 #ft ul{background:#222;}
 #ft ul,#ft ul a,#ft .copyright{color:#666;}
 #ft li.col{float:left;display:inline;width:140px;height:130px;padding:20px 0 0 30px;border-right:1px dashed #373536;}
@@ -758,7 +758,7 @@ dd#consult .deal-info .link h2 span{font-family:arial,sans-serif;}
 #maillist .welcome .detail{margin-top:8px;color:#666;font-size:12px;}
 
 #recent-deals .sect{width:auto;padding:10px 20px 40px;}
-#recent-deals .deals-list li{float:left;width:680px;height:206px;border-bottom:1px dashed #ccc;border-right:1px dashed #ccc;}
+#recent-deals .deals-list li{float:left;width:650px;height:206px;border-bottom:1px dashed #ccc;border-right:1px dashed #ccc;}
 #recent-deals .deals-list li.first{height:213px;}
 #recent-deals .deals-list li.alt{padding-left:20px;border-right:none;}
 #recent-deals .deals-list .time{margin-top:15px;font-size:12px;font-weight:bold;color:#000;}
@@ -830,6 +830,11 @@ dd#consult .deal-info .link h2 span{font-family:arial,sans-serif;}
 /*dialog*/
 #dialog{position:absolute;z-index:9999;border:4px solid #CCC;display:none;}
 /*end*/
+
+#terms {padding-left:10px;}
+#terms p{padding-bottom:5px;}
+#privacy {padding-left:10px;}
+#privacy p{padding-bottom:5px;}
 
 /*validator*/
 span.errorTip{ font-size:12px; color:#C00; display:none; }

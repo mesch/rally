@@ -1,17 +1,20 @@
 class SiteController < ApplicationController
 
-  # Use the user layout (for now?)
-  layout "user"
+  layout "site"
 
   def home
     redirect_to :controller => :user, :action => :home
   end
   
-  def tos
+  def terms
     
   end
   
   def privacy
+    
+  end
+  
+  def merchant_terms
     
   end
   

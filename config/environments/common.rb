@@ -10,7 +10,7 @@ OPTIONS[:recaptcha_public_key] = "6Lc7G8QSAAAAAIErQb-7rMDJ-2vVL2BbIqKN_fHk"
 OPTIONS[:recaptcha_private_key] = "6Lc7G8QSAAAAADTgEYoxR2cG2HbaBUFVwaUEggfn"
 
 # UI stuff
-OPTIONS[:site_name] = "Rally Commerce"
+OPTIONS[:site_name] = "Shop and Rally"
 
 # Use the same from address and return-path for all emails
 OPTIONS[:email_from] = "Rally Commerce <support@rallycommerce.com>"

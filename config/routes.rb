@@ -82,8 +82,9 @@ Rally::Application.routes.draw do
   end
   
   controller :site do
-    match '/tos' => :tos, :via => :get
+    match '/terms' => :terms, :via => :get
     match '/privacy' => :privacy, :via => :get
+    match '/merchant_terms' => :merchant_terms, :via => :get
   end
   
   namespace :help do

@@ -5,21 +5,29 @@
 	<title><%= OPTIONS[:site_name] %></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<!-- ><link rel="shortcut icon" href="/favicon.ico" /> -->
-	<%= raw stylesheet_link_tag 'facebook.css', :media => "screen", :charset => "utf-8" %>	
+	<%= raw stylesheet_link_tag 'index.css', :media => "screen", :charset => "utf-8" %>	
 	<script type="text/javascript">var WEB_ROOT = '';</script>
 	<%= raw javascript_include_tag "index.js" %>
 	<%= render :partial => 'layouts/block/google_analytics' %>
 </head>
-<body>
+<body class="<%= request.method == 'index' ? 'bg-alt' : 'newbie' %>">
 <div id="pagemasker"></div><div id="dialog"></div>
 <div id="doc">
-	<div id="logo">
-		<%= image_tag("logo_original.gif") %>
-	</div>
+	<%= raw javascript_include_tag "xheditor/xheditor.js" %>	
 	<div id="hdw">
 		<div id="hd">
-			<ul class="nav cf">
-			</ul>
+			<div id="logo">
+				<% if @merchant_subdomain and @merchant_subdomain.get_logo %>
+					<%= image_tag(@merchant_subdomain.get_logo) %>
+				<% else %>
+					<%= image_tag("logo_original.gif") %>
+				<% end %>
+			</div>
+			<div class="guides">
+				<div class="city">
+					<h2>Site</h2>
+				</div>
+			</div>
 		</div>
 	</div>
 
@@ -31,8 +39,9 @@
 	<% end %>
 
 	<%= yield %>
-
+	
 	<%= render :partial => 'layouts/block/footer' %>
+
 </div>
 </body>
 </html>
