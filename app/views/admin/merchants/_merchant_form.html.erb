@@ -1,0 +1,157 @@
+<%= form_for [:admin, @merchant], :html => { :multipart => true } do |f| %>
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="partner">
+	<div id="content" class="clear mainwide">
+        <div class="clear box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head"><h2><%= @merchant.id ? 'Edit Account' : 'New Account' %></h2>
+					<% if !@merchant.activated %>
+						<%= link_to "Send Activation Email", send_activation_admin_merchant_url %>
+					<% end %>
+				</div>
+                <div class="sect">
+					<div class="wholetip clear"><h3>1. Login</h3></div>
+					<% if @merchant.id %>
+						<div class="field">
+							<%= label_tag 'Id' %>
+							<%= f.text_field :id, :value => @merchant.id, :class => "f-input", :disabled => true %>
+						</div>
+					<% end %>
+					<div class="field">
+						<%= label_tag 'Username' %>
+						<%= f.text_field :username, :value => @merchant.username, :class => "f-input" %>
+					</div>
+					<% if @merchant.id %>
+						<div class="field">
+							<%= label_tag 'Password' %>
+							<%= link_to "Change Password", change_password_admin_merchant_url(@merchant.id) %>
+						</div>
+					<% else %>
+						<div class="field">
+							<%= label_tag 'Password' %>
+							<%= f.password_field :password, :value => @merchant.password, :class => "f-input" %>
+						</div>
+						<div class="field">
+							<%= label_tag 'Confirm Password', 'Confirm Password' %>
+							<%= f.password_field :password_confirmation, :value => @merchant.password_confirmation, :class => "f-input" %>
+						</div>						
+					<% end %>
+					<div class="field">
+						<%= label_tag 'Email' %>
+						<%= f.text_field :email, :value => @merchant.email, :class => "f-input" %>
+					</div>
+				
+					<div class="wholetip clear"><h3>2. Deal Store</h3></div>
+					<div class="field">
+						<%= label_tag 'Subdomain' %>
+						<%= f.text_field :subdomain, :value => @merchant.merchant_subdomain ? @merchant.merchant_subdomain.subdomain : '', 
+							:class=>"f-input" %>
+						<% if @merchant.merchant_subdomain %>
+							<span class="hint"><%= @merchant.merchant_subdomain.subdomain + '.' + request.host_with_port %></span>
+						<% else %>
+							<span class="hint">Your personalized deal store will be located at [Subdomain].<%= request.host_with_port %>.</span>
+						<% end %>
+                       </div>
+
+					<div class="field">
+						<%= label_tag 'Logo' %>
+						<%= f.file_field :logo, :class => "f-input" %>
+						<% if @merchant.get_logo %>
+							<span class="hint"><%= @merchant.get_logo %></span>
+						<% else %>
+							<span class="hint">Upload a logo for your personalized deal store.</span>
+						<% end %>
+					</div>
+
+					<div class="wholetip clear"><h3>3. Company</h3></div>
+                    <div class="field">
+						<%= label_tag 'Company Name', 'Company Name' %> 
+						<%= f.text_field :name, :value => @merchant.name, :class=>"f-input", :datatype=>"require", :require=>"true" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Website' %> 
+						<%= f.text_field :website, :value => @merchant.website, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Time Zone', 'Time Zone' %> 
+						<%= f.select :time_zone, time_zone_options_for_select(@merchant.time_zone) %>
+                    </div>
+
+					<div class="wholetip clear"><h3>4. Contact</h3></div>
+                    <div class="field">
+						<%= label_tag 'Contact Name', 'Contact Name' %> 
+						<%= f.text_field :contact_name, :value => @merchant.contact_name, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Address Line 1', 'Address Line 1' %> 
+						<%= f.text_field :address1, :value => @merchant.address1, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Address Line 2', 'Address Line 2' %> 
+						<%= f.text_field :address2, :value => @merchant.address2, :class=>"f-input" %>
+                   	</div>
+                    <div class="field">
+						<%= label_tag 'City' %> 
+						<%= f.text_field :city, :value => @merchant.city, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'State' %> 
+						<%= f.text_field :state, :value => @merchant.state, :class=>"f-input" %>
+                    </div>					
+                    <div class="field">
+						<%= label_tag 'ZIP', 'ZIP' %> 
+						<%= f.text_field :zip, :value => @merchant.zip, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Country' %> 
+						<%= f.text_field :country, :value => @merchant.country, :class=>"f-input" %>
+                    </div>						
+                    <div class="field">
+						<%= label_tag 'Phone Number', 'Phone Number' %> 
+						<%= f.text_field :phone_number, :value => @merchant.phone_number, :class=>"f-input" %>
+                    </div>
+
+					<div class="wholetip clear"><h3>5. Bank Account</h3></div>
+                    <div class="field">
+						<%= label_tag 'Tax Id', 'Tax Id' %> 
+						<%= f.text_field :tax_id, :value => @merchant.tax_id, :class=>"f-input" %>
+                    </div>						
+                    <div class="field">
+						<%= label_tag 'Bank Name', 'Bank Name' %> 
+						<%= f.text_field :bank, :value => @merchant.bank, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Name on Account', 'Name on Account' %> 
+						<%= f.text_field :account_name, :value => @merchant.account_name, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Routing Number', 'Routing Number' %> 
+						<%= f.text_field :routing_number, :value => @merchant.routing_number, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Account Number', 'Account Number' %> 
+						<%= f.text_field :account_number, :value => @merchant.account_number, :class=>"f-input" %>
+                    </div>
+                    <div class="field">
+						<%= label_tag 'Paypal Account', 'Paypal Account' %> 
+						<%= f.text_field :paypal_account, :value => @merchant.paypal_account, :class=>"f-input" %>
+                    </div>
+					<div class="act">
+						<%= f.submit :submit, :value=>"Commit", :class=>"formbutton"%>
+						or <%= link_to "cancel", admin_merchants_url %>
+                    </div>
+                </div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+	</div>
+
+<div id="sidebar">
+</div>
+
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->
+<% end %>

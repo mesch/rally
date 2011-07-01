@@ -4,6 +4,8 @@ burger_order:
     quantity: 2
     amount_in_cents: 2000
     state: <%= OPTIONS[:order_states][:paid] %>
+    authorized_at: "2011-07-01T00:00:00"
+    paid_at: "2011-07-01T00:00:00"
     
 burger_order2:
     user: test_user
@@ -11,6 +13,7 @@ burger_order2:
     quantity: 1
     amount_in_cents: 1000
     state: <%= OPTIONS[:order_states][:authorized] %>
+    authorized_at: "2011-07-01T00:00:00"
 
 current_order:
     user: test_user
@@ -18,3 +21,4 @@ current_order:
     quantity: 1
     amount_in_cents: 1000
     state: <%= OPTIONS[:order_states][:authorized] %>
+    authorized_at: "2011-07-01T00:00:00"

@@ -10,6 +10,12 @@ class Coupon < ActiveRecord::Base
   belongs_to :order
   belongs_to :deal_code
 
+  # Paginate methods
+  def self.search(search="", page=1, per_page=10)
+    paginate :per_page => per_page, :page => page,
+             :order => 'created_at desc'
+  end
+
   def state
     if self.deal.is_expired
       return 'Expired'

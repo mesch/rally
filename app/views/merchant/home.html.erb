@@ -1,0 +1,46 @@
+<%= form_tag(merchant_home_url, :method => "post") %>
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="home">
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+					<h2>Home</h2>
+
+				</div>
+                <div class="sect">
+					<div class="act right">
+						<%= label_tag 'Start Day', 'Start Day'%>
+						<%= text_field_tag :start_day, @start_day, :class => :date_field %>
+						<%= label_tag 'End Day', 'End Day'%>
+						<%= text_field_tag :end_day, @end_day, :class => :date_field %>
+						<%= content_tag :button, "Submit", :type => :submit, :class=>"formbutton" %>
+					</div>
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">					
+					<tr>
+						<th width="300">Deal</th>
+						<th width="80">Views</th>
+						<th width="80">Orders</th>
+						<th width="80">Coupons</th>
+						<th width="80">Sales</th>
+					</tr>
+					<% for deal in @deals %>
+					<tr class="alt">
+						<td><%= deal.title %></td>
+						<td><%= deal.views_in_date_range(@start_date, @end_date) %></td>
+						<td><%= deal.orders_in_date_range(@start_date, @end_date) %></td>
+						<td><%= deal.coupons_in_date_range(@start_date, @end_date) %></td>
+						<td><%= deal.coupons_in_date_range(@start_date, @end_date) * deal.deal_price.to_f %></td>
+					</tr>
+					<% end %>
+                    </table>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

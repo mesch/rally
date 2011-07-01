@@ -1,8 +1,7 @@
 class Admin::UsersController < AdminController
- 
 
   def index
-    @users = User.find(:all)
+    @users = User.search(params[:search], params[:page])
   end
   
   def show

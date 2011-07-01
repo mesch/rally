@@ -1,0 +1,46 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>User Actions</h2>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">
+						<tr><th width="40">Id</th>
+							<th width="60">Visitor Id</th>
+							<th width="60">User Id</th>							
+							<th width="80">Merchant Id</th>
+							<th width="60">Deal Id</th>
+							<th width="40">Controller</th>
+							<th width="40">Action</th>
+							<th width="40">Method</th>
+							<th width="140">Created</th>
+						</tr>							
+						<% for user_action in @user_actions %>
+						<tr>
+							<td><%= user_action.id %></td>
+							<td><%= user_action.visitor_id %></td>
+							<td><%= user_action.user_id %></td>
+							<td><%= user_action.merchant_id %></td>
+							<td><%= user_action.deal_id %></td>
+							<td><%= user_action.controller %></td>
+							<td><%= user_action.action %></td>
+							<td><%= user_action.method %></td>
+							<td><%= user_action.created_at.strftime(OPTIONS[:time_format]) %></td>
+						</tr>
+						<% end %>
+                    </table>
+					<%= page_entries_info @user_actions %>
+					<%= will_paginate @user_actions %>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   include Facebook
   include DateHelper
+  include ErrorHelper
   include SslRequirement
 
   ### Subdomain methods

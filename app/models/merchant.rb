@@ -66,7 +66,20 @@ class Merchant < ActiveRecord::Base
     return nil
   end
   
+  # Paginate methods
+  def self.search(search="", page=1, per_page=10)
+    paginate :per_page => per_page, :page => page,
+             :conditions => ['name like ?', "%#{search}%"],
+             :order => 'created_at desc'
+  end
+  
   # Deal methods
+  def deals_in_date_range(start_date, end_date)
+    return Deal.find(:all,
+      :conditions => ["merchant_id = ? AND start_date <= ? AND end_date >= ?", self.id, end_date, start_date],
+      :order => 'active desc, created_at desc')
+  end
+  
   def drafts
     return Deal.find(:all, 
       :conditions => ["merchant_id = ? AND published = ?", self.id, false ], 

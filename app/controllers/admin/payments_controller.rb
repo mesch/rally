@@ -1,8 +1,7 @@
 class Admin::PaymentsController < AdminController
- 
 
   def index
-    @payments = OrderPayment.find(:all)
+    @payments = OrderPayment.search(params[:search], params[:page])
   end
   
   def show

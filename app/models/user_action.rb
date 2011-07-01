@@ -7,6 +7,12 @@ class UserAction < ActiveRecord::Base
   belongs_to :deal
   
   attr_protected :id
+
+  # Paginate methods
+  def self.search(search="", page=1, per_page=10)
+    paginate :per_page => per_page, :page => page,
+             :order => 'created_at desc'
+  end
   
   def self.log(options={})
     ua = UserAction.new(:controller => options[:controller], :action => options[:action], :method => options[:method],

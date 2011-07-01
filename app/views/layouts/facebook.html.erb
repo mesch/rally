@@ -30,10 +30,7 @@
 					>
 						<%= link_to "Deals", facebook_deals_url %></li>
 					<li <%= controller.action_name == 'coupons' ? 'class=current' : '' %> >
-							<%= link_to "Coupons", facebook_coupons_url %></li>		
-				<% else %>
-					<li <%= controller.action_name == 'tour' ? 'class=current' : '' %> >
-						<%= link_to "Tour", help_tour_url %></li>
+							<%= link_to "Coupons", facebook_coupons_url %></li>
 				<% end %>
 			</ul>
 	

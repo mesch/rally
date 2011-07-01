@@ -1,3 +1,4 @@
+<%= form_tag(admin_deals_url, :method => "get") %>
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div>
@@ -9,6 +10,10 @@
                     <h2>Deals</h2>
 				</div>
                 <div class="sect">
+					<div>
+						<%= text_field_tag :search, nil %>
+						<%= submit_tag :submit, :value => "Search" %>
+					</div>
 					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">					
 					<tr>
 						<th width="40">Id</th>
@@ -36,10 +41,11 @@
 						<td nowrap><%= deal.confirmed_coupon_count %></td>
 						<td nowrap><%= deal.min %></td>
 						<td nowrap><%= deal.max %></td>
-
 					</tr>
 					<% end %>
                     </table>
+					<%= page_entries_info @deals %>
+					<%= will_paginate @deals %>
 				</div>
             </div>
             <div class="box-bottom"></div>

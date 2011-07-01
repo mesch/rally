@@ -11,6 +11,13 @@ class Order < ActiveRecord::Base
   belongs_to :deal
   belongs_to :user
   has_many :order_payments
+
+  # Paginate methods
+  def self.search(search="", page=1, per_page=10)
+    paginate :per_page => per_page, :page => page,
+             :conditions => ["quantity != 0"],
+             :order => 'created_at desc'
+  end
   
   # try to reserve the quantity of coupons
   def reserve_quantity(quantity)

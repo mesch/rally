@@ -33,6 +33,13 @@ class User < ActiveRecord::Base
     return "#{self.first_name} #{self.last_name}"
   end
   
+  # Paginate methods
+  def self.search(search="", page=1, per_page=10)
+    paginate :per_page => per_page, :page => page,
+             :conditions => ['email like ?', "%#{search}%"],
+             :order => 'created_at desc'
+  end
+  
   def coupon_count(deal_id=nil)
     if deal_id
       return Order.sum(:quantity, :conditions => ["user_id = ? AND deal_id = ?", self.id, deal_id])

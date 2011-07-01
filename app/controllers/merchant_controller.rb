@@ -157,8 +157,43 @@ class MerchantController < ApplicationController
 
   # Home
   def home
-    # just go to deals for now?
-    redirect_to :controller => 'merchant', :action => :deals
+    use_default = false
+    if request.post?
+      if verify_date(params[:start_day]) && verify_date(params[:end_day])
+        start_date = Time.zone.parse(params[:start_day]).to_date
+        end_date = Time.zone.parse(params[:end_day]).to_date
+
+        if start_date > end_date
+          use_default = true
+          flash.now[:warning] = "Start Day cannot be after End Day."
+        end
+        if end_date - start_date + 1 > 365
+          use_default = true
+          flash.now[:warning] = "Date range cannot be greater than 1 year."
+        end
+      else
+        use_default = true
+        flash.now[:error] = "Dates must be of the form: MM/DD/YY"
+      end
+    else # request.get
+      use_default = true
+    end
+
+    if use_default
+      # default to last 7 days
+      start_date = 0.days.ago.to_date - 6.days
+      end_date = 0.days.ago.to_date
+    end
+    
+    @num_days = end_date - start_date + 1
+ 
+    @deals = @current_merchant.deals_in_date_range(start_date, end_date)
+  
+    @start_date = start_date
+    @end_date = end_date.end_of_day
+    @start_day = @start_date.strftime(OPTIONS[:date_format])
+    @end_day = @end_date.strftime(OPTIONS[:date_format])
+
   end
   
   # Account methods

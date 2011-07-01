@@ -1,0 +1,49 @@
+<%= form_tag(admin_process_logs_url, :method => "get") %>
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Process Logs</h2>
+				</div>
+                <div class="sect">
+					<div>
+						<%= text_field_tag :search, nil %>
+						<%= submit_tag :submit, :value => "Search" %>
+					</div>
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">
+						<tr><th width="40">Id</th>
+							<th width="40">Name</th>
+							<th width="80">Start Time</th>							
+							<th width="80">End Time</th>
+							<th width="40">Considered</th>
+							<th width="40">Successes</th>
+							<th width="40">Failures</th>
+							<th width="80">Created</th>
+						</tr>							
+						<% for process_log in @process_logs %>
+						<tr>
+							<td><%= process_log.id %></td>
+							<td><%= process_log.name %></td>
+							<td><%= process_log.start_time.strftime(OPTIONS[:time_format]) %></td>
+							<td><%= process_log.end_time.strftime(OPTIONS[:time_format]) %></td>
+							<td><%= process_log.considered %></td>
+							<td><%= process_log.successes %></td>
+							<td><%= process_log.failures %></td>
+							<td><%= process_log.created_at.strftime(OPTIONS[:time_format]) %></td>
+						</tr>
+						<% end %>
+                    </table>
+					<%= page_entries_info @process_logs %>
+					<%= will_paginate @process_logs %>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

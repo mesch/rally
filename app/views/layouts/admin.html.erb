@@ -25,13 +25,9 @@
 				</div>
 			</div>
 			<ul class="nav cf">
-				<li <%= controller.controller_name == 'admin' ? 'class=current' : '' %> ><%= link_to "Home", admin_home_url %></li>
-				<li <%= controller.controller_name == 'merchants' ? 'class=current' : '' %> ><%= link_to "Merchants", admin_merchants_url %></li>
-				<li <%= controller.controller_name == 'users' ? 'class=current' : '' %> ><%= link_to "Users", admin_users_url %></li>
-				<li <%= controller.controller_name == 'deals' ? 'class=current' : '' %> ><%= link_to "Deals", admin_deals_url %></li>
-				<li <%= controller.controller_name == 'coupons' ? 'class=current' : '' %> ><%= link_to "Coupons", admin_coupons_url %></li>
-				<li <%= controller.controller_name == 'orders' ? 'class=current' : '' %> ><%= link_to "Orders", admin_orders_url %></li>
-				<li <%= controller.controller_name == 'payments' ? 'class=current' : '' %> ><%= link_to "Payments", admin_payments_url %></li>			
+				<li <%= controller.controller_name == 'admin' ? 'class=current' : '' %> >
+					<%= link_to "Home", admin_home_url %>
+				</li>
 		</div>
 	</div>
 

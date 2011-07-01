@@ -2,7 +2,7 @@ class Admin::OrdersController < AdminController
  
 
   def index
-    @orders = Order.find(:all, :conditions => ["quantity != 0"])
+    @orders = Order.search(params[:search], params[:page])
   end
   
   def show

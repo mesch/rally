@@ -40,6 +40,7 @@ Rally::Application.routes.draw do
     end
   end
   
+  # Payments
   namespace :payment do
     match '/order'          =>  :order,           :via => :get
     match '/order'          =>  :order,           :via => :post    
@@ -72,7 +73,7 @@ Rally::Application.routes.draw do
     end
   end
   
-  # Facebook Payments?
+  # Facebook Payments
   namespace :facebook_payment do
     match '/order'          =>  :order,           :via => :get
     match '/order'          =>  :order,           :via => :post    
@@ -81,16 +82,11 @@ Rally::Application.routes.draw do
     match '/receipt'        =>  :receipt,         :via => :get
   end
   
+  # General site pages
   controller :site do
     match '/terms' => :terms, :via => :get
     match '/privacy' => :privacy, :via => :get
     match '/merchant_terms' => :merchant_terms, :via => :get
-  end
-  
-  namespace :help do
-    scope :via => :get do
-      match 'tour'
-    end
   end
 
   # Merchant
@@ -133,12 +129,19 @@ Rally::Application.routes.draw do
   namespace :admin do
     match '/' => :home, :via => :get
     match :home, :via => :get
-    resources :merchants
+    resources :merchants do
+      get 'change_password', :on => :member
+      post 'change_password', :on => :member
+      get 'send_activation', :on => :member
+    end
     resources :users
     resources :deals
     resources :coupons
     resources :orders
-    resources :payments  
+    resources :payments
+    resources :process_logs
+    resources :visitors
+    resources :user_actions
   end
 
   

@@ -2,7 +2,7 @@ class Admin::CouponsController < AdminController
  
 
   def index
-    @coupons = Coupon.find(:all)
+    @coupons = Coupon.search(params[:search], params[:page])
   end
   
   def show

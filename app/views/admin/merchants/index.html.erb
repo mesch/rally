@@ -1,3 +1,4 @@
+<%= form_tag(admin_merchants_url, :method => "get") %>
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div>
@@ -7,8 +8,13 @@
             <div class="box-content">
                 <div class="head">
                     <h2>Merchants</h2>
+					<%= link_to "New Merchant", new_admin_merchant_url %>
 				</div>
                 <div class="sect">
+					<div>
+						<%= text_field_tag :search, nil %>
+						<%= submit_tag :submit, :value => "Search" %>
+					</div>
 					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">
 						<tr><th width="40">Id</th>
 							<th width="200">Name</th>
@@ -21,7 +27,7 @@
 						</tr>							
 						<% for merchant in @merchants %>
 						<tr>
-							<td><%= merchant.id %></td>
+							<td><%= link_to merchant.id, edit_admin_merchant_url(merchant.id) %></td>
 							<td><%= merchant.name %></td>
 							<td><%= merchant.username %></td>
 							<td><%= merchant.email %></td>
@@ -32,6 +38,8 @@
 						</tr>
 						<% end %>
                     </table>
+					<%= page_entries_info @merchants %>
+					<%= will_paginate @merchants %>
 				</div>
             </div>
             <div class="box-bottom"></div>
