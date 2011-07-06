@@ -84,6 +84,7 @@ Rally::Application.routes.draw do
   
   # General site pages
   controller :site do
+    match '/contact' => :contact, :via => :get
     match '/terms' => :terms, :via => :get
     match '/privacy' => :privacy, :via => :get
     match '/merchant_terms' => :merchant_terms, :via => :get

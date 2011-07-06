@@ -23,12 +23,11 @@
 	<div id="hdw">
 		<div id="hd">
 			<ul class="nav cf">
+				<li <% if controller.action_name == 'deals' or controller.action_name == 'deal' %>
+						<%= 'class=current' %>
+					<% end %> 
+				><%= link_to "Deals", facebook_deals_url %></li>
 				<% if @current_user %>
-					<li <% if controller.action_name == 'deals' or controller.action_name == 'deal' %>
-							<%= 'class=current' %>
-						<% end %> 
-					>
-						<%= link_to "Deals", facebook_deals_url %></li>
 					<li <%= controller.action_name == 'coupons' ? 'class=current' : '' %> >
 							<%= link_to "Coupons", facebook_coupons_url %></li>
 				<% end %>

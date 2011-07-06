@@ -4,7 +4,7 @@ class PaymentController < ApplicationController
   after_filter :log_user_action
   
   ssl_required :purchase
-  ssl_allowed :relay_response
+  ssl_allowed :relay_response, :receipt
 
   layout "user"
   helper :authorize_net

@@ -452,6 +452,8 @@ dd#bd{position:relative;z-index:1;width:702px;margin:0 auto;padding:30px 0 65px;
 #terms p{padding-bottom:5px;}
 #privacy {padding-left:10px;}
 #privacy p{padding-bottom:5px;}
+#contact {padding-left:10px;}
+#contact p{padding-bottom:5px;}
 
 /*validator*/
 span.errorTip{ font-size:12px; color:#C00; display:none; }

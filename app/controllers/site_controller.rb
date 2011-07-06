@@ -6,6 +6,10 @@ class SiteController < ApplicationController
     redirect_to :controller => :user, :action => :home
   end
   
+  def contact
+    
+  end
+  
   def terms
     
   end
