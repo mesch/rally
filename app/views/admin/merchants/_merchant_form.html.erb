@@ -7,8 +7,8 @@
             <div class="box-top"></div>
             <div class="box-content">
                 <div class="head"><h2><%= @merchant.id ? 'Edit Account' : 'New Account' %></h2>
-					<% if !@merchant.activated %>
-						<%= link_to "Send Activation Email", send_activation_admin_merchant_url %>
+					<% if @merchant.id and !@merchant.activated %>
+						<%= link_to "Send Activation Email", send_activation_admin_merchant_url(@merchant.id) %>
 					<% end %>
 				</div>
                 <div class="sect">
