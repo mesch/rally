@@ -82,7 +82,7 @@ Rally::Application.routes.draw do
     match '/receipt'        =>  :receipt,         :via => :get
   end
   
-  # General site pages
+  # General Site
   controller :site do
     match '/contact' => :contact, :via => :get
     match '/terms' => :terms, :via => :get

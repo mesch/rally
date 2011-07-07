@@ -10,7 +10,7 @@ OPTIONS[:recaptcha_public_key] = "6Lc7G8QSAAAAAIErQb-7rMDJ-2vVL2BbIqKN_fHk"
 OPTIONS[:recaptcha_private_key] = "6Lc7G8QSAAAAADTgEYoxR2cG2HbaBUFVwaUEggfn"
 
 # UI stuff
-OPTIONS[:site_name] = "Shop and Rally"
+OPTIONS[:site_name] = "Shop n Rally"
 
 # Use the same from address and return-path for all emails
 OPTIONS[:email_from] = "Rally Commerce <support@rallycommerce.com>"
@@ -19,7 +19,7 @@ OPTIONS[:email_return_path] = "support@rallycommerce.com"
 # Internal email info
 OPTIONS[:internal_email_to] = "admin@rallycommerce.com"
 OPTIONS[:internal_error_to] = "admin@rallycommerce.com"
-OPTIONS[:internal_email_from] = "internal@rallycommerce.com"
+OPTIONS[:internal_email_from] = "admin@rallycommerce.com"
 
 # Email settings for prod and staging
 OPTIONS[:action_mailer_deliver_method] = :smtp

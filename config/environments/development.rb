@@ -31,10 +31,6 @@ Rally::Application.configure do
   OPTIONS[:site_url] = "localhost:3000"
   config.action_mailer.default_url_options = { :host => OPTIONS[:site_url] }
 
-  # Internal email info
-  OPTIONS[:internal_email_to] = "admin@rallycommerce.com"
-  OPTIONS[:internal_error_to] = "admin@rallycommerce.com"
-
   OPTIONS[:paperclip_storage_options] = {
     :path => ":rails_root/public/system/#{Rails.env}/:class/:attachment/:id/:style.:extension",
     :url => "/system/#{Rails.env}/:class/:attachment/:id/:style.:extension"

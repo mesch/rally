@@ -48,7 +48,7 @@ Rally::Application.configure do
   config.active_support.deprecation = :notify
   
   # Set the default action mailer host..
-  OPTIONS[:site_url] = "www.rallycommerce.com"
+  OPTIONS[:site_url] = "www.shopnrally.com"
   config.action_mailer.default_url_options = { :host => OPTIONS[:site_url] }
   
   OPTIONS[:paperclip_storage_options] = {
@@ -58,8 +58,9 @@ Rally::Application.configure do
   }
   
   # Facebook logins
-  OPTIONS[:facebook_app_id] = "213793915317881"
-  OPTIONS[:facebook_api_key] = "3314342ac8dacfb238f977316f1a0bc5"
-  OPTIONS[:facebook_secret_key] = "6c652039cde19d2762657b268b24a38c"
+  OPTIONS[:facebook_app_id] = "218190441555675"
+  OPTIONS[:facebook_secret_key] = "366d64de9a50fd3e698f030fcc0058d3"
+  
+  OPTIONS[:facebook_app_url] = "http://apps.facebook.com/shopnrally/"
   
 end
