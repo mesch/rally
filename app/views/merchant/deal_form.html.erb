@@ -1,5 +1,5 @@
 <%= form_tag(controller.action_name == 'new_deal' ? merchant_create_deal_url : merchant_update_deal_url, :multipart => true) %>
-
+<%= raw javascript_include_tag "xheditor/xheditor.js" %>
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div id="leader">
