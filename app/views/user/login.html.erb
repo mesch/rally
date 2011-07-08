@@ -51,6 +51,10 @@
             cookie : true,
             xfbml  : true
         });
+		// Hack around FB SSL bug (http://bugs.developers.facebook.net/show_bug.cgi?id=17121)
+		if(document.location.protocol == 'https:' && !!FB && !!FB._domain && !!FB._domain.staticfb) {
+			FB._domain.staticfb = FB._domain.staticfb.replace('http://static.ak.facebook.com/', 'https://s-static.ak.fbcdn.net/');
+		}
 		// If they log in - redirect_to :connect
         FB.Event.subscribe('auth.login', function() {
             window.location = '<%= url_for(:controller => controller.controller_name, :action => 'connect') %>';
