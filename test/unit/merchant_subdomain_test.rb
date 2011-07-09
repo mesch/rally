@@ -5,7 +5,7 @@ class MerchantSubdomainTest < ActiveSupport::TestCase
   fixtures :coupons
 
   def setup
-
+    MerchantSubdomain.delete_all
   end
   
   def test_subdomain_create_basic
@@ -41,6 +41,12 @@ class MerchantSubdomainTest < ActiveSupport::TestCase
     assert sd.save
     #fail
     sd = MerchantSubdomain.new(:merchant_id => 1000, :subdomain => nil)
+    assert !sd.save
+  end
+  
+  def test_subdomain_empty_subdomain
+    #fail
+    sd = MerchantSubdomain.new(:merchant_id => nil, :subdomain => '')
     assert !sd.save
   end
   

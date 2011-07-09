@@ -2,6 +2,9 @@ require "exception"
 
 class MerchantController < ApplicationController
   before_filter :require_merchant, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :connect_success]
+
+  ssl_required :login, :signup, :account, :change_password, :change_email
+  ssl_allowed :home
   
   # Use the merchant layout
   layout "merchant"

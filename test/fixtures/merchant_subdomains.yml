@@ -7,9 +7,4 @@ www_subdomain:
 
 api_subdomain:
     subdomain: "api"
-        
-admin_subdomain:
-    subdomain: "admin"
-    
-empty_subdomain:
-    subdomain: ""
+
