@@ -11,7 +11,7 @@ class MerchantControllerTest < ActionController::TestCase
   fixtures :merchants
 
   def setup
-    @request.host = "localhost"
+    @request.host = "www.rcom.com"
     
     @start = Time.zone.today
     @end = Time.zone.today + 1.days
@@ -697,5 +697,26 @@ class MerchantControllerTest < ActionController::TestCase
     assert deal.published
     assert_equal deal.max, 0    
   end
-  
+
+  def test_subdomain_general
+    old_host = @request.host
+    # go to login - no redirection
+    get :login
+    assert_response :success
+    assert_template "merchant/login"
+    assert_equal @request.host, old_host
+    # empty subdomain - redirected
+    @request.host = @request.host.gsub(/^www\./, '')
+    assert_not_equal @request.host, old_host
+    get :login
+    assert_response :redirect
+    assert_redirected_to :action => :login, :host => old_host    
+    # use invalid subdomain - redirected
+    @request.host = @request.host.gsub(/^www\./, 'invalid.')
+    assert_not_equal @request.host, old_host
+    get :login
+    assert_response :redirect
+    assert_redirected_to :action => :login, :host => old_host
+  end
+
 end

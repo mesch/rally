@@ -41,11 +41,13 @@ class FacebookController < UserController
     end
     
     # check for subdomain passed in
-    if params[:sd] and merchant_subdomain = MerchantSubdomain.find_by_subdomain(params[:sd]) and merchant_subdomain.merchant_id
-      redirect_to :host => "#{params[:sd]}." + request.host_with_port, :controller => self.controller_name, :action => self.action_name, :sd => nil
-      return
+    if params[:sd]
+      merchant_subdomain = MerchantSubdomain.find_by_subdomain(params[:sd])
+      if merchant_subdomain and merchant_subdomain.merchant_id and request.subdomain != merchant_subdomain.subdomain
+        redirect_to_subdomain(merchant_subdomain.subdomain)
+        return
+      end
     end
-    
     super
   end
   

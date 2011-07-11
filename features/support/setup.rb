@@ -1,5 +1,5 @@
 Capybara.ignore_hidden_elements = false
-Capybara.default_host = 'rcom.com'
+Capybara.default_host = 'www.rcom.com'
 
 # load fixtures - before each scenario
 Before do
@@ -16,7 +16,7 @@ Before do
   @base_host = "rcom.com"
 end
 After do
-  Capybara.default_host = @base_host
+  Capybara.default_host = "www.#{@base_host}"
 end
 
 # Helper methods

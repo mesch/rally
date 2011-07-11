@@ -7,11 +7,16 @@ class ApplicationController < ActionController::Base
   include Facebook
   include DateHelper
   include ErrorHelper
+  include SubdomainHelper
   include SslRequirement
 
   ### Subdomain methods
   def set_merchant_subdomains
     @merchant_subdomain = MerchantSubdomain.find_by_subdomain(request.subdomain)
+    # if not a known subdomain - redirect to 'www'
+    unless @merchant_subdomain
+      redirect_to_subdomain('www')
+    end
   end
   
   ### SSL methods

@@ -11,7 +11,7 @@ class UserControllerTest < ActionController::TestCase
   fixtures :users
 
   def setup
-    @request.host = "rcom.com"
+    @request.host = "www.rcom.com"
   end
 
   def login
@@ -375,7 +375,7 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
     assert_template "user/deals"    
     # subdomain "bob" - one deal - go to deal
-    @request.host = "#{@bob.merchant_subdomain.subdomain}.#{@request.host}"
+    @request.host = @request.host.gsub(/^www\./, "#{@bob.merchant_subdomain.subdomain}.")
     get :deals
     assert_response :redirect
     assert_redirected_to :action=>'deal', :id => d.id
@@ -567,7 +567,7 @@ class UserControllerTest < ActionController::TestCase
     assert_nil ua.merchant
     # go to a page (login) - with subdomain
     UserAction.delete_all
-    @request.host = "#{@bob.merchant_subdomain.subdomain}.#{@request.host}"
+    @request.host = @request.host.gsub(/^www\./, "#{@bob.merchant_subdomain.subdomain}.")
     get :login
     ua = UserAction.find(:first)
     assert ua
@@ -590,6 +590,28 @@ class UserControllerTest < ActionController::TestCase
     ua = UserAction.find(:first)
     assert ua
     assert_equal ua.deal, @burger_deal   
+  end
+  
+  def test_subdomain_general
+    old_host = @request.host
+    # go to login - no redirection
+    get :login
+    assert_response :success
+    assert_template "user/login"
+    assert_equal @request.host, old_host
+    # empty subdomain - redirected
+    @request.host = @request.host.gsub(/^www\./, '')
+    assert_not_equal @request.host, old_host
+    get :login
+    assert_response :redirect
+    assert_redirected_to :action => :login, :host => old_host    
+    # use invalid subdomain - redirected
+    @request.host = old_host
+    @request.host = @request.host.gsub(/^www\./, 'invalid.')
+    assert_not_equal @request.host, old_host
+    get :login
+    assert_response :redirect
+    assert_redirected_to :action => :login, :host => old_host
   end
   
 end

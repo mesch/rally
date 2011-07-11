@@ -12,7 +12,7 @@ class FacebookPaymentControllerTest < ActionController::TestCase
   fixtures :deals
 
   def setup
-    @request.host = "rcom.com"
+    @request.host = "www.rcom.com"
     
     @deal = @burger_deal
     @order = @test_user.unconfirmed_order(@deal.id)
@@ -199,7 +199,7 @@ class FacebookPaymentControllerTest < ActionController::TestCase
     assert_nil ua.merchant
     # go to an order page - with subdomain
     UserAction.delete_all
-    @request.host = "#{@bob.merchant_subdomain.subdomain}.#{@request.host}"
+    @request.host = @request.host.gsub(/^www\./, "#{@bob.merchant_subdomain.subdomain}.")
     get :order, :deal_id => @burger_deal.id
     ua = UserAction.find(:first)
     assert ua

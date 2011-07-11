@@ -11,7 +11,7 @@ class FacebookControllerTest < ActionController::TestCase
   fixtures :users
 
   def setup
-    @request.host = "rc.com"
+    @request.host = "www.rcom.com"
   end
 
   def login(user=@test_user)
@@ -128,19 +128,20 @@ class FacebookControllerTest < ActionController::TestCase
     self.login
     assert_response :redirect
     assert session[:user_id]
-    # no params - go to deals
+    # no params - go to deals - host doesn't change
     get :home
     assert_response :redirect
     assert_redirected_to :action => 'deals'
-    # invalid subdomain - host doesn't change
-    get :home, :sd => 'testing'
+    assert_equal @request.host, old_host 
+    # invalid subdomain - go to deals - host doesn't change
+    get :home, :sd => 'invalid'
     assert_response :redirect
     assert_redirected_to :action => 'deals'
     assert_equal @request.host, old_host 
-    # invalid subdomain - host doesn't change
+    # valid subdomain - host changes
     get :home, :sd => 'bob'
     assert_response :redirect
-    assert_redirected_to :action => :home, :host => "bob.#{old_host}"
+    assert_redirected_to :action => :home, :host => old_host.gsub(/^www/,'bob')
   end
   
   def test_home_fb_page_id
@@ -244,7 +245,7 @@ class FacebookControllerTest < ActionController::TestCase
     assert_nil ua.merchant
     # go to a page (login) - with subdomain
     UserAction.delete_all
-    @request.host = "#{@bob.merchant_subdomain.subdomain}.#{@request.host}"
+    @request.host = @request.host.gsub(/^www\./, "#{@bob.merchant_subdomain.subdomain}.")
     get :login
     ua = UserAction.find(:first)
     assert ua
@@ -267,6 +268,27 @@ class FacebookControllerTest < ActionController::TestCase
     ua = UserAction.find(:first)
     assert ua
     assert_equal ua.deal, @burger_deal   
+  end
+
+  def test_subdomain_general
+    old_host = @request.host
+    # go to login - no redirection
+    get :login
+    assert_response :success
+    assert_template "user/login"
+    assert_equal @request.host, old_host
+    # empty subdomain - redirected
+    @request.host = @request.host.gsub(/^www\./, '')
+    assert_not_equal @request.host, old_host
+    get :login
+    assert_response :redirect
+    assert_redirected_to :action => :login, :host => old_host    
+    # use invalid subdomain - redirected
+    @request.host = @request.host.gsub(/^www\./, 'invalid.')
+    assert_not_equal @request.host, old_host
+    get :login
+    assert_response :redirect
+    assert_redirected_to :action => :login, :host => old_host
   end
   
 end
