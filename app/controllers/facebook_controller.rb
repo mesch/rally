@@ -44,14 +44,4 @@ class FacebookController < UserController
     render :layout => false
   end
   
-  def home
-    # merchant connect - any better way to do this? is there another method we can give FB?
-    if params[:fb_page_id] and !Merchant.find_by_facebook_page_id(params[:fb_page_id])
-      redirect_to :controller => 'merchant', :action => 'connect', :fb_page_id => params[:fb_page_id]
-      return
-    end
-    
-    super
-  end
-  
 end

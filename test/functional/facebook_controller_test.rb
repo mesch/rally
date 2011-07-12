@@ -163,24 +163,6 @@ class FacebookControllerTest < ActionController::TestCase
     assert_redirected_to :action => 'home', :host => old_host.gsub(/^www/,'bob')    
   end
   
-  def test_home_fb_page_id
-    self.login
-    assert_response :redirect
-    assert session[:user_id]
-    # no params - go to deals
-    get :home
-    assert_response :redirect
-    assert_redirected_to :action => 'deals'
-    # fb_page_id already configured for a client - still goes to deals
-    get :home, :fb_page_id => @bob.facebook_page_id
-    assert_response :redirect
-    assert_redirected_to :action => 'deals'
-    # new fb_page_id - go to merchant connect
-    get :home, :fb_page_id => 0
-    assert_response :redirect
-    assert_redirected_to :controller => 'merchant', :action => 'connect', :fb_page_id => 0    
-  end
-  
   def test_logging_basic
     Visitor.delete_all
     UserAction.delete_all

@@ -3,7 +3,7 @@ require "exception"
 class MerchantController < ApplicationController
   before_filter :require_merchant, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :connect_success]
 
-  ssl_required :login, :signup, :account, :change_password, :change_email
+  ssl_required :login, :signup, :account, :change_password, :change_email, :connect
   ssl_allowed :home
   
   # Use the merchant layout
@@ -440,6 +440,7 @@ class MerchantController < ApplicationController
     end    
   end
   
+  # !Merchant.find_by_facebook_page_id(params[:fb_page_id])
   def connect
     if @fb_page_id = params[:fb_page_id]
       fb_page = get_fb_object(@fb_page_id)
@@ -447,11 +448,19 @@ class MerchantController < ApplicationController
         @page_name = fb_page["name"]
         @page_link = fb_page["link"]
       else
-        redirect_to :controller => 'facebook', :action => :home, :fb_page_id => nil
+        flash[:error] = "Unable to access Facebook for information on your page. Please try again."
+        redirect_to :controller => self.controller_name, :action => :home, :fb_page_id => nil
         return
       end
     else
-      redirect_to :controller => 'facebook', :action => :home, :fb_page_id => nil
+      flash[:error] = "Unable to access Facebook for information on your page. Please try again."
+      redirect_to :controller => self.controller_name, :action => :home, :fb_page_id => nil
+      return
+    end
+    
+    # Already connected?
+    if Merchant.find_by_facebook_page_id(@fb_page_id)
+      redirect_to :controller => self.controller_name, :action => :connect_success, :fb_page_id => params[:fb_page_id]
       return
     end
     
@@ -462,7 +471,7 @@ class MerchantController < ApplicationController
       else
         if m.active
           if m.activated
-            if m.update_attributes(:facebook_page_id => :facebook_page_id)
+            if m.update_attributes(:facebook_page_id => @fb_page_id)
               redirect_to :controller => self.controller_name, :action => :connect_success, :fb_page_id => params[:fb_page_id]
               return
             else
@@ -487,11 +496,13 @@ class MerchantController < ApplicationController
         @page_name = fb_page["name"]
         @page_link = fb_page["link"]
       else
-        redirect_to :controller => 'facebook', :action => :home, :fb_page_id => nil
+        flash[:error] = "Unable to access Facebook for information on your page. Please try again."
+        redirect_to :controller => self.controller_name, :action => :home, :fb_page_id => nil
         return
       end
     else
-      redirect_to :controller => 'facebook', :action => :home, :fb_page_id => nil
+      flash[:error] = "Unable to access Facebook for information on your page. Please try again."
+      redirect_to :controller => self.controller_name, :action => :home, :fb_page_id => nil
       return
     end
     render :layout => "facebook_merchant"
