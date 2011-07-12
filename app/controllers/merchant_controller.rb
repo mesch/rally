@@ -9,6 +9,10 @@ class MerchantController < ApplicationController
   # Use the merchant layout
   layout "merchant"
 
+  def go_home
+    redirect_to :controller => self.controller_name, :action => 'home'
+  end
+
   # Deals
   def deals
     @selector = params[:selector] ? params[:selector] : 'drafts'
@@ -65,18 +69,24 @@ class MerchantController < ApplicationController
         end       
       end
       flash[:notice] = "Your deal was created successfully."
-      redirect_to :controller => 'merchant', :action => :deals
+      redirect_to :controller => self.controller_name, :action => :deals
       return
     rescue ActiveRecord::RecordInvalid => invalid
       ### TODO: add invalid.record.errors?
       flash[:error] = "There was a problem creating your deal."
-      redirect_to :controller => 'merchant', :action => :new_deal
+      redirect_to :controller => self.controller_name, :action => :new_deal
       return
     end    
   end
   
   def edit_deal
     @deal = Deal.find_by_id(params[:id])
+
+    unless @deal.merchant == @current_merchant
+      go_home
+      return
+    end
+    
     deal_images = DealImage.find(:all, 
       :conditions => { :deal_id => @deal.id }, 
       :order => 'created_at asc')
@@ -91,6 +101,12 @@ class MerchantController < ApplicationController
   
   def update_deal
     deal = Deal.find_by_id(params[:id])
+    
+    unless deal.merchant == @current_merchant
+      go_home
+      return
+    end
+    
     begin
       Deal.transaction do
         # Update deal
@@ -135,25 +151,31 @@ class MerchantController < ApplicationController
       else
         selector = 'drafts'
       end
-      redirect_to :controller => 'merchant', :action => :deals, :selector => selector
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => selector
       return
     rescue ActiveRecord::RecordInvalid => invalid
       ### TODO: add invalid.record.errors?
       flash[:error] = "There was a problem updating your deal."
-      redirect_to :controller => 'merchant', :action => :edit_deal
+      redirect_to :controller => self.controller_name, :action => :edit_deal
       return
     end        
   end
 
   def publish_deal
     deal = Deal.find_by_id(params[:id])
+    
+    unless deal.merchant == @current_merchant
+      go_home
+      return
+    end
+    
     if deal.publish
       flash[:notice] = "Your deal was published successfully."
-      redirect_to :controller => 'merchant', :action => :deals, :selector => 'current'
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'current'
       return
     else
       flash[:error] = "There was a problem publishing your deal."
-      redirect_to :controller => 'merchant', :action => :deals, :selector => 'current'
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'current'
       return
     end        
   end
@@ -299,7 +321,7 @@ class MerchantController < ApplicationController
       end
       
       flash[:notice] = "Signup successful. An activation code has been sent."
-      redirect_to :controller => 'merchant', :action => :login
+      redirect_to :controller => self.controller_name, :action => :login
       return
     end
   end
@@ -317,7 +339,7 @@ class MerchantController < ApplicationController
             redirect_merchant_to_stored
           else
             flash[:error] = "You must activate your account."
-            redirect_to :controller => 'merchant', :action => :reactivate
+            redirect_to :controller => self.controller_name, :action => :reactivate
             return
           end
         else
@@ -330,7 +352,7 @@ class MerchantController < ApplicationController
   def logout
     @current_user = nil
     reset_session
-    redirect_to :controller => 'merchant', :action => :login
+    redirect_to :controller => self.controller_name, :action => :login
   end
 
   def forgot_password
@@ -338,7 +360,7 @@ class MerchantController < ApplicationController
       u = Merchant.find(:first, :conditions => {:username => params[:username], :email => params[:email]})
       if u and u.send_new_password
         flash[:notice]  = "A new password has been sent."
-        redirect_to :controller => 'merchant', :action =>:login
+        redirect_to :controller => self.controller_name, :action =>:login
         return
       else
         flash.now[:error]  = "Could not find your account. Please enter a valid username and email."
@@ -351,18 +373,18 @@ class MerchantController < ApplicationController
     if request.post?
       if params[:password].blank?
         flash[:error] = "Passwords cannot be empty."
-        redirect_to :controller => 'merchant', :action => :change_password
+        redirect_to :controller => self.controller_name, :action => :change_password
         return
       else
         @merchant.update_attributes(:password => params[:password], :password_confirmation => params[:password_confirmation])
         if @merchant.save
           flash[:notice] = "Password changed."
-          redirect_to :controller => 'merchant', :action => :account
+          redirect_to :controller => self.controller_name, :action => :account
           return
         else
           logger.error "Merchant.change_password: Couldn't update password for Merchant #{@merchant}"
           flash[:error] = "Password not changed. Passwords must be at least 3 characters and match the confirmation field."
-          redirect_to :controller => 'merchant', :action => 'change_password'
+          redirect_to :controller => self.controller_name, :action => 'change_password'
           return
         end
       end
@@ -374,7 +396,7 @@ class MerchantController < ApplicationController
     if request.post?
       if @merchant.update_email(params[:email])
         flash[:notice]  = "Your email has been updated."
-        redirect_to :controller => 'merchant', :action => :logout
+        redirect_to :controller => self.controller_name, :action => :logout
         return
       else
         logger.error "Merchant.change_email: Couldn't update email for Merchant #{@merchant}"
@@ -386,7 +408,7 @@ class MerchantController < ApplicationController
   def activate
     if params[:activation_code].blank? or params[:merchant_id].blank?
       flash[:error] = "The activation code was missing.  Please follow the URL from your email."
-      redirect_to :controller => 'merchant', :action => :reactivate
+      redirect_to :controller => self.controller_name, :action => :reactivate
       return
     else      
       activation_code = params[:activation_code] 
@@ -395,11 +417,11 @@ class MerchantController < ApplicationController
         # Activate the merchant
         merchant.activate
         flash[:notice] = "Congratulations! Your account is now active. Please login."
-        redirect_to :controller => 'merchant', :action => :login
+        redirect_to :controller => self.controller_name, :action => :login
         return
       else 
         flash[:error]  = "Invalid activation code. Maybe you've already activated. Try signing in."
-        redirect_to :controller => 'merchant', :action => :login
+        redirect_to :controller => self.controller_name, :action => :login
         return
       end
     end
@@ -410,7 +432,7 @@ class MerchantController < ApplicationController
       m = Merchant.find(:first, :conditions => {:username => params[:username], :email => params[:email]})
       if m and m.send_activation
         flash[:notice]  = "An activation code has been sent by email."
-        redirect_to :controller => 'merchant', :action =>:login
+        redirect_to :controller => self.controller_name, :action =>:login
         return
       else
         flash.now[:error]  = "Could not find your account. Please enter a valid username and email."
@@ -441,7 +463,7 @@ class MerchantController < ApplicationController
         if m.active
           if m.activated
             if m.update_attributes(:facebook_page_id => :facebook_page_id)
-              redirect_to :controller => 'merchant', :action => :connect_success, :fb_page_id => params[:fb_page_id]
+              redirect_to :controller => self.controller_name, :action => :connect_success, :fb_page_id => params[:fb_page_id]
               return
             else
               logger.error "Merchant.connect: Couldn't update facebook_page_id for Merchant #{m}"

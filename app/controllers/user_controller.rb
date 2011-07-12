@@ -78,10 +78,15 @@ class UserController < ApplicationController
   
   def coupon
     @coupon = Coupon.find_by_id(params[:id])
+
+    unless @coupon.user == @current_user
+      go_home
+      return
+    end
+    
     render "user/#{self.action_name}", :layout => false
   end
 
-  
   def subscribe
     render "user/#{self.action_name}"
   end

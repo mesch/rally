@@ -1,8 +1,19 @@
 class FacebookController < UserController
+  prepend_before_filter :handle_subdomain, :only => [:home]
   skip_before_filter :verify_authenticity_token
   ssl_allowed :home
   
   layout "facebook"
+  
+  def handle_subdomain
+    # check for subdomain passed in
+    if params[:sd]
+      merchant_subdomain = MerchantSubdomain.find_by_subdomain(params[:sd])
+      if merchant_subdomain and merchant_subdomain.merchant_id and request.subdomain != merchant_subdomain.subdomain
+        redirect_to_subdomain(merchant_subdomain.subdomain)
+      end
+    end
+  end
   
   def go_home
     redirect_to :controller => self.controller_name, :action => 'home'
@@ -34,20 +45,12 @@ class FacebookController < UserController
   end
   
   def home
-    # merchant connect - any better way to tell?
+    # merchant connect - any better way to do this? is there another method we can give FB?
     if params[:fb_page_id] and !Merchant.find_by_facebook_page_id(params[:fb_page_id])
       redirect_to :controller => 'merchant', :action => 'connect', :fb_page_id => params[:fb_page_id]
       return
     end
     
-    # check for subdomain passed in
-    if params[:sd]
-      merchant_subdomain = MerchantSubdomain.find_by_subdomain(params[:sd])
-      if merchant_subdomain and merchant_subdomain.merchant_id and request.subdomain != merchant_subdomain.subdomain
-        redirect_to_subdomain(merchant_subdomain.subdomain)
-        return
-      end
-    end
     super
   end
   

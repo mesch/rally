@@ -9,12 +9,12 @@
             <div class="box-content">
                 <div class="head"><h2>Log In</h2></div>
 					<div class="subsect">
-						<div class="wholetip clear"><h3>Rally Commerce + Facebook</h3></div>
+						<div class="wholetip clear"><h3><%= OPTIONS[:site_name] %> + Facebook</h3></div>
 						<div id="fb-root"></div>
 						<div class="act">
 							<div id="fb-login-button"></div>
 						</div>
-						<div class="wholetip"><p>Skip signup! The easiest way to start with Rally Commerce.</p></div>
+						<div class="wholetip"><p>Skip signup! The easiest way to start with <%= OPTIONS[:site_name] %>.</p></div>
 					</div>
 					<% if controller.controller_name == 'user' %>
 						<div class="sect">

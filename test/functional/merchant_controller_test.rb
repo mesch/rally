@@ -698,6 +698,48 @@ class MerchantControllerTest < ActionController::TestCase
     assert_equal deal.max, 0    
   end
 
+  def test_access_other_deals
+    Deal.delete_all
+    # can access my deal (edit/update/publish)
+    self.login
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    deal = @bob.deals[0]
+    get :edit_deal, :id => deal.id
+    assert_response :success
+    assert_template "merchant/deal_form"
+    post :update_deal, :id => deal.id, :title => 'new dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    get :publish_deal, :id => deal.id
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'current'
+    # others can't access my deal
+    post :login, :username => "emptybob", :password => "test"
+    get :edit_deal, :id => deal.id
+    assert_nil flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'home'
+    post :update_deal, :id => deal.id, :title => 'new dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
+    assert_nil flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'home'
+    get :publish_deal, :id => deal.id
+    assert_nil flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'home'  
+  end
+
   def test_subdomain_general
     old_host = @request.host
     # go to login - no redirection

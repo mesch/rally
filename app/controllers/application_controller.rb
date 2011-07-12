@@ -71,13 +71,14 @@ class ApplicationController < ActionController::Base
   def check_for_user
     user = get_user
     if user
+      # We found a user... Set them in the session
       set_user(user)
       return true
     end
     return false
   end
     
-  # Gets the fb user and checks if they exist in our system
+  # Checks the sessin for a user
   def get_user()  
     # Short circuit user with a session user if they exist
     if session[:user_id]
@@ -85,10 +86,10 @@ class ApplicationController < ActionController::Base
     end
     
     # Else see if there is a facebook connection...
-    fb_user = get_fb_user
-    if fb_user
-      return User.find_by_facebook_id(fb_user["id"])
-    end
+    #fb_user = get_fb_user
+    #if fb_user
+    #  return User.find_by_facebook_id(fb_user["id"])
+    #end
     return nil 
   end
   
@@ -160,7 +161,7 @@ class ApplicationController < ActionController::Base
   
   ### Logging methods
   def log_user_action
-    # only include the final location
+    # only includes the final location (if redirected)
     unless response.location
       visitor_id = cookies['visitor_id']
       user_id = @current_user ? @current_user.id : nil

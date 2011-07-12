@@ -144,6 +144,25 @@ class FacebookControllerTest < ActionController::TestCase
     assert_redirected_to :action => :home, :host => old_host.gsub(/^www/,'bob')
   end
   
+  def test_home_subdomain_no_login
+    old_host = @request.host
+    assert_nil session[:user_id]
+    # no params - go to login - host doesn't change
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action => 'login'
+    assert_equal @request.host, old_host 
+    # invalid subdomain - go to login - host doesn't change
+    get :home, :sd => 'invalid'
+    assert_response :redirect
+    assert_redirected_to :action => 'login'
+    assert_equal @request.host, old_host 
+    # valid subdomain - goes to facebook home (due to subdomain redirect) - changes host
+    get :home, :sd => 'bob'
+    assert_response :redirect
+    assert_redirected_to :action => 'home', :host => old_host.gsub(/^www/,'bob')    
+  end
+  
   def test_home_fb_page_id
     self.login
     assert_response :redirect

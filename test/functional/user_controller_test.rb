@@ -381,6 +381,22 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action=>'deal', :id => d.id
   end
   
+  def test_coupon_page
+    # can view own coupons
+    self.login
+    coupon = @test_user.coupons[0]
+    get :coupon, :id => coupon.id
+    assert_response :success
+    assert_template "user/coupon"
+    # someone else can't view them
+    post :login, :email => @empty_user.email, :password => "test"
+    assert_response :redirect
+    assert_redirected_to :action=>'home'  
+    get :coupon, :id => coupon.id
+    assert_response :redirect
+    assert_redirected_to :action=>'home' 
+  end
+  
   def test_return_to
     #cant access account without being logged in
     get :account

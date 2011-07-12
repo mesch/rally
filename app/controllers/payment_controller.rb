@@ -3,7 +3,7 @@ class PaymentController < ApplicationController
   before_filter :check_for_visitor
   after_filter :log_user_action
   
-  ssl_required :purchase
+  ssl_required :purchase if Rails.env.production?
   ssl_allowed :relay_response, :receipt
 
   layout "user"
