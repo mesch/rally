@@ -123,7 +123,7 @@ class PaymentController < ApplicationController
         AUTHORIZE_NET_CONFIG['api_login_id'], 
         AUTHORIZE_NET_CONFIG['api_transaction_key'], 
         @order.amount.to_f,
-        :type => AuthorizeNet::SIM::Transaction::Type::AUTHORIZE_ONLY,
+        :transaction_type => AuthorizeNet::SIM::Transaction::Type::AUTHORIZE_ONLY,
         :relay_url => url_for(:controller => self.controller_name, :action => 'relay_response', :only_path => false))
     @timeout = OPTIONS[:order_timeout]
     render "payment/#{self.action_name}"

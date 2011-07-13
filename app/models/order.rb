@@ -47,13 +47,16 @@ class Order < ActiveRecord::Base
       Order.transaction do
         # lock order
         Order.find_by_id(self.id, :lock => true)
-        # create order_payment
-        OrderPayment.create!(:user_id => self.user_id, :order_id => self.id, :gateway => gateway, 
-          :transaction_type => transaction_type, :confirmation_code => confirmation_code, :amount => amount)
-        # create coupons
-        self.create_coupons!
-        # update order
-        self.update_attributes!(:state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+        # ignore any order state besides created - page refresh
+        if self.state == OPTIONS[:order_states][:created]
+          # create order_payment
+          OrderPayment.create!(:user_id => self.user_id, :order_id => self.id, :gateway => gateway, 
+            :transaction_type => transaction_type, :confirmation_code => confirmation_code, :amount => amount)
+          # create coupons
+          self.create_coupons!
+          # update order
+          self.update_attributes!(:state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+        end
       end
       return true
     rescue ActiveRecord::RecordInvalid => invalid
