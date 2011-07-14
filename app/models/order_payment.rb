@@ -19,7 +19,11 @@ class OrderPayment < ActiveRecord::Base
 
   def capture!
     if self.gateway == OPTIONS[:gateways][:authorize_net] and (self.transaction_type == 'auth_only' or self.transaction_type == 'AUTH_ONLY')
-      transaction = AuthorizeNet::AIM::Transaction.new(AUTHORIZE_NET_CONFIG['api_login_id'], AUTHORIZE_NET_CONFIG['api_transaction_key'])
+      transaction = AuthorizeNet::AIM::Transaction.new(
+        AUTHORIZE_NET_CONFIG['api_login_id'], 
+        AUTHORIZE_NET_CONFIG['api_transaction_key'],
+        :gateway => AUTHORIZE_NET_CONFIG['gateway'],
+        :test => AUTHORIZE_NET_CONFIG['test'])
       response = transaction.capture(self.amount.to_s, self.confirmation_code)
       if response.success?
         # update order payment
