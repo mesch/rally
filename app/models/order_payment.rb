@@ -24,7 +24,7 @@ class OrderPayment < ActiveRecord::Base
         AUTHORIZE_NET_CONFIG['api_transaction_key'],
         :gateway => AUTHORIZE_NET_CONFIG['gateway'],
         :test => AUTHORIZE_NET_CONFIG['test'])
-      response = transaction.capture(self.amount.to_s, self.confirmation_code)
+      response = transaction.prior_auth_capture(self.confirmation_code)
       if response.success?
         # update order payment
         self.update_attributes!(:transaction_type => 'capture_only')
