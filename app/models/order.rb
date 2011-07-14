@@ -92,7 +92,7 @@ class Order < ActiveRecord::Base
         # go through all order_payments
         order_payments = self.order_payments
         if order_payments.size == 0
-          #p "No order_payments to process."
+          p "No order_payments to process."
           raise PaymentError, "No order_payments to process."
         end
         for order_payment in order_payments
@@ -103,10 +103,10 @@ class Order < ActiveRecord::Base
       end
       return true
     rescue PaymentError => pe
-      #p "Order.capture: Failed for Order #{self.inspect} #{pe}"
+      p "Order.capture: Failed for Order #{self.inspect} #{pe}"
       logger.error "Order.capture: Failed for Order #{self.inspect}", pe
     rescue ActiveRecord::RecordInvalid => invalid
-      #p "Order.capture: Failed for Order #{self.inspect} #{invalid}"
+      p "Order.capture: Failed for Order #{self.inspect} #{invalid}"
       logger.error "Order.capture: Failed for Order #{self.inspect}", invalid
     end
     return false
@@ -145,7 +145,7 @@ class Order < ActiveRecord::Base
       considered = orders.length
 	    # set quantity to 0, amount to 0
 	    for order in orders
-	      logger.debug("Resetting Order #{order.inspect}")
+	      p "Resetting Order #{order.inspect}"
 	      if order.update_attributes(:quantity => 0, :amount => 0)
 	        successes += 1
 	      else

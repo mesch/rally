@@ -165,14 +165,14 @@ class Deal < ActiveRecord::Base
     # select all deals - tipped, not expired
     deals = Deal.find(:all, :conditions => ["expiration_date >= ?", Time.zone.today])
     for deal in deals
-      logger.debug("Checking Deal #{deal.inspect}")
+      p "Checking Deal #{deal.inspect}"
       if deal.is_tipped
-        logger.debug("  is tipped...")
+        p "  is tipped..."
         # charge any authorized orders
         orders = Order.find(:all, :conditions => ["deal_id = ? AND state = ?", deal.id, OPTIONS[:order_states][:authorized]])
         considered = orders.length
         for order in orders
-          logger.debug("  Trying to capture Order #{order.inspect}")
+          p "  Trying to capture Order #{order.inspect}"
           if order.capture
             successes += 1
           else
