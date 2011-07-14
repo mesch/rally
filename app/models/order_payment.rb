@@ -25,14 +25,14 @@ class OrderPayment < ActiveRecord::Base
         # update order payment
         self.update_attributes!(:transaction_type => 'capture_only')
       else
-        logger.warn "OrderPayment.capture!: CAPTURE_ONLY failed for Order Payment #{self}"
-        p "AUTHORIZE.NET: AUTH_ONLY FAILED."
+        logger.warn "OrderPayment.capture!: CAPTURE_ONLY failed for Order Payment #{self.inspect}"
+        #p "AUTHORIZE.NET: AUTH_ONLY FAILED."
         raise PaymentError, "AUTHORIZE.NET: AUTH_ONLY FAILED."
       end
     else
       # skipping everything else for now
-      logger.warn "OrderPayment.capture!: Skipped Order Payment #{self}"
-      p "SKIPPED ORDER PAYMENT."
+      logger.warn "OrderPayment.capture!: Skipped Order Payment #{self.inspect}"
+      #p "SKIPPED ORDER PAYMENT."
       raise PaymentError, "SKIPPED ORDER PAYMENT."
     end
   end
