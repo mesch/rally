@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110623223313) do
+ActiveRecord::Schema.define(:version => 20110715032129) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -136,6 +136,7 @@ ActiveRecord::Schema.define(:version => 20110623223313) do
     t.integer  "amount_in_cents"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "transaction_id"
   end
 
   add_index "order_payments", ["order_id"], :name => "index_order_payments_on_order_id"

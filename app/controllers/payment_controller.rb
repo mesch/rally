@@ -157,10 +157,11 @@ class PaymentController < ApplicationController
       transaction_type = params[:x_type]
       amount = params[:x_amount]
       @confirmation_code = params[:x_auth_code]
+      transaction_id = params[:x_trans_id]
       
       # process payment
       unless order.process_authorization(:gateway => gateway, :transaction_type => transaction_type, 
-        :amount => amount, :confirmation_code => @confirmation_code)
+        :amount => amount, :confirmation_code => @confirmation_code, :transaction_id => transaction_id)
         flash.now[:error] = "There was a problem creating your coupons."
       end
     else

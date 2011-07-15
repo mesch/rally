@@ -43,6 +43,7 @@ class Order < ActiveRecord::Base
     transaction_type = options[:transaction_type]
     amount = options[:amount]
     confirmation_code = options[:confirmation_code]
+    transaction_id = options[:transaction_id]
     begin
       Order.transaction do
         # lock order
@@ -51,7 +52,8 @@ class Order < ActiveRecord::Base
         if self.state == OPTIONS[:order_states][:created]
           # create order_payment
           OrderPayment.create!(:user_id => self.user_id, :order_id => self.id, :gateway => gateway, 
-            :transaction_type => transaction_type, :confirmation_code => confirmation_code, :amount => amount)
+            :transaction_type => transaction_type, :confirmation_code => confirmation_code, 
+            :transaction_id => transaction_id, :amount => amount)
           # create coupons
           self.create_coupons!
           # update order
