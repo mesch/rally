@@ -22,13 +22,13 @@ class OrderPayment < ActiveRecord::Base
       transaction = AuthorizeNet::AIM::Transaction.new(
         AUTHORIZE_NET_CONFIG['api_login_id'], 
         AUTHORIZE_NET_CONFIG['api_transaction_key'],
-        :gateway => AUTHORIZE_NET_CONFIG['gateway'],
-        :test => AUTHORIZE_NET_CONFIG['test'])
-      response = transaction.prior_auth_capture(self.confirmation_code)
+        :gateway => AUTHORIZE_NET_CONFIG['gateway'])
+      response = transaction.capture(self.amount.to_s, self.confirmation_code)
       if response.success?
         # update order payment
         self.update_attributes!(:transaction_type => 'capture_only')
       else
+        p self.inspect
         p transaction
         p response
         p "OrderPayment.capture!: CAPTURE_ONLY failed for Order Payment #{self.inspect}"

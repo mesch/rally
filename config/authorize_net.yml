@@ -3,7 +3,6 @@ default:
     api_transaction_key: 92bbPV487mh8GguL
     merchant_hash_value: 6ZqUc56q
     gateway: :test
-    test: true
 production:
     
 development:
