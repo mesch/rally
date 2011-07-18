@@ -1,8 +1,4 @@
-<% if Rails.env.production? %>
-	<%= form_for :sim_transaction, :url => AuthorizeNet::SIM::Transaction::Gateway::LIVE do |f| %>
-<% else %>
-	<%= form_for :sim_transaction, :url => AuthorizeNet::SIM::Transaction::Gateway::TEST do |f| %>
-<% end %>
+<%= form_for :sim_transaction, :url => @gateway_url do |f| %>
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div id="partner">
