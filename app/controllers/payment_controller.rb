@@ -126,11 +126,6 @@ class PaymentController < ApplicationController
         :transaction_type => AuthorizeNet::SIM::Transaction::Type::AUTHORIZE_ONLY,
         :relay_url => url_for(:controller => self.controller_name, :action => 'relay_response', :only_path => false))
     @timeout = OPTIONS[:order_timeout]
-    if Rails.env.production?
-      @url = AuthorizeNet::SIM::Transaction::Gateway::LIVE
-    else
-      @url = AuthorizeNet::SIM::Transaction::Gateway::TEST
-    end
     render "payment/#{self.action_name}"
   end
 
