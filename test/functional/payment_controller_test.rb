@@ -136,6 +136,50 @@ class PaymentControllerTest < ActionController::TestCase
     assert_redirected_to :controller => @user_controller_name, :action=>'home'    
   end
   
+  def test_receipt
+    self.login
+    Order.delete_all
+    Coupon.delete_all
+    # setup order
+    order = Order.new(:user_id => @test_user.id, :deal_id => @deal.id, :quantity => 1, :amount => '10.00')
+    assert order.save
+    # receipt page
+    get :receipt, :gateway => OPTIONS[:gateways][:authorize_net], :x_invoice_num => order.id,
+      :x_type => 'AUTHORIZE', :x_amount => '10.00', :x_auth_code => 'xyz123', :x_trans_id => '1234'
+    assert_response :success
+    assert_template 'payment/receipt'
+    orders = Order.find(:all)
+    assert_equal orders.size, 1
+    assert_equal orders[0].id, order.id
+    assert_equal orders[0].user, order.user
+    assert_equal orders[0].deal, order.deal
+    assert_equal orders[0].quantity, order.quantity
+    assert_equal orders[0].amount, order.amount
+    assert_equal orders[0].state, OPTIONS[:order_states][:authorized]
+    coupons = Coupon.find(:all)
+    assert_equal coupons.size, 1
+    assert_equal coupons[0].deal, order.deal
+    assert_equal coupons[0].user, order.user
+    # refresh receipt page - no change
+    # receipt page
+    get :receipt, :gateway => OPTIONS[:gateways][:authorize_net], :x_invoice_num => order.id,
+      :x_type => 'AUTHORIZE', :x_amount => '10.00', :x_auth_code => 'xyz123', :x_trans_id => '1234'
+    assert_response :success
+    assert_template 'payment/receipt'
+    orders = Order.find(:all)
+    assert_equal orders.size, 1
+    assert_equal orders[0].id, order.id
+    assert_equal orders[0].user, order.user
+    assert_equal orders[0].deal, order.deal
+    assert_equal orders[0].quantity, order.quantity
+    assert_equal orders[0].amount, order.amount
+    assert_equal orders[0].state, OPTIONS[:order_states][:authorized]
+    coupons = Coupon.find(:all)
+    assert_equal coupons.size, 1
+    assert_equal coupons[0].deal, order.deal
+    assert_equal coupons[0].user, order.user
+  end
+  
   def test_logging_deal
     Visitor.delete_all
     self.login
@@ -172,7 +216,7 @@ class PaymentControllerTest < ActionController::TestCase
     # go to receipt page
     UserAction.delete_all
     get :receipt, :gateway => OPTIONS[:gateways][:authorize_net], :x_invoice_num => Order.find(:first).id,
-      :x_type => 'AUTHORIZE', :x_amount => '10.00', :x_auth_code => 'xyz123'
+      :x_type => 'AUTHORIZE', :x_amount => '10.00', :x_auth_code => 'xyz123', :x_trans_id => '1234'
     ua = UserAction.find(:first)
     assert ua
     assert ua.visitor, Visitor.find(:first)

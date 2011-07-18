@@ -147,14 +147,13 @@ class Order < ActiveRecord::Base
       considered = orders.length
 	    # set quantity to 0, amount to 0
 	    for order in orders
-	      p "Resetting Order #{order.inspect}"
+	      #p "Resetting Order #{order.inspect}"
 	      if order.update_attributes(:quantity => 0, :amount => 0)
 	        successes += 1
 	      else
 	        failures += 1
 	      end
       end
-      logger.info "#{orders.size} orders reset."
     end
     return {:considered => considered, :successes => successes, :failures => failures}
   end

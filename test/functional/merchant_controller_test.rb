@@ -301,7 +301,7 @@ class MerchantControllerTest < ActionController::TestCase
     assert_redirected_to :action => "reactivate"  
   end
   
-  def test_missing_code_activation
+  def test_missing_merchant_id_activation
     get :activate, :activation_code => '1234567890'
     assert_response :redirect
     assert flash[:error]

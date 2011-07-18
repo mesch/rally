@@ -6,7 +6,7 @@ class UserController; def rescue_action(e) raise e end; end
 
 class UserControllerTest < ActionController::TestCase
 
-  self.use_instantiated_fixtures  = true
+  self.use_instantiated_fixtures = true
 
   fixtures :users
 
@@ -382,13 +382,49 @@ class UserControllerTest < ActionController::TestCase
   end
   
   def test_coupon_page
-    # can view own coupons
     self.login
-    coupon = @test_user.coupons[0]
+    m = @existingbob
+    # Create Deal
+    deal = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert deal.save
+    assert deal.publish
+    # Create Order
+    order = Order.new(:user_id => @test_user.id, :deal_id => deal.id, :state => OPTIONS[:order_states][:authorized])
+    assert order.save
+    # Create Coupon
+    coupon = Coupon.new(:user_id => @test_user.id, :deal_id => deal.id, :order_id => order.id)
+    assert coupon.save
+    assert_equal coupon.state, 'Pending'
+    # pending - can't view
+    get :coupon, :id => coupon.id
+    assert_response :redirect
+    assert_redirected_to :action=>'home'
+    # active - can view
+    order.state = OPTIONS[:order_states][:paid]
+    assert order.save
+    coupon = Coupon.find_by_id(coupon.id)
+    assert_equal coupon.state, 'Active'
     get :coupon, :id => coupon.id
     assert_response :success
     assert_template "user/coupon"
-    # someone else can't view them
+    # someone else - can't view
+    post :login, :email => @empty_user.email, :password => "test"
+    assert_response :redirect
+    assert_redirected_to :action=>'home'  
+    get :coupon, :id => coupon.id
+    assert_response :redirect
+    assert_redirected_to :action=>'home' 
+    # expired - can view
+    self.login
+    deal.expiration_date = Time.zone.today - 1.days
+    assert deal.save
+    coupon = Coupon.find_by_id(coupon.id)
+    assert_equal coupon.state, 'Expired'
+    get :coupon, :id => coupon.id
+    assert_response :success
+    assert_template "user/coupon"
+    # someone else - can't view
     post :login, :email => @empty_user.email, :password => "test"
     assert_response :redirect
     assert_redirected_to :action=>'home'  
@@ -436,7 +472,7 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
     assert_template 'user/coupons'
     assert_template "layouts/user"
-    get :coupon, :id => @test_user.coupons[0]
+    get :coupon, :id => @burger_coupon1.id
     assert_response :success
     assert_template 'user/coupon'
     assert_template "layouts/user"

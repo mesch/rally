@@ -1,5 +1,5 @@
 class AdminController < ApplicationController
-  before_filter :authenticate
+  before_filter :authenticate unless Rails.env.test?
 
   # Use the admin layout
   layout "admin"

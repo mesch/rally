@@ -412,4 +412,97 @@ class DealTest < ActiveSupport::TestCase
     assert difference > 86400
   end
   
+  def test_views_in_date_range
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save 
+    # non-deal user_action
+    ua = UserAction.new(:controller => 'user', :action => 'home', :method => 'get')
+    assert ua.save
+    assert_equal d.views_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 0
+    # deal user_action, other controller
+    ua = UserAction.new(:controller => 'merchant', :action => 'deal', :deal_id => d.id, :method => 'get')
+    assert ua.save   
+    assert_equal d.views_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 0
+    # deal user_action, other deal
+    ua = UserAction.new(:controller => 'user', :action => 'deal', :deal_id => d.id + 1, :method => 'get')  
+    assert ua.save
+    assert_equal d.views_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 0
+    # deal user_action
+    ua = UserAction.new(:controller => 'user', :action => 'deal', :deal_id => d.id, :method => 'get') 
+    assert ua.save
+    assert_equal d.views_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
+    
+    assert_equal d.views_in_date_range(Time.zone.today, Time.zone.today.end_of_day + 1.days), 1
+    assert_equal d.views_in_date_range(Time.zone.today - 1.days, Time.zone.today.end_of_day), 1
+    assert_equal d.views_in_date_range(Time.zone.today - 1.days, Time.zone.today.end_of_day - 1.days), 0
+    assert_equal d.views_in_date_range(Time.zone.today + 1.days, Time.zone.today.end_of_day + 1.days), 0
+    
+    # add another
+    ua = UserAction.new(:controller => 'user', :action => 'deal', :deal_id => d.id, :method => 'get') 
+    assert ua.save
+    assert_equal d.views_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2    
+  end
+  
+  def test_orders_in_date_range
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    # created order
+    o = Order.new(:user_id => 1000, :deal_id => d.id, :quantity => 1, :amount => '10.00')
+    assert o.save
+    assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 0
+    # authorize
+    o.update_attributes(:state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+    assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
+    # authorized order for another deal - no change
+    o = Order.new(:user_id => 1000, :deal_id => d.id + 1, :quantity => 1, :amount => '10.00', 
+      :state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+    assert o.save
+    assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
+
+    assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day + 1.days), 1
+    assert_equal d.orders_in_date_range(Time.zone.today - 1.days, Time.zone.today.end_of_day), 1
+    assert_equal d.orders_in_date_range(Time.zone.today - 1.days, Time.zone.today.end_of_day - 1.days), 0
+    assert_equal d.orders_in_date_range(Time.zone.today + 1.days, Time.zone.today.end_of_day + 1.days), 0
+    
+    # add another
+    o = Order.new(:user_id => 1000, :deal_id => d.id, :quantity => 1, :amount => '10.00', 
+      :state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+    assert o.save
+    assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2    
+  end
+  
+  def test_coupons_in_date_range
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    o = Order.new(:user_id => 1000, :deal_id => d.id, :quantity => 1, :amount => '10.00', 
+      :state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+    assert o.save
+    # Pending coupon
+    c = Coupon.new(:user_id => 1000, :deal_id => d.id, :order_id => o.id)
+    assert c.save
+    assert_equal c.state, 'Pending'
+    assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
+    # Pending coupon - still counts
+    o.update_attributes(:state => OPTIONS[:order_states][:paid])
+    c = Coupon.find_by_id(c.id)
+    assert_equal c.state, 'Active'
+    assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1    
+    # Coupon for another deal - no change
+    c = Coupon.new(:user_id => 1000, :deal_id => d.id + 1, :order_id => 1)
+    assert c.save    
+
+    assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day + 1.days), 1
+    assert_equal d.coupons_in_date_range(Time.zone.today - 1.days, Time.zone.today.end_of_day), 1
+    assert_equal d.coupons_in_date_range(Time.zone.today - 1.days, Time.zone.today.end_of_day - 1.days), 0
+    assert_equal d.coupons_in_date_range(Time.zone.today + 1.days, Time.zone.today.end_of_day + 1.days), 0
+    
+    # add another
+    c = Coupon.new(:user_id => 1000, :deal_id => d.id, :order_id => o.id)
+    assert c.save
+    assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2
+  end
+  
 end

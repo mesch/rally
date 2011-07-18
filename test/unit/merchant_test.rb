@@ -164,6 +164,7 @@ class MerchantTest < ActiveSupport::TestCase
     assert_not_nil sent
     #old password no longer workd
     assert_nil Merchant.authenticate("bob", "test")
+    
 ### TODO - test this using delayed job?
 =begin
     #email sent...
@@ -256,5 +257,142 @@ class MerchantTest < ActiveSupport::TestCase
     assert_equal m.get_logo_footer, OPTIONS[:logo_default_url].sub(':style', 'footer')
   end
   
+  def test_deals_in_date_range
+    m = @emptybob
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.deals_in_date_range(Time.zone.today, Time.zone.today).size, 1
+    assert_equal m.deals_in_date_range(Time.zone.today - 1.days, Time.zone.today).size, 1
+    assert_equal m.deals_in_date_range(Time.zone.today, Time.zone.today + 1.days).size, 1
+    assert_equal m.deals_in_date_range(Time.zone.today - 1.days, Time.zone.today - 1.days).size, 0
+    assert_equal m.deals_in_date_range(Time.zone.today + 1.days, Time.zone.today + 1.days).size, 0
+    # multiple deals
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.deals_in_date_range(Time.zone.today, Time.zone.today).size, 2        
+  end
+  
+  def test_drafts
+    m = @emptybob
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.drafts().size, 1
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today)
+    assert_equal m.drafts().size, 1    
+    d.update_attributes(:start_date => Time.zone.today, :end_date => Time.zone.today + 1.days)
+    assert_equal m.drafts().size, 1    
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    assert_equal m.drafts().size, 1    
+    d.update_attributes(:start_date => Time.zone.today + 1.days, :end_date => Time.zone.today + 1.days)
+    assert_equal m.drafts().size, 1    
+    # publish
+    d.publish
+    assert_equal m.drafts().size, 0   
+    # add a draft 
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.drafts().size, 1
+    # add another draft
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.drafts().size, 2    
+  end
+  
+  def test_current_deals
+    m = @emptybob
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.current_deals().size, 0
+    # publish
+    d.publish
+    assert_equal m.current_deals().size, 1
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today)
+    assert_equal m.current_deals().size, 1
+    d.update_attributes(:start_date => Time.zone.today, :end_date => Time.zone.today + 1.days)
+    assert_equal m.current_deals().size, 1  
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    assert_equal m.current_deals().size, 0
+    d.update_attributes(:start_date => Time.zone.today + 1.days, :end_date => Time.zone.today + 1.days)
+    assert_equal m.current_deals().size, 1   
+    # add a draft 
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.current_deals().size, 1
+    # publish
+    d.publish
+    assert_equal m.current_deals().size, 2
+  end
+  
+  def test_good_deals
+    m = @emptybob
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.good_deals().size, 0
+    # publish
+    d.publish
+    assert_equal m.good_deals().size, 1
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today)
+    assert_equal m.good_deals().size, 0
+    d.update_attributes(:start_date => Time.zone.today, :end_date => Time.zone.today + 1.days)
+    assert_equal m.good_deals().size, 0  
+    d.update_attributes(:start_date => Time.zone.today + 1.days, :end_date => Time.zone.today + 1.days)
+    assert_equal m.good_deals().size, 0
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    assert_equal m.good_deals().size, 1    
+    # add a draft 
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.good_deals().size, 1
+    # publish
+    d.publish
+    assert_equal m.good_deals().size, 1
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    assert_equal m.good_deals().size, 2    
+  end
+  
+  def test_failed_deals
+    m = @emptybob
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.failed_deals().size, 0
+    # publish
+    d.publish
+    assert_equal m.failed_deals().size, 0
+    # set min to 1
+    d.update_attributes(:min => 1)
+    assert_equal m.failed_deals().size, 1
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today)
+    assert_equal m.failed_deals().size, 0
+    d.update_attributes(:start_date => Time.zone.today, :end_date => Time.zone.today + 1.days)
+    assert_equal m.failed_deals().size, 0  
+    d.update_attributes(:start_date => Time.zone.today + 1.days, :end_date => Time.zone.today + 1.days)
+    assert_equal m.failed_deals().size, 0
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    assert_equal m.failed_deals().size, 1    
+    # add a draft 
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal m.failed_deals().size, 1
+    # publish
+    d.publish
+    assert_equal m.failed_deals().size, 1
+    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    assert_equal m.failed_deals().size, 1
+    # set min to 1
+    d.update_attributes(:min => 1)
+    assert_equal m.failed_deals().size, 2        
+  end  
+      
 end
 

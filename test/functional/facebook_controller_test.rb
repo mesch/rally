@@ -53,7 +53,7 @@ class FacebookControllerTest < ActionController::TestCase
     assert_response :success
     assert_template 'user/coupons'
     assert_template "layouts/facebook"
-    get :coupon, :id => @test_user.coupons[0]
+    get :coupon, :id => @burger_coupon1.id
     assert_response :success
     assert_template 'user/coupon'
     assert_template "layouts/facebook"
@@ -85,7 +85,7 @@ class FacebookControllerTest < ActionController::TestCase
     get :coupons
     assert_response :success
     assert_template 'user/coupons'
-    get :coupon, :id => @test_user.coupons[0]
+    get :coupon, :id => @burger_coupon1.id
     assert_response :success
     assert_template 'user/coupon'    
   end

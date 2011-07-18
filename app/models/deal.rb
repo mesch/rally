@@ -165,14 +165,14 @@ class Deal < ActiveRecord::Base
     # select all deals - tipped, not expired
     deals = Deal.find(:all, :conditions => ["expiration_date >= ?", Time.zone.today])
     for deal in deals
-      p "Checking Deal #{deal.inspect}"
+      #p "Checking Deal #{deal.inspect}"
       if deal.is_tipped
-        p "  is tipped..."
+        #p "  is tipped..."
         # charge any authorized orders
         orders = Order.find(:all, :conditions => ["deal_id = ? AND state = ?", deal.id, OPTIONS[:order_states][:authorized]])
         considered = orders.length
         for order in orders
-          p "  Trying to capture Order #{order.inspect}"
+          #p "  Trying to capture Order #{order.inspect}"
           if order.capture
             successes += 1
           else
@@ -185,17 +185,18 @@ class Deal < ActiveRecord::Base
   end
   
   # Deal statistics methods
-  def views_in_date_range(start_date, end_date)
+  def views_in_date_range(start_time, end_time)
     return UserAction.count(
-      :conditions => ["deal_id = ? AND action = ? AND created_at >= ? AND created_at <= ?", self.id, "deal", start_date, end_date])
+      :conditions => ["controller = ? AND action = ? AND deal_id = ? AND created_at >= ? AND created_at <= ?", 
+        "user", "deal", self.id, start_time, end_time])
   end
   
-  def orders_in_date_range(start_date, end_date)
-    return Order.count(:conditions => ["deal_id = ? AND authorized_at >= ? AND authorized_at <= ?", self.id, start_date, end_date])
+  def orders_in_date_range(start_time, end_time)
+    return Order.count(:conditions => ["deal_id = ? AND authorized_at >= ? AND authorized_at <= ?", self.id, start_time, end_time])
   end
   
-  def coupons_in_date_range(start_date, end_date)
-    Coupon.count(:conditions => ["deal_id = ? AND created_at >= ? AND created_at <= ?", self.id, start_date, end_date])
+  def coupons_in_date_range(start_time, end_time)
+    Coupon.count(:conditions => ["deal_id = ? AND created_at >= ? AND created_at <= ?", self.id, start_time, end_time])
   end
   
 end

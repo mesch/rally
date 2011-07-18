@@ -84,6 +84,11 @@ class UserController < ApplicationController
       return
     end
     
+    unless @coupon.state == 'Active' or @coupon.state == 'Expired'
+      go_home
+      return
+    end
+    
     render "user/#{self.action_name}", :layout => false
   end
 
