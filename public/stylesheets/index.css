@@ -836,11 +836,11 @@ dd#consult .deal-info .link h2 span{font-family:arial,sans-serif;}
 #dialog{position:absolute;z-index:9999;border:4px solid #CCC;display:none;}
 /*end*/
 
-#terms {padding-left:10px;}
+#terms {padding-left:10px; padding-right:10px;}
 #terms p{padding-bottom:5px;}
-#privacy {padding-left:10px;}
+#privacy {padding-left:10px; padding-right:10px;}
 #privacy p{padding-bottom:5px;}
-#contact {padding-left:10px;}
+#contact {padding-left:10px; padding-right:10px;}
 #contact p{padding-bottom:5px;}
 
 /*validator*/
