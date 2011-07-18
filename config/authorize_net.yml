@@ -6,7 +6,7 @@ default:
 production:
     api_login_id: 9CYgR5yLJB6V
     api_transaction_key: 997KbVJsBw6G59LN
-    merchant_hash_value: 9CYgR5yLJB6V
+    merchant_hash_value: 
     gateway: :live
 development:
   
