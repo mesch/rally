@@ -1,5 +1,33 @@
+<div id="fb-root"></div>
+<script src="https://connect.facebook.net/en_US/all.js"></script>
+<script>
+	FB.init({
+		appId  : <%= OPTIONS[:facebook_app_id] %>,
+		status : true,
+		cookie : true,
+       xfbml  : true
+	});
+	// Hack around FB SSL bug (http://bugs.developers.facebook.net/show_bug.cgi?id=17121)
+	if(document.location.protocol == 'https:' && !!FB && !!FB._domain && !!FB._domain.staticfb) {
+		FB._domain.staticfb = FB._domain.staticfb.replace('http://static.ak.facebook.com/', 'https://s-static.ak.fbcdn.net/');
+	}
+	// If they log in - redirect_to :connect
+	FB.Event.subscribe('auth.login', function() {
+		window.location = '<%= url_for(:controller => controller.controller_name, :action => 'connect') %>';
+	});
+	// If they are already logged in - redirect_to :connect
+	// Else - show fb:login-button 
+	FB.getLoginStatus(function(response) {
+		if (response.status == 'connected') {
+			document.getElementById('fb-login-button').innerHTML = '<%= link_to image_tag("facebook_login_button.png"), url_for(:controller => controller.controller_name, :action => 'connect') %>';
+		} 
+		else { 
+			document.getElementById('fb-login-button').innerHTML = '<fb:login-button perms="email">Login</fb:login-button>';
+			FB.XFBML.parse(document.getElementById('fb-login-button'));
+		}
+	});
+</script>
 <%= form_tag :controller => controller.controller_name, :action=>'login', :class=>"validator" %>
-
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div id="biz">
@@ -10,7 +38,6 @@
                 <div class="head"><h2>Log In</h2></div>
 					<div class="subsect">
 						<div class="wholetip clear"><h3><%= OPTIONS[:site_name] %> + Facebook</h3></div>
-						<div id="fb-root"></div>
 						<div class="act">
 							<div id="fb-login-button"></div>
 						</div>
@@ -43,38 +70,3 @@
 </div>
 </div> <!-- bd end -->
 </div> <!-- bdw end -->
-<script>
-    window.fbAsyncInit = function() {
-        FB.init({
-            appId  : <%= OPTIONS[:facebook_app_id] %>,
-            status : true,
-            cookie : true,
-            xfbml  : true
-        });
-		// Hack around FB SSL bug (http://bugs.developers.facebook.net/show_bug.cgi?id=17121)
-		if(document.location.protocol == 'https:' && !!FB && !!FB._domain && !!FB._domain.staticfb) {
-			FB._domain.staticfb = FB._domain.staticfb.replace('http://static.ak.facebook.com/', 'https://s-static.ak.fbcdn.net/');
-		}
-		// If they log in - redirect_to :connect
-        FB.Event.subscribe('auth.login', function() {
-            window.location = '<%= url_for(:controller => controller.controller_name, :action => 'connect') %>';
-        });
-		// If they are already logged in - redirect_to :connect
-		// Else - show fb:login-button 
-		FB.getLoginStatus(function(response) {
-	     if (response.status == 'connected') {
-	        document.getElementById('fb-login-button').innerHTML = '<%= link_to image_tag("facebook_login_button.png"), url_for(:controller => controller.controller_name, :action => 'connect') %>';
-	     } else {
-	        document.getElementById('fb-login-button').innerHTML = '<fb:login-button perms="email">Login</fb:login-button>';
-	        FB.XFBML.parse(document.getElementById('fb-login-button'));
-	     }
-	   });
-    };
-
-    (function() {
-        var e = document.createElement('script');
-        e.src = 'https://connect.facebook.net/en_US/all.js';
-        e.async = true;
-        document.getElementById('fb-login-button').appendChild(e);
-    }());
-</script>
