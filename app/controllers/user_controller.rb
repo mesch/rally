@@ -120,6 +120,10 @@ class UserController < ApplicationController
     # Try looking up by Facebook Email
     unless user
       user = User.find_by_email(fb["email"])
+      # update facebook_id
+      unless user.update_attributes(:facebook_id => fb["id"])
+        logger.error "UserController.connect: Can't update facebook_id for User #{user}"
+      end
     end
     # Try creating new user
     unless user

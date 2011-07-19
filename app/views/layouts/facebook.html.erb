@@ -62,7 +62,7 @@
 
 	<%= yield %>
 	
-	<% if @current_user %>
+	<% if @current_user and @current_user.facebook_id %>
 		<script type="text/javascript">
 			/* Useful info when doing javascript queries */
 			var fb_id = <%= @current_user.facebook_id %>;

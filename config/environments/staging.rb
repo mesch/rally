@@ -46,6 +46,7 @@ Rally::Application.configure do
   OPTIONS[:paperclip_storage_options] = {
     :storage => :s3,
     :s3_credentials => "#{::Rails.root.to_s}/config/s3.yml",
+    :s3_protocol => 'https',
     :path => ":class/:attachment/:id/:style.:extension"
   }
   
