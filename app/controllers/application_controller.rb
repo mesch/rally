@@ -1,6 +1,7 @@
 require "facebook"
 
 class ApplicationController < ActionController::Base
+  before_filter :set_p3p
   before_filter :set_merchant_subdomains
   protect_from_forgery
 
@@ -179,4 +180,11 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  private
+  
+  # this is required by IE so that we can set session cookies
+  def set_p3p
+    headers['P3P'] = 'CP="ALL DSP COR CURa ADMa DEVa OUR IND COM NAV"'
+  end
+    
 end
