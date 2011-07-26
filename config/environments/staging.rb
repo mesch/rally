@@ -40,7 +40,7 @@ Rally::Application.configure do
   # config.threadsafe!
 
   # Set the default action mailer host..
-  OPTIONS[:site_url] = "rallycommerce-staging.heroku.com"
+  OPTIONS[:site_url] = "www.rallycommerce.net"
   config.action_mailer.default_url_options = { :host => OPTIONS[:site_url] }
   
   OPTIONS[:paperclip_storage_options] = {
