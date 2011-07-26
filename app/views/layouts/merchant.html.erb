@@ -12,17 +12,24 @@
 </head>
 <body class="newbie">
 <div id="pagemasker"></div><div id="dialog"></div>
-<div id="doc">	
+<div id="doc">
+	<div id="hdl">
+		<div id="logo">
+			<% if @current_merchant and @current_merchant.get_logo %>
+				<%= image_tag(@current_merchant.get_logo) %>
+			<% else %>
+				<%= image_tag("logo_header.gif") %>
+			<% end %>
+		</div>
+		<div class="guides">
+			<div class="city">
+				<h2>Merchant</h2>
+			</div>
+		</div>
+	</div>
 	<div id="hdw">
 		<div id="hd">
-			<div id="logo">
-			<%= image_tag("logo_original.gif") %>
-			</div>
-			<div class="guides">
-				<div class="city">
-					<h2>Merchant</h2>
-				</div>
-			</div>
+
 			<ul class="nav cf">
 				<% if @current_merchant %>
 					<li <%= controller.action_name == 'home' ? 'class=current' : '' %> ><%= link_to "Home", merchant_home_url %></li>
@@ -50,10 +57,10 @@
 	</div>
 
 	<% if flash[:notice] %>
-	<div class="sysmsgw" id="sysmsg-success"><div class="sysmsg"><p><%= flash[:notice] %></p><span class="close">Close</span></div></div>
+	<div class="sysmsgw" id="sysmsg-success"><div class="sysmsg"><p><%= simple_format(flash[:notice]) %></p><span class="close">Close</span></div></div>
 	<% end %>
 	<% if flash[:error] %>
-	<div class="sysmsgw" id="sysmsg-error"><div class="sysmsg"><p><%= flash[:error] %></p><span class="close">Close</span></div></div> 
+	<div class="sysmsgw" id="sysmsg-error"><div class="sysmsg"><p><%= simple_format(flash[:error]) %></p><span class="close">Close</span></div></div> 
 	<% end %>
 
 	<%= yield %>

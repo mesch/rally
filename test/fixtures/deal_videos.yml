@@ -1,0 +1,7 @@
+burger_deal_video1:
+    id: 1
+    counter: 1
+    deal: burger_deal
+    video_file_name: race.flv
+    video_content_type: application/octet-stream
+    video_file_size: 669036

@@ -1,8 +1,8 @@
 class DealImage < ActiveRecord::Base
-  MAX_IMAGE_SIZE = 3145728 # Max bytes (3 MB)
-  CONTENT_TYPES = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png']
+  MAX_IMAGE_SIZE = 1048576 # Max bytes (1 MB)
+  CONTENT_TYPES = ['image/jpg', 'image/jpeg', 'image/pjpeg', 'image/gif', 'image/png', 'image/x-png', 'image/bmp']
   THUMB_SIZE = "100x100!"
-  DISPLAY_SIZE = "440x280!"
+  DISPLAY_SIZE = "440x275!"
 
   validates_attachment_presence :image
   validates_attachment_size :image, :less_than => MAX_IMAGE_SIZE

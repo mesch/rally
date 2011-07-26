@@ -149,7 +149,7 @@
 					<% end %>
 				<% end %>
 			</div>
-      		<div class="digest"><br/><%= simple_format(strip_tags(@deal.description)) %></div>			
+      		<div class="digest"><br/><%= simple_format(@deal.description) %></div>			
 		</div>
 	</div>
 	<div id="deal-stuff" class="cf">
@@ -159,7 +159,7 @@
                 	<div class="main">
 						<% if @deal.terms %>
                        	<h2 id="detail">Terms</h2>
-						<div class="blk detail"><%= @deal.terms %></div>
+						<div class="blk detail"><%= simple_format(@deal.terms) %></div>
 						<% end %>
 					</div>
                     <div class="side">

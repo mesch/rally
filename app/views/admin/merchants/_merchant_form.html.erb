@@ -8,7 +8,7 @@
             <div class="box-content">
                 <div class="head"><h2><%= @merchant.id ? 'Edit Account' : 'New Account' %></h2>
 					<% if @merchant.id and !@merchant.activated %>
-						<%= link_to "Send Activation Email", send_activation_admin_merchant_url(@merchant.id) %>
+						&nbsp;&nbsp;<%= link_to "Send Activation Email", send_activation_admin_merchant_url(@merchant.id) %>
 					<% end %>
 				</div>
                 <div class="sect">
@@ -49,12 +49,16 @@
 						<%= f.text_field :subdomain, :value => @merchant.merchant_subdomain ? @merchant.merchant_subdomain.subdomain : '', 
 							:class=>"f-input" %>
 						<% if @merchant.merchant_subdomain %>
-							<span class="hint"><%= @merchant.merchant_subdomain.subdomain + '.' + request.host_with_port %></span>
+							<span class="hint">Your personalized deal store is located at <%= @deal_store_url %></span>
 						<% else %>
-							<span class="hint">Your personalized deal store will be located at [Subdomain].<%= request.host_with_port %>.</span>
+							<span class="hint">Your personalized deal store will be located at [Subdomain].<%= @base_host %></span>
 						<% end %>
                        </div>
-
+					<div class="field">
+						<span class="spec">Logos must be one of these types: <%= Merchant::CONTENT_TYPES.join(", ") %>.</span>
+						<span class="spec">Maximum logo size is <%= number_to_human_size Merchant::MAX_IMAGE_SIZE %>.</span>
+						<span class="spec">For best results, logos should smaller than 400x100.</span>
+					</div>
 					<div class="field">
 						<%= label_tag 'Logo' %>
 						<%= f.file_field :logo, :class => "f-input" %>
@@ -139,7 +143,8 @@
 						<%= f.text_field :paypal_account, :value => @merchant.paypal_account, :class=>"f-input" %>
                     </div>
 					<div class="act">
-						<%= f.submit :submit, :value=>"Commit", :class=>"formbutton"%>
+						<%= f.submit :submit, :class =>"formbutton",
+							:value => controller.action_name == 'new' ? "Create Merchant" : "Update Merchant" %>
 						or <%= link_to "cancel", admin_merchants_url %>
                     </div>
                 </div>

@@ -12,6 +12,7 @@ bob:
     logo_file_name: logo.png
     logo_content_type: image/png
     logo_file_size: 26062
+    terms: true
 
 emptybob:
     name: "Bob's Burgers"
@@ -22,6 +23,7 @@ emptybob:
     website: "http://www.fox.com/bobsburgers/"
     activation_code: 1234567890
     activated: true
+    terms: true
 
 existingbob:
     name: "What About Bob?"
@@ -32,6 +34,7 @@ existingbob:
     activation_code: 1234567890
     activated: true
     time_zone: "Hawaii"
+    terms: true
 
 longbob:
     name: "Bob's Big Boy" 
@@ -41,6 +44,7 @@ longbob:
     hashed_password: 00728d3362c26746ec25963f71be022b152237a9 # longtest
     activation_code: 1234567890
     activated: true
+    terms: true
 
 inactive:
     name: "Inactive Account" 

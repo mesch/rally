@@ -86,7 +86,6 @@ class DealTest < ActiveSupport::TestCase
     d.limit = 5
     d.description = 'blahblah'
     d.terms = 'limited to blah.'
-    d.video = 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
     d.active = false
     assert d.save
     # check defaults

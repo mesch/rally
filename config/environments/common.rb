@@ -47,3 +47,4 @@ OPTIONS[:gateways] = {:authorize_net  => 'AUTHORIZE_NET'}
 # Paperclip defaults
 OPTIONS[:logo_default_url] = '/images/logo_:style.gif'
 OPTIONS[:deal_image_default_url] = '/images/missing_deal_image.gif'
+OPTIONS[:deal_video_default_url] = '/images/missing_deal_video.gif'

@@ -136,7 +136,7 @@ When /^I upload a file of 0 coupons codes$/ do
 end
 
 When /^I upload a logo$/ do
-  attach_file('logo_file', File.join(::Rails.root.to_s, 'features', 'upload-files', 'logo.png'))
+  attach_file('merchant_logo', File.join(::Rails.root.to_s, 'features', 'upload-files', 'logo.png'))
 end
 
 When /^the background process to charge orders is run$/ do
@@ -180,9 +180,9 @@ Then /^I should see the limit is (\d)$/ do |limit|
 end
 
 Then /^I should see the generic logo$/ do
-    page.should have_xpath("//img[@alt=\"Logo_original\"]")
+    page.should have_xpath("//img[@alt=\"Logo_header\"]")
 end
 
 Then /^I should see the merchant logo$/ do
-    page.should have_xpath("//img[@alt=\"Original\"]")
+    page.should have_xpath("//img[@alt=\"Header\"]")
 end

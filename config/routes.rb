@@ -100,6 +100,7 @@ Rally::Application.routes.draw do
       match :signup
       match :activate
       match :reactivate
+      match :accept_terms
       match :account
       match :change_email
       match :change_password
@@ -116,7 +117,7 @@ Rally::Application.routes.draw do
       match :login
       match :signup
       match :reactivate
-      match :account
+      match :accept_terms
       match :change_email
       match :change_password
       match :forgot_password
@@ -124,6 +125,9 @@ Rally::Application.routes.draw do
       match '/deal/:id' => :update_deal, :as => :update_deal
       match :connect
     end
+    scope :via => :put do
+      match :account
+    end      
   end
 
   # Admin

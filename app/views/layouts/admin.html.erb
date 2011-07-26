@@ -12,17 +12,19 @@
 </head>
 <body class="newbie">
 <div id="pagemasker"></div><div id="dialog"></div>
-<div id="doc">	
+<div id="doc">
+	<div id="hdl">
+		<div id="logo">
+		<%= link_to image_tag("logo_header.gif"), root_url, :class => "link", :target => "_blank" %>
+		</div>
+		<div class="guides">
+			<div class="city">
+				<h2>Admin</h2>
+			</div>
+		</div>		
+	</div>
 	<div id="hdw">
 		<div id="hd">
-			<div id="logo">
-			<%= link_to image_tag("logo_original.gif"), root_url, :class => "link", :target => "_blank" %>
-			</div>
-			<div class="guides">
-				<div class="city">
-					<h2>Admin</h2>
-				</div>
-			</div>
 			<ul class="nav cf">
 				<li <%= controller.controller_name == 'admin' ? 'class=current' : '' %> >
 					<%= link_to "Home", admin_home_url %>
@@ -31,10 +33,10 @@
 	</div>
 
 	<% if flash[:notice] %>
-	<div class="sysmsgw" id="sysmsg-success"><div class="sysmsg"><p><%= flash[:notice] %></p><span class="close">Close</span></div></div>
+	<div class="sysmsgw" id="sysmsg-success"><div class="sysmsg"><p><%= simple_format(flash[:notice]) %></p><span class="close">Close</span></div></div>
 	<% end %>
 	<% if flash[:error] %>
-	<div class="sysmsgw" id="sysmsg-error"><div class="sysmsg"><p><%= flash[:error] %></p><span class="close">Close</span></div></div> 
+	<div class="sysmsgw" id="sysmsg-error"><div class="sysmsg"><p><%= simple_format(flash[:error]) %></p><span class="close">Close</span></div></div> 
 	<% end %>
 
 	<%= yield %>

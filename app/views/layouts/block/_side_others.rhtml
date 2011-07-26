@@ -1,16 +1,22 @@
 <% if @others and @others.size > 0 %>
-<div class="sbox side-business">
+<div class="sbox side-business" id="recent-deals">
 	<div class="sbox-top"></div>
 	<div class="sbox-content">
 		<div class="tip">
 		<h2>Other deals</h2>
 		<% index = 0 %>
 		<% for deal in @others %>
-			<b><%= index += 1%>.&nbsp;<%= deal.title %></b>
+			<b><%= index += 1%>.&nbsp;<%= link_to deal.title, deal_url(deal.id) %></b>
 			<% if deal.deal_images[0] %>
-				<p><%= link_to image_tag(deal.deal_images[0].image.url, :width=>"195", :height=>"148", :border=>"0"), deal_url(deal.id) %></p>
+				<p><%= link_to image_tag(deal.deal_images[0].image.url(:display), :width=>"200", :height=>"125", :border=>"0"), 	
+							   deal_url(deal.id) %></p>
 			<% end %>
-			<p><%= link_to deal.description, deal_url(deal.id) %></p>
+			<p class="price">
+				Value: <strong class="old"><%= deal.deal_value.format(:no_cents) %></strong>&nbsp;&nbsp;
+				Discount: <strong class="discount"><%= deal.discount %>%</strong><br />
+				Price: <strong><%= deal.deal_price.format(:no_cents) %></strong>&nbsp;&nbsp;&nbsp;
+				You save: <strong><%= deal.savings.format(:no_cents) %></strong><br />
+			</p>
 		<% end %>
 		</div>
 	</div>

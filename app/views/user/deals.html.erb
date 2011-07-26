@@ -17,13 +17,10 @@
 								<div class="<%= deal.is_maxed ? 'soldout' : 'isopen' %>"></div>
 								<% if deal.deal_images[0] %>
 									<%= link_to image_tag(deal.deal_images[0].image.url(:display), 
-											:width => "200", :height => "121", :alt => deal.title), 
+											:width => "200", :height => "125", :alt => deal.title), 
 											url_for(:controller => controller.controller_name, :action => 'deal', :id => deal.id), 
 											:title => deal.title  %>									
 								<% end %>
-							</div>
-							<div class="description">
-								<%= deal.description %>
 							</div>
 							<div class="info">
 								<p class="total"><strong class="count"><%= deal.confirmed_coupon_count %></strong> Buyers&nbsp;

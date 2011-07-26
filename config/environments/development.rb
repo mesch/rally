@@ -37,7 +37,7 @@ Rally::Application.configure do
   }
 
   # Order Timout
-  OPTIONS[:order_timeout] = 10
+  OPTIONS[:order_timeout] = 60
   
   # Facebook logins
   OPTIONS[:facebook_app_id] = "221523644534233"

@@ -8,7 +8,6 @@ burger_deal:
     deal_value_in_cents: 2000
     description: "$20 worth of burgers for $10."
     terms: "Redeemable at any local Bob's Burgers."
-    video: "http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv"
     min: 2
     max: 20
     limit: 3

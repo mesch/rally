@@ -2,11 +2,12 @@ class Deal < ActiveRecord::Base
   validates_length_of :title, :maximum => 50
   validates_length_of :description, :maximum => 2000
   validates_length_of :terms, :maximum => 2000
-  validates_length_of :video, :maximum => 255
   validates_presence_of :merchant_id, :title, :start_date, :end_date, :expiration_date, :deal_price, :deal_value
   validates_numericality_of :min, :greater_than_or_equal_to => 0
   validates_numericality_of :max, :greater_than_or_equal_to => 0
   validates_numericality_of :limit, :greater_than_or_equal_to => 0 
+  validates_numericality_of :deal_price, :greater_than_or_equal_to => 1
+  validates_numericality_of :deal_value, :greater_than_or_equal_to => 1
 
   attr_protected :id
 
@@ -16,6 +17,7 @@ class Deal < ActiveRecord::Base
   belongs_to :merchant
 
   has_many :deal_images
+  has_one :deal_video
   has_many :deal_codes
   has_many :coupons
 

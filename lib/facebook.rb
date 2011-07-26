@@ -1,5 +1,4 @@
 module Facebook
-  
 
   def get_fb_user
     oauth = Koala::Facebook::OAuth.new(OPTIONS[:facebook_app_id], OPTIONS[:facebook_secret_key])

@@ -41,7 +41,7 @@ body{ background:#fff;}
 	<% if @merchant_subdomain and @merchant_subdomain.get_logo %>
 		<%= image_tag(@merchant_subdomain.get_logo) %>
 	<% else %>
-		<%= image_tag("logo_original.gif") %>
+		<%= image_tag("logo_header.gif") %>
 	<% end %>
 </div>
 <div id="welcome">Coupon # <%= @coupon.id %></div>
@@ -70,9 +70,9 @@ body{ background:#fff;}
 <!--right -->
 <div id="mright">
 <div id="name">Description</div>
-<div id="notice"><%= @coupon.deal.description %></div>
+<div id="notice"><%= simple_format(strip_tags(@coupon.deal.description)) %></div>
 <div id="name">Terms</div>
-<div id="notice"><%= @coupon.deal.terms %></div>
+<div id="notice"><%= simple_format(strip_tags(@coupon.deal.terms)) %></div>
 <div id="name">How to use</div>
 <div id="notice">
 <ul>

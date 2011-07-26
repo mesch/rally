@@ -1,4 +1,4 @@
-<%= form_tag(controller.action_name == 'new_deal' ? merchant_create_deal_url : merchant_update_deal_url, :multipart => true) %>
+<%= form_tag(['new_deal','create_deal'].include?(controller.action_name) ? merchant_create_deal_url : merchant_update_deal_url, :multipart => true) %>
 <%= raw javascript_include_tag "xheditor/xheditor.js" %>
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
@@ -8,7 +8,7 @@
             <div class="box-top"></div>
             <div class="box-content">
                 <div class="head">
-					<h2><%= controller.action_name == 'new_deal' ? 'Create Deal' : 'Update Deal' %></h2>
+					<h2><%= ['new_deal','create_deal'].include?(controller.action_name) ? 'Create Deal' : 'Update Deal' %></h2>
 				</div>
                 <div class="sect">
 					<div class="wholetip clear"><h3>1. Basic Info</h3></div>
@@ -24,15 +24,15 @@
 					</div>
 					<div class="field">
 					<% if @deal.published %>
-						<%= label_tag 'Value' %>
-						<%= text_field_tag :deal_value, @deal.deal_value, :size=>"10", :class=>"number", :disabled => true %>
-						<%= label_tag 'Price' %> 
-						<%= text_field_tag :deal_price, @deal.deal_price, :size=>"10", :class=>"number", :disabled => true %>									
+						<%= label_tag 'Value ($)' %>
+						<%= text_field_tag :deal_value, @deal.deal_value, :min => 1, :size=>"10", :class=>"number", :disabled => true %>
+						<%= label_tag 'Price ($)' %> 
+						<%= text_field_tag :deal_price, @deal.deal_price, :min => 1, :size=>"10", :class=>"number", :disabled => true %>									
 					<% else %>
-						<%= label_tag 'Value' %>
-						<%= text_field_tag :deal_value, @deal.deal_value, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
-						<%= label_tag 'Price' %> 
-						<%= text_field_tag :deal_price, @deal.deal_price, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>									
+						<%= label_tag 'Value ($)' %>
+						<%= number_field_tag :deal_value, @deal.deal_value, :min => 1, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
+						<%= label_tag 'Price ($)' %> 
+						<%= number_field_tag :deal_price, @deal.deal_price, :min => 1, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>									
 						<span class="inputtip">Value must be greater than Price.</span>
 					<% end %>
 					</div>
@@ -82,6 +82,11 @@
 					</div>
 					<div class="wholetip clear"><h3>2. Creative Content</h3></div>
 					<div class="field">
+						<span class="spec">Images must be one of these types: <%= DealImage::CONTENT_TYPES.join(", ") %>.</span>
+						<span class="spec">Maximum image size is <%= number_to_human_size DealImage::MAX_IMAGE_SIZE %>.</span>
+						<span class="spec">For best results, images should be 440x275 (1.6 aspect ratio).</span>
+					</div>
+					<div class="field">
 						<%= label_tag 'Image 1' %>
 						<%= file_field_tag :image1, :size=>"30", :class => "f-input" %>
 						<% if @image1 %>
@@ -105,11 +110,22 @@
 						<% end %>
 					</div>
 					<div class="field">
-						<%= label_tag 'FLV Video', 'FLV Video' %>
-						<%= text_field_tag :video, @deal.video, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
-						<span class="hint">Format: http://.../video.flv</span>
+						<span class="spec">Only Flash Videos (.flv) are currently allowed.</span>
+						<span class="spec">Maximum video size is <%= number_to_human_size DealVideo::MAX_VIDEO_SIZE %>.</span>
+						<span class="spec">For best results, videos should have a 1.33 aspect ratio.</span>
+					</div>
+					<div class="field">
+						<%= label_tag 'Video' %>
+						<%= file_field_tag :video, :size=>"30", :class=>"f-input" %>
+						<% if @video %>
+							<span class="hint"><%= @video.video.url %></span>
+						<% end %>
 					</div>
 					<div class="wholetip clear"><h3>3. Coupon Codes</h3></div>
+					<div class="field">
+						<span class="spec">Uploaded files need to be a single-column CSV with 1 unique code in each row. No header row should be included.</span>
+						<span class="spec">Codes should only be composed of alphanumeric characters.</span>
+					</div>
 					<div class="field">
 						<%= label_tag 'Upload Codes', 'Upload Codes' %>
 						<% if @deal.published %>
@@ -125,7 +141,7 @@
 					</div>
 					<div class="act">
 						<%= submit_tag :submit, :class=>"formbutton",
-							:value => controller.action_name == 'new_deal' ? "Create Deal" : "Update Deal" %>
+							:value => ['new_deal','create_deal'].include?(controller.action_name) ? "Create Deal" : "Update Deal" %>
 						or 	<% if @deal.published %>
 								<%= link_to "cancel", merchant_deals_url(:selector=>'current') %>
 						 	<% else %>

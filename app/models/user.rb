@@ -70,6 +70,13 @@ class User < ActiveRecord::Base
     self.salt = User.random_string(10) if !self.salt?
     self.hashed_password = User.encrypt(@password, self.salt)
   end
+  
+  def email=(email)
+    if email
+      email = email.downcase
+    end
+    self[:email] = email
+  end
 
   # Mailer methods
   def send_new_password

@@ -30,6 +30,9 @@ class Admin::MerchantsControllerTest < ActionController::TestCase
     assert_equal merchants[0].username, "newbob"
     assert_equal merchants[0].email, "newbob@mcbob.com"
     assert_equal merchants[0].name, "bobs"
+    assert merchants[0].active
+    assert !merchants[0].activated
+    assert !merchants[0].terms
   end
 
   def test_bad_create

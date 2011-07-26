@@ -6,7 +6,7 @@ class Merchant < ActiveRecord::Base
   validates_length_of :email, :maximum => 50  
   validates_uniqueness_of :username
   validates_presence_of :name, :username, :email, :salt, :time_zone
-  validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "Invalid email."
+  validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "invalid email"
 
   # info fields
   validates_length_of :website, :maximum => 255
@@ -32,16 +32,20 @@ class Merchant < ActiveRecord::Base
   validates_presence_of :password, :password_confirmation, :on => :update, :if => :password_required?
 
   # logo
-  MAX_IMAGE_SIZE = 3145728 # Max bytes (3 MB)
-  CONTENT_TYPES = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png']
+  MAX_IMAGE_SIZE = 1048576 # Max bytes (1 MB)
+  CONTENT_TYPES = ['image/jpg', 'image/jpeg', 'image/pjpeg', 'image/gif', 'image/png', 'image/x-png', 'image/bmp']
+  LOGO_SIZE = "400x100>"
   FOOTER_SIZE = "150x40>"
 
   #validates_attachment_presence :logo
-  #validates_attachment_size :logo, :less_than => MAX_IMAGE_SIZE
-  #validates_attachment_content_type :logo, { :content_type => CONTENT_TYPES }
+  validates_attachment_size :logo, :less_than => MAX_IMAGE_SIZE, :if => lambda { logo.dirty? }
+  validates_attachment_content_type :logo, :content_type => CONTENT_TYPES, :if => lambda { logo.dirty? }
   
   has_attached_file :logo, {
-    :styles => { :footer => FOOTER_SIZE },
+    :styles => { 
+        :header => LOGO_SIZE, 
+        :footer => FOOTER_SIZE 
+    },
     :default_url => OPTIONS[:logo_default_url]
   }.merge(OPTIONS[:paperclip_storage_options])
 
@@ -54,7 +58,7 @@ class Merchant < ActiveRecord::Base
   # Logo methods
   def get_logo
     if self.logo
-      return self.logo.url(:original)
+      return self.logo.url(:header)
     end
     return nil
   end
@@ -120,7 +124,7 @@ class Merchant < ActiveRecord::Base
   
   # Authentication methods
   def self.authenticate(username, password)
-    m=find(:first, :conditions=>["username = ?", username])
+    m = Merchant.find_by_username(username)
     return nil if m.nil?
     return m if Merchant.encrypt(password, m.salt)==m.hashed_password
     nil
@@ -130,6 +134,20 @@ class Merchant < ActiveRecord::Base
     @password=pass
     self.salt = Merchant.random_string(10) if !self.salt?
     self.hashed_password = Merchant.encrypt(@password, self.salt)
+  end
+
+  def website=(website)
+    if website and !website.match(/^http(s)?:\/\//)
+      website = "http://" + website
+    end
+    self[:website] = website
+  end
+  
+  def username=(username)
+    if username
+      username = username.downcase
+    end
+    self[:username] = username
   end
 
   # Mailer methods

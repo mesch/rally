@@ -14,12 +14,14 @@
 <div id="fb-root"></div>
 <div id="pagemasker"></div><div id="dialog"></div>
 <div id="doc">
-	<div id="logo">
-		<% if @merchant_subdomain and @merchant_subdomain.get_logo %>
-			<%= image_tag(@merchant_subdomain.get_logo) %>
-		<% else %>
-			<%= image_tag("logo_original.gif") %>
-		<% end %>
+	<div id="hdl">
+		<div id="logo">
+			<% if @merchant_subdomain and @merchant_subdomain.get_logo %>
+				<%= image_tag(@merchant_subdomain.get_logo) %>
+			<% else %>
+				<%= image_tag("logo_header.gif") %>
+			<% end %>
+		</div>
 	</div>
 	<div id="hdw">
 		<div id="hd">
@@ -54,10 +56,10 @@
 	</div>
 
 	<% if flash[:notice] %>
-	<div class="sysmsgw" id="sysmsg-success"><div class="sysmsg"><p><%= flash[:notice] %></p><span class="close">Close</span></div></div>
+	<div class="sysmsgw" id="sysmsg-success"><div class="sysmsg"><p><%= simple_format(flash[:notice]) %></p><span class="close">Close</span></div></div>
 	<% end %>
 	<% if flash[:error] %>
-	<div class="sysmsgw" id="sysmsg-error"><div class="sysmsg"><p><%= flash[:error] %></p><span class="close">Close</span></div></div> 
+	<div class="sysmsgw" id="sysmsg-error"><div class="sysmsg"><p><%= simple_format(flash[:error]) %></p><span class="close">Close</span></div></div> 
 	<% end %>
 
 	<%= yield %>

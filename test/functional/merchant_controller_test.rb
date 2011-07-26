@@ -205,21 +205,65 @@ class MerchantControllerTest < ActionController::TestCase
   end
 
   def test_login_required
-    #can't access account page if not logged in
     get :account
     assert_response :redirect
     assert_redirected_to :action=>'login'
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action=>'login'
+    get :accept_terms
+    assert_response :redirect
+    assert_redirected_to :action=>'login'      
     #login
     post :login, :username => "bob", :password => "test"
     assert_response :redirect
     assert session[:merchant_id]
-    #can access it now
+    #can access now
     get :account
     assert_response :success
     assert_nil flash[:error]
     assert_template "merchant/account"
+    get :home
+    assert_response :success
+    assert_nil flash[:error]
+    assert_template "merchant/home"
+    get :accept_terms
+    assert_response :success
+    assert_nil flash[:error]
+    assert_template "merchant/accept_terms"    
   end
-
+  
+  def test_terms
+    @existingbob.update_attributes(:terms => false)
+    # go to home - redirected to login
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action=>'login'
+    # got to accept_terms - redirected to login    
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action=>'login'
+    # login - redirected to home
+    post :login, :username => "existingbob", :password => "test"
+    assert_response :redirect
+    assert session[:merchant_id]
+    # go to home - redirected to accept_terms
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action=>'accept_terms'
+    # accept_terms without terms - stay on page  
+    post :accept_terms
+    assert_response :success
+    assert flash[:error]
+    assert_template "merchant/accept_terms"
+    assert !Merchant.find_by_id(@existingbob.id).terms
+    # accept_terms with terms - redirected to home
+    post :accept_terms, :terms => 1
+    assert_response :redirect
+    assert_redirected_to :action=>'home'
+    assert Merchant.find_by_id(@existingbob.id).terms
+  end
+    
   def test_change_password
     #can login
     post :login, :username => "bob", :password => "test"
@@ -357,16 +401,18 @@ class MerchantControllerTest < ActionController::TestCase
     #can login
     post :login, :username => "bob", :password => "test"
     assert_response :redirect
+    assert_redirected_to :action => 'home'
     assert session[:merchant_id]
     #name too long
-    post :account, :name => '123456789012345678901234567890123456789012345678900', :time_zone => @bob.time_zone
+    put :account, :merchant => {:name => '123456789012345678901234567890123456789012345678900', :time_zone => @bob.time_zone}
     assert_response :success
     assert flash[:error]
     assert_template "merchant/account"
     assert_equal Merchant.find(@bob.id).name, old_name
     #success
-    post :account, :name => '1234567890', :time_zone => @bob.time_zone
-    assert_response :success
+    put :account, :merchant => {:name => '1234567890', :time_zone => @bob.time_zone}
+    assert_response :redirect
+    assert_redirected_to :action => 'account'
     assert flash[:notice]
     assert_template "merchant/account"
     assert_equal Merchant.find(@bob.id).name, '1234567890' 
@@ -377,37 +423,42 @@ class MerchantControllerTest < ActionController::TestCase
     #can login
     post :login, :username => @existingbob.username, :password => "test"
     assert_response :redirect
+    assert_redirected_to :action => 'home'
     assert session[:merchant_id]
     # no subdomain set
     m = Merchant.find_by_id(session[:merchant_id])
     assert_nil m.merchant_subdomain
     # empty subdomain - do nothing
-    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => ""
-    assert_response :success
+    put :account, :merchant => {:name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => ""}
+    assert_response :redirect
+    assert_redirected_to :action => 'account'
     assert flash[:notice]
     m = Merchant.find_by_id(session[:merchant_id])
     assert_nil m.merchant_subdomain
     # taken subdomain - fail
-    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "www"
+    put :account, :merchant => {:name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "www"}
     assert_response :success
     assert flash[:error]
     m = Merchant.find_by_id(session[:merchant_id])
     assert_nil m.merchant_subdomain
     # new subdomain - save
-    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "existingbob"
-    assert_response :success
+    put :account, :merchant => {:name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "existingbob"}
+    assert_response :redirect
+    assert_redirected_to :action => 'account'
     assert flash[:notice]
     m = Merchant.find_by_id(session[:merchant_id])
     assert m.merchant_subdomain.subdomain, "existingbob"
     # same subdomain - do nothing
-    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "existingbob"
-    assert_response :success
+    put :account, :merchant => {:name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => "existingbob"}
+    assert_response :redirect
+    assert_redirected_to :action => 'account'
     assert flash[:notice]
     m = Merchant.find_by_id(session[:merchant_id])
     assert m.merchant_subdomain.subdomain, "existingbob"
     # empty subdomain - do nothing (for now?)
-    post :account, :name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => ""
-    assert_response :success
+    put :account, :merchant => {:name => @existingbob.name, :time_zone => @existingbob.time_zone, :subdomain => ""}
+    assert_response :redirect
+    assert_redirected_to :action => 'account'
     assert flash[:notice]
     m = Merchant.find_by_id(session[:merchant_id])
     assert m.merchant_subdomain.subdomain, "existingbob"
@@ -420,10 +471,10 @@ class MerchantControllerTest < ActionController::TestCase
     assert_response :redirect
     assert session[:merchant_id]
     #success
-    post :account, :name => @bob.name, :time_zone => 'Hawaii'
-    assert_response :success
+    put :account, :merchant => {:name => @bob.name, :time_zone => 'Hawaii'}
+    assert_response :redirect
+    assert_redirected_to :action => 'account'
     assert flash[:notice]
-    assert_template "merchant/account"
     assert_not_equal Merchant.find(@bob.id).time_zone, 'Hawaii'
     # go back to page and check time zone
     get :account
@@ -481,8 +532,8 @@ class MerchantControllerTest < ActionController::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal' 
+    assert_response :success
+    assert_template "merchant/_deal_form"
     # verify in DB
     deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
     assert_equal deals.size, 0    
@@ -490,50 +541,50 @@ class MerchantControllerTest < ActionController::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => nil, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => nil, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => nil, :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => nil,
       :min => 1, :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => nil, :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => nil, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => nil
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
   end
   
   def test_create_non_numbers
@@ -542,20 +593,20 @@ class MerchantControllerTest < ActionController::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 'a', :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 'a', :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 'a'
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
   end  
   
   def test_create_deal_field_lengths
@@ -568,8 +619,8 @@ class MerchantControllerTest < ActionController::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 0
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'new_deal'    
+    assert_response :success
+    assert_template "merchant/_deal_form"   
   end
   
   def test_create_deal_full
@@ -577,8 +628,7 @@ class MerchantControllerTest < ActionController::TestCase
     #create full
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
-      :description => 'blahblahblah', :terms => 'you have to ...', :min => 20, :max => '100', :limit => '5',
-      :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
+      :description => 'blahblahblah', :terms => 'you have to ...', :min => 20, :max => '100', :limit => '5'
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals'
@@ -592,8 +642,7 @@ class MerchantControllerTest < ActionController::TestCase
     #create full
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
-      :description => 'blahblahblah', :terms => 'you have to ...', :min => 20, :max => '100', :limit => '5',
-      :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
+      :description => 'blahblahblah', :terms => 'you have to ...', :min => 20, :max => '100', :limit => '5'
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals'
@@ -632,8 +681,7 @@ class MerchantControllerTest < ActionController::TestCase
     post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start + 1.days, 
       :end_date => @end + 1.days, :expiration_date => @expiration + 1.days,
       :deal_price => '15.00', :deal_value => '30.00',  :min => '5', :max => '100', :limit => '3',
-      :description => 'blahblahblah', :terms => 'you have to ...',
-      :video => 'http://www.mediacollege.com/video-gallery/testclips/barsandtone.flv'
+      :description => 'blahblahblah', :terms => 'you have to ...'
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals', :selector=>'drafts'
@@ -663,8 +711,8 @@ class MerchantControllerTest < ActionController::TestCase
     length.times{ string << "a"}
     post :update_deal, :id => deal.id, :title => string
     assert flash[:error]
-    assert_response :redirect
-    assert_redirected_to :action => 'edit_deal'
+    assert_response :success
+    assert_template "merchant/_deal_form"
     # verify in DB
     deal = Deal.find(deal.id)
     assert_equal deal.title, 'dealio' 
@@ -711,7 +759,7 @@ class MerchantControllerTest < ActionController::TestCase
     deal = @bob.deals[0]
     get :edit_deal, :id => deal.id
     assert_response :success
-    assert_template "merchant/deal_form"
+    assert_template "merchant/_deal_form"
     post :update_deal, :id => deal.id, :title => 'new dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 0

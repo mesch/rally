@@ -1,4 +1,5 @@
 require "facebook"
+require "subdomain"
 
 class ApplicationController < ActionController::Base
   before_filter :set_p3p
@@ -49,6 +50,21 @@ class ApplicationController < ActionController::Base
       redirect_to :controller=>'merchant', :action=>'home'
     end
   end
+  
+  def require_terms
+    if @current_merchant
+      if @current_merchant.terms
+        return true
+      else
+        redirect_to :controller => "merchant", :action => "accept_terms"
+        return false
+      end
+    else
+      redirect_to :controller => "merchant", :action => "login"
+      return false
+    end
+  end
+
   
   ### User methods
   # Require that a user is present

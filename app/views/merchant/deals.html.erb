@@ -25,7 +25,7 @@
                 <div class="head">
 				<% if @selector == 'drafts' %>
 					<h2>Drafts</h2>
-					<%= link_to "New Deal", merchant_new_deal_url %>
+					&nbsp;&nbsp;<%= link_to "New Deal", merchant_new_deal_url %>
 				<% elsif @selector == 'success' %>
                     <h2>Good Deals</h2>
 				<% elsif @selector == 'failure' %>				
@@ -41,9 +41,9 @@
 						<th width="300">Title</th>
 						<th width="60">Start / End</th>
 						<th width="60" nowrap>Price / Value</th>
-						<th width="60" nowrap>Sold</th>
-						<th width="60" nowrap>Min</th>
-						<th width="60" nowrap>Max</th>
+						<th width="50" nowrap>Sold</th>
+						<th width="50" nowrap>Min</th>
+						<th width="50" nowrap>Max</th>
 						<th width="140">Actions</th>
 					</tr>
 					<% for deal in @deals %>
@@ -61,8 +61,14 @@
 						<td nowrap><%= deal.confirmed_coupon_count %></td>
 						<td nowrap><%= deal.min %></td>
 						<td nowrap><%= deal.max %></td>
-						<td class="op" nowrap>
-							<%= link_to "View", deal_url(deal.id), :target=> "_blank" %>
+						<td class="op">
+							<% if @current_merchant.merchant_subdomain %>
+								<%= link_to "View", 
+									url_for(:host => @deal_store_url, :controller => 'user', :action => 'deal', :id => deal.id), 
+									:target=> "_blank" %>
+							<% else %>
+								<%= link_to "View", deal_url(deal.id), :target=> "_blank" %>
+							<% end %>
 							<% if !deal.is_ended %>
 							| <%= link_to "Edit", merchant_edit_deal_url(deal.id) %>
 							<% end %>

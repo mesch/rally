@@ -65,9 +65,6 @@ class FacebookControllerTest < ActionController::TestCase
 
   def test_login_required
     #can't access coupons page if not logged in
-    get :home
-    assert_response :redirect
-    assert_redirected_to :action=>'login'
     get :coupons
     assert_response :redirect
     assert_redirected_to :action=>'login'
@@ -79,9 +76,6 @@ class FacebookControllerTest < ActionController::TestCase
     assert_response :redirect
     assert session[:user_id]
     #can access it now
-    get :home
-    assert_response :redirect
-    assert_redirected_to :action=>'deals'
     get :coupons
     assert_response :success
     assert_template 'user/coupons'
@@ -92,6 +86,9 @@ class FacebookControllerTest < ActionController::TestCase
 
   def test_login_not_required
     # can access the deals and deal pages without logging in (but session isn't set)
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
     get :deals
     assert_response :success
     assert_template "user/deals"
@@ -109,6 +106,9 @@ class FacebookControllerTest < ActionController::TestCase
     assert_response :redirect
     assert session[:user_id]
     # can still access
+    get :home
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
     get :deals
     assert_response :success
     assert_template "user/deals"
@@ -147,15 +147,15 @@ class FacebookControllerTest < ActionController::TestCase
   def test_home_subdomain_no_login
     old_host = @request.host
     assert_nil session[:user_id]
-    # no params - go to login - host doesn't change
+    # no params - go to deals - host doesn't change
     get :home
     assert_response :redirect
-    assert_redirected_to :action => 'login'
+    assert_redirected_to :action => 'deals'
     assert_equal @request.host, old_host 
-    # invalid subdomain - go to login - host doesn't change
+    # invalid subdomain - go to deals - host doesn't change
     get :home, :sd => 'invalid'
     assert_response :redirect
-    assert_redirected_to :action => 'login'
+    assert_redirected_to :action => 'deals'
     assert_equal @request.host, old_host 
     # valid subdomain - goes to facebook home (due to subdomain redirect) - changes host
     get :home, :sd => 'bob'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110715032129) do
+ActiveRecord::Schema.define(:version => 20110725180653) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -47,6 +47,19 @@ ActiveRecord::Schema.define(:version => 20110715032129) do
 
   add_index "deal_images", ["deal_id", "counter"], :name => "deal_images_by_deal_counter"
 
+  create_table "deal_videos", :force => true do |t|
+    t.integer  "deal_id"
+    t.integer  "counter"
+    t.string   "video_file_name"
+    t.string   "video_content_type"
+    t.integer  "video_file_size"
+    t.boolean  "active",             :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "deal_videos", ["deal_id", "counter"], :name => "deal_videos_by_deal_counter"
+
   create_table "deals", :force => true do |t|
     t.integer  "merchant_id"
     t.string   "title"
@@ -59,7 +72,6 @@ ActiveRecord::Schema.define(:version => 20110715032129) do
     t.integer  "limit",               :default => 1
     t.text     "description"
     t.text     "terms"
-    t.string   "video"
     t.boolean  "active",              :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -123,6 +135,7 @@ ActiveRecord::Schema.define(:version => 20110715032129) do
     t.string   "logo_content_type"
     t.integer  "logo_file_size"
     t.integer  "facebook_page_id",  :limit => 8
+    t.boolean  "terms",                          :default => false
   end
 
   add_index "merchants", ["username"], :name => "index_merchants_on_username"

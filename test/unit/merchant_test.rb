@@ -96,15 +96,21 @@ class MerchantTest < ActiveSupport::TestCase
     assert m.errors.empty?
   end
 
-
   def test_collision
     #check can't create new user with existing username
-    m = Merchant.new
-    m.username = "existingbob"
+    m = Merchant.new(:name => "existingbob", :username => "existingbob", :email => "test@abc.com")
     m.password = m.password_confirmation = "bobs_secure_password"
     assert !m.save
   end
-
+  
+  def test_case_sensitivity
+    m1 = Merchant.new(:name => "test", :username => "test", :email => "test@abc.com")
+    m1.password = m1.password_confirmation = "lower"
+    assert m1.save
+    m2 = Merchant.new(:name => "test", :username => "Test", :email => "test@abc.com")
+    m2.password = m2.password_confirmation = "upper"
+    assert !m2.save
+  end
 
   def test_create
     #check create works and we can authenticate after creation
@@ -115,6 +121,8 @@ class MerchantTest < ActiveSupport::TestCase
     assert_equal m.time_zone, "Pacific Time (US & Canada)"
     assert m.save
     assert_equal 10, m.salt.length
+    assert !m.terms
+    assert !m.activated
     assert_equal m, Merchant.authenticate(m.username, m.password)
 
     m = Merchant.new(:name => "test", :username => "newbob", :email => "testtest@abc.com", :activation_code => "1234",
@@ -126,13 +134,12 @@ class MerchantTest < ActiveSupport::TestCase
     assert_equal m, Merchant.authenticate(m.username, m.password)
   end
 
-  
   def test_create_complete
     #check that we can create with all fields
     #note - this may get out of sync if new fields are added   
     m = Merchant.new(:name => "test", :username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234",
     :logo_file_name => 'logo.png', :logo_content_type => 'image/png', :logo_file_size => 1000,
-    :time_zone => "Pacific Time (US & Canada)", :website => "abc.com", :contact_name => "Bobby Smith",
+    :time_zone => "Pacific Time (US & Canada)", :website => "http://abc.com", :contact_name => "Bobby Smith",
     :address1 => "Pier 38", :address2 => "Suite 201", :city => "San Francisco", :state => "CA", :zip => "94103", :country => "USA",
     :phone_number => "4155551212", :tax_id => "123456789", :bank => "BofA", :account_name => "Bob Smith",
     :routing_number => "2345", :account_number => "345a", :paypal_account => "bob@abc.com")
@@ -153,6 +160,41 @@ class MerchantTest < ActiveSupport::TestCase
         :activation_code, :activate, :time_zone, :website, :contact_name,
         :address1, :address2, :city, :state, :zip, :country, :phone_number, :tax_id, :bank, :account_name,
         :routing_number, :account_number, :paypal_account])
+  end
+  
+  
+  def test_website
+    # empty website - ok
+    m = Merchant.new(:name => "test", :username => "newbob", :email => "testtest@abc.com", :activation_code => "1234",
+      :password => "newpassword", :password_confirmation => "newpassword")
+    assert m.save
+    assert_nil m.website
+    # adds http if not there
+    m = Merchant.new(:name => "test", :username => "newbob1", :email => "testtest@abc.com", :activation_code => "1234",
+      :password => "newpassword", :password_confirmation => "newpassword", :website => "www.abc.com")
+    assert m.save
+    assert_equal m.website, "http://www.abc.com"
+    # ignore if http is there
+    m = Merchant.new(:name => "test", :username => "newbob2", :email => "testtest@abc.com", :activation_code => "1234",
+      :password => "newpassword", :password_confirmation => "newpassword", :website => "http://www.abc.com")
+    assert m.save
+    assert_equal m.website, "http://www.abc.com"
+    # ignore if https is there too
+    m = Merchant.new(:name => "test", :username => "newbob3", :email => "testtest@abc.com", :activation_code => "1234",
+      :password => "newpassword", :password_confirmation => "newpassword", :website => "https://www.abc.com")
+    assert m.save
+    assert_equal m.website, "https://www.abc.com"
+    
+    # also works on updates
+    m = Merchant.new(:name => "test", :username => "newbob4", :email => "testtest@abc.com", :activation_code => "1234",
+      :password => "newpassword", :password_confirmation => "newpassword", :website => "www.abc.com")
+    assert m.save
+    assert m.update_attributes(:website => "www.abcd.com")
+    assert_equal m.website, "http://www.abcd.com"
+    assert m.update_attributes(:website => "http://www.abcd.com")
+    assert_equal m.website, "http://www.abcd.com"
+    assert m.update_attributes(:website => "https://www.abcd.com")
+    assert_equal m.website, "https://www.abcd.com"
   end
 
 
@@ -247,13 +289,13 @@ class MerchantTest < ActiveSupport::TestCase
   def test_get_logo
     #assuming @bob has logo set
     m = Merchant.find(@bob.id)
-    assert_equal m.get_logo, m.logo.url(:original)
+    assert_equal m.get_logo, m.logo.url(:header)
     assert_equal m.get_logo_footer, m.logo.url(:footer)
     #merchant from scratch uses default logo
     m = Merchant.new(:name => "test", :username => "nonexistingbob", :email => "test@abc.com", :salt => "1000", :activation_code => "1234")
     m.password = m.password_confirmation = "bobs_secure_password"
     assert m.save
-    assert_equal m.get_logo, OPTIONS[:logo_default_url].sub(':style', 'original')
+    assert_equal m.get_logo, OPTIONS[:logo_default_url].sub(':style', 'header')
     assert_equal m.get_logo_footer, OPTIONS[:logo_default_url].sub(':style', 'footer')
   end
   

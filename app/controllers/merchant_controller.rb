@@ -2,6 +2,7 @@ require "exception"
 
 class MerchantController < ApplicationController
   before_filter :require_merchant, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :connect_success]
+  before_filter :require_terms, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :connect_success, :accept_terms]
 
   ssl_required :login, :signup, :account, :change_password, :change_email, :connect
   ssl_allowed :home
@@ -25,45 +26,53 @@ class MerchantController < ApplicationController
     else
       @deals = @current_merchant.drafts
     end
+    if @current_merchant.merchant_subdomain
+      @deal_store_url = new_host_subdomain(request, @current_merchant.merchant_subdomain.subdomain)
+    end
   end
 
   def new_deal
-    @deal = Deal.new()
+    unless @deal
+      @deal = Deal.new()
+    end
     
     # Set some deafults
     @deal.start_date = Time.zone.today
     @deal.end_date = Time.zone.today + 1.weeks
     @deal.expiration_date = Time.zone.today + 2.months
-    
-    render :deal_form
   end
 
   def create_deal
+    @deal = Deal.new(:merchant_id => @current_merchant.id, :title => params[:title],
+    :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
+    :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
+    :min => params[:min], :max => params[:max], :limit => params[:limit],
+    :description => params[:description], :terms => params[:terms])
+    
     begin
       Deal.transaction do
-        # Create Badge
-        deal = Deal.new(:merchant_id => @current_merchant.id, :title => params[:title],
-        :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
-        :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
-        :min => params[:min], :max => params[:max], :limit => params[:limit],
-        :description => params[:description], :terms => params[:terms], :video => params[:video])
-        deal.save!
+        # Create Deal
+        @deal.save!
         # Create each new DealImage
         if (image = params[:image1])
-            di = DealImage.new(:deal_id => deal.id, :counter => 1, :image => image)
+            di = DealImage.new(:deal_id => @deal.id, :counter => 1, :image => image)
             di.save!
         end
         if (image = params[:image2])
-            di = DealImage.new(:deal_id => deal.id, :counter => 2, :image => image)
+            di = DealImage.new(:deal_id => @deal.id, :counter => 2, :image => image)
             di.save!
         end
         if (image = params[:image3])
-            di = DealImage.new(:deal_id => deal.id, :counter => 3, :image => image)
+            di = DealImage.new(:deal_id => @deal.id, :counter => 3, :image => image)
             di.save!
-        end 
+        end
+        if (video = params[:video])
+            dv = DealVideo.new(:deal_id => @deal.id, :counter => 1, :video => video)
+            dv.save!
+        end
         if (file = params[:codes_file])
           while (line = file.gets)
-            dc = DealCode.new(:deal_id => deal.id, :code => line.strip)
+            dc = DealCode.new(:deal_id => @deal.id, :code => line.strip)
             dc.save!
           end
         end       
@@ -72,9 +81,9 @@ class MerchantController < ApplicationController
       redirect_to :controller => self.controller_name, :action => :deals
       return
     rescue ActiveRecord::RecordInvalid => invalid
-      ### TODO: add invalid.record.errors?
-      flash[:error] = "There was a problem creating your deal."
-      redirect_to :controller => self.controller_name, :action => :new_deal
+      logger.error(invalid.record.errors)
+      flash.now[:error] = "#{pp_errors(invalid.record.errors)}"
+      render :new_deal
       return
     end    
   end
@@ -93,60 +102,64 @@ class MerchantController < ApplicationController
     @image1 = deal_images[0] ? @deal.deal_images[0] : nil
     @image2 = deal_images[1] ? @deal.deal_images[1] : nil
     @image3 = deal_images[2] ? @deal.deal_images[2] : nil
+    @video = @deal.deal_video ? @deal.deal_video : nil
     
     @num_deal_codes = DealCode.count(:conditions => "deal_id = #{@deal.id}")
-    
-    render :deal_form
   end
   
   def update_deal
-    deal = Deal.find_by_id(params[:id])
+    @deal = Deal.find_by_id(params[:id])
     
-    unless deal.merchant == @current_merchant
+    unless @deal.merchant == @current_merchant
       go_home
       return
     end
     
     begin
       Deal.transaction do
-        # Update deal
-        if deal.published
-          deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
+        # Update Deal
+        if @deal.published
+          @deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
           :start_date => params[:start_date], :end_date => params[:end_date],
-          :description => params[:description], :terms => params[:terms], :video => params[:video])
+          :description => params[:description], :terms => params[:terms])
         else
-          deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
+          @deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
           :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
           :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
           :min => params[:min], :max => params[:max], :limit => params[:limit],
-          :description => params[:description], :terms => params[:terms], :video => params[:video])
+          :description => params[:description], :terms => params[:terms])
         end
         # Create each new DealImage
         if (image = params[:image1])
-          DealImage.delete_all(["deal_id = ? AND counter = 1", deal.id])
-          di = DealImage.new(:deal_id => deal.id, :counter => 1, :image => image)
+          DealImage.delete_all(["deal_id = ? AND counter = 1", @deal.id])
+          di = DealImage.new(:deal_id => @deal.id, :counter => 1, :image => image)
           di.save!
         end
         if (image = params[:image2])
-          DealImage.delete_all(["deal_id = ? AND counter = 2", deal.id])
-          di = DealImage.new(:deal_id => deal.id, :counter => 2, :image => image)
+          DealImage.delete_all(["deal_id = ? AND counter = 2", @deal.id])
+          di = DealImage.new(:deal_id => @deal.id, :counter => 2, :image => image)
           di.save!
         end
         if (image = params[:image3])
-          DealImage.delete_all(["deal_id = ? AND counter = 3", deal.id])
-          di = DealImage.new(:deal_id => deal.id, :counter => 3, :image => image)
+          DealImage.delete_all(["deal_id = ? AND counter = 3", @deal.id])
+          di = DealImage.new(:deal_id => @deal.id, :counter => 3, :image => image)
           di.save!
         end
-        if (file = params[:codes_file] and !deal.published)
-          DealCode.delete_all(["deal_id = ?", deal.id])
+        if (video = params[:video])
+          DealVideo.delete_all(["deal_id = ? AND counter = 1", @deal.id])
+          dv = DealVideo.new(:deal_id => @deal.id, :counter => 1, :video => video)
+          dv.save!
+        end       
+        if (file = params[:codes_file] and !@deal.published)
+          DealCode.delete_all(["deal_id = ?", @deal.id])
           while (line = file.gets)
-            dc = DealCode.new(:deal_id => deal.id, :code => line.strip)
+            dc = DealCode.new(:deal_id => @deal.id, :code => line.strip)
             dc.save!
           end
         end
       end
       flash[:notice] = "Your deal was updated successfully."
-      if deal.published 
+      if @deal.published 
         selector = 'current'
       else
         selector = 'drafts'
@@ -154,10 +167,9 @@ class MerchantController < ApplicationController
       redirect_to :controller => self.controller_name, :action => :deals, :selector => selector
       return
     rescue ActiveRecord::RecordInvalid => invalid
-      ### TODO: add invalid.record.errors?
-      flash[:error] = "There was a problem updating your deal."
-      redirect_to :controller => self.controller_name, :action => :edit_deal
-      return
+      logger.error(invalid.record.errors)
+      flash.now[:error] = "#{pp_errors(invalid.record.errors)}"
+      render :edit_deal
     end        
   end
 
@@ -224,9 +236,18 @@ class MerchantController < ApplicationController
   # Account methods
   def account
     @merchant = Merchant.find_by_id(@current_merchant.id)
-    if request.post?
+    if @merchant.merchant_subdomain
+      @deal_store_url = new_host_subdomain(request, @merchant.merchant_subdomain.subdomain)
+    end
+    @base_host = base_host(request)
+    
+    if request.put?
       # set subdomain to nil if empty
-      subdomain = (params[:subdomain] and params[:subdomain].empty?) ? nil : params[:subdomain]
+      subdomain = (params[:merchant][:subdomain] and params[:merchant][:subdomain].empty?) ? nil : params[:merchant][:subdomain]
+      params[:merchant].delete(:subdomain)
+      
+      # Can't update time zone
+      params[:merchant].delete(:time_zone)
       
       # Check for available subdomain
       if merchant_subdomain = MerchantSubdomain.find_by_subdomain(subdomain) and merchant_subdomain.merchant_id != @merchant.id
@@ -237,29 +258,23 @@ class MerchantController < ApplicationController
       
       begin
         Merchant.transaction do
-          @merchant.update_attributes!(:name => params[:name], :website => params[:website], 
-            :contact_name => params[:contact_name], :address1 => params[:address1], :address2 => params[:address2], 
-            :city => params[:city], :state => params[:state], :zip => params[:zip], :country => params[:country],
-            :phone_number => params[:phone_number], :tax_id => params[:tax_id], :bank => params[:bank], 
-            :account_name => params[:account_name], :routing_number => params[:routing_number], 
-            :account_number => params[:account_number], :paypal_account => params[:paypal_account])
-          if params[:logo_file]
-            @merchant.update_attributes!(:logo => params[:logo_file])
-          end
+          @merchant.update_attributes!(params[:merchant])
           if subdomain
             if merchant_subdomain = MerchantSubdomain.find_by_merchant_id(@merchant.id)
               merchant_subdomain.update_attributes!(:subdomain => subdomain)
             else
-              MerchantSubdomain.create!(:merchant_id => @merchant.id, :subdomain => params[:subdomain])
+              MerchantSubdomain.create!(:merchant_id => @merchant.id, :subdomain => subdomain)
             end
           end
         end
       rescue ActiveRecord::RecordInvalid => invalid
         logger.error "Merchant.account: Couldn't update Merchant #{@merchant}", invalid
-        flash.now[:error] = "Could not update account. Please try again."
-        return        
+        flash.now[:error] = "#{pp_errors(invalid.record.errors)}"
+        return      
       end
-      flash.now[:notice] = "Your account has been updated."
+      flash[:notice] = "Your account has been updated."
+      redirect_to :controller => self.controller_name, :action => :account
+      return
     end
   end
 
@@ -337,6 +352,7 @@ class MerchantController < ApplicationController
           if m.activated
             session[:merchant_id] = m.id
             redirect_merchant_to_stored
+            return
           else
             flash[:error] = "You must activate your account."
             redirect_to :controller => self.controller_name, :action => :reactivate
@@ -440,7 +456,22 @@ class MerchantController < ApplicationController
     end    
   end
   
-  # !Merchant.find_by_facebook_page_id(params[:fb_page_id])
+  def accept_terms
+    if request.post?
+      if params[:terms]
+        if @current_merchant.update_attributes(:terms => true)
+          go_home
+          return
+        else
+          logger.error "Merchant.tos: Couldn't update tos for Merchant #{@merchant}"
+          flash.now[:error]  = "Could not update your account. Please try again."
+        end
+      else 
+        flash.now[:error] = "You must agree to the Terms and Conditions."
+      end
+    end
+  end
+  
   def connect
     if @fb_page_id = params[:fb_page_id]
       fb_page = get_fb_object(@fb_page_id)

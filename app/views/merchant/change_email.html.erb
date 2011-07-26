@@ -16,7 +16,7 @@
                         </div>
                         <div class="act">
 							<%= submit_tag :submit, :value=>"Change Email", :class=>"formbutton"%>
-							or <%= link_to "cancel", merchant_account_url %>
+							or <%= link_to "cancel", merchant_account_url(@current_merchant.id) %>
                          </div>
                 </div>
             </div>

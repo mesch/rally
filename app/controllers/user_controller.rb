@@ -1,6 +1,6 @@
 class UserController < ApplicationController
-  before_filter :require_user, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :deals, :deal, :splash]
-  before_filter :check_for_user, :only => [:deals, :deal]
+  before_filter :require_user, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :deals, :deal, :splash, :home]
+  before_filter :check_for_user, :only => [:home, :deals, :deal]
   before_filter :check_for_visitor
   after_filter :log_user_action
   

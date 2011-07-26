@@ -91,7 +91,15 @@ class UserTest < ActiveSupport::TestCase
     assert u.save
   end
 
-
+  def test_case_sensitivity
+    u1 = User.new(:email => "test@abc.com")
+    u1.password = u1.password_confirmation = "lower"
+    assert u1.save
+    u2 = Merchant.new(:email => "Test@abc.com")
+    u2.password = u2.password_confirmation = "upper"
+    assert !u2.save
+  end
+  
   def test_create
     #check create works and we can authenticate after creation
     u = User.new(:email => "test@abc.com", :salt => "1000", :activation_code => "1234")
