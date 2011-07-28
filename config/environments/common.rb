@@ -32,7 +32,7 @@ OPTIONS[:email_domain] = ENV['SENDGRID_PASSWORD']
 OPTIONS[:enable_starttls_auto] = false
 
 # Date / Time formatting
-OPTIONS[:date_format] = '%m/%d/%y'
+OPTIONS[:date_format] = '%m/%d/%Y'
 OPTIONS[:time_format] = '%Y-%m-%d %H:%M:%S'
 
 # Order Timout

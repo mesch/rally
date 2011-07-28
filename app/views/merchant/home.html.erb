@@ -1,4 +1,10 @@
 <%= form_tag(merchant_home_url, :method => "post") %>
+<script> 
+window.addEvent('domready', function(){
+	new Picker.Date('start_date', { });
+	new Picker.Date('end_date', { });
+});
+</script>
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div id="home">
@@ -8,14 +14,13 @@
             <div class="box-content">
                 <div class="head">
 					<h2>Home</h2>
-
 				</div>
                 <div class="sect">
 					<div class="act right">
-						<%= label_tag 'Start Day', 'Start Day'%>
-						<%= text_field_tag :start_day, @start_day, :class => :date_field %>
-						<%= label_tag 'End Day', 'End Day'%>
-						<%= text_field_tag :end_day, @end_day, :class => :date_field %>
+						<%= label_tag 'Start', 'Start' %> 
+						<%= text_field_tag :start_date, @start_date.strftime(OPTIONS[:date_format]), :size => "10", :class=>"date", :datatype=>"require", :require=>"true" %>
+						<%= label_tag 'End', 'End' %> 
+						<%= text_field_tag :end_date, @end_date.strftime(OPTIONS[:date_format]), :size => "10", :class=>"date", :datatype=>"require", :require=>"true" %>
 						<%= content_tag :button, "Submit", :type => :submit, :class=>"formbutton" %>
 					</div>
 					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">					

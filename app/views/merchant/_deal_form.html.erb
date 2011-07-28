@@ -1,5 +1,12 @@
 <%= form_tag(['new_deal','create_deal'].include?(controller.action_name) ? merchant_create_deal_url : merchant_update_deal_url, :multipart => true) %>
 <%= raw javascript_include_tag "xheditor/xheditor.js" %>
+<script> 
+window.addEvent('domready', function(){
+	new Picker.Date('start_date', { });
+	new Picker.Date('end_date', { });
+	new Picker.Date('expiration_date', { });
+});
+</script>
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 <div id="leader">
@@ -56,14 +63,14 @@
 					</div>
 					<div class="field">
 						<%= label_tag 'Start Date', 'Start Date' %> 
-						<%= text_field_tag :start_date, @deal.start_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>
+						<%= text_field_tag :start_date, @deal.start_date.strftime(OPTIONS[:date_format]), :class=>"date", :datatype=>"require", :require=>"true" %>
 						<%= label_tag 'End Date', 'End Date' %> 
-						<%= text_field_tag :end_date, @deal.end_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>
+						<%= text_field_tag :end_date, @deal.end_date.strftime(OPTIONS[:date_format]), :class=>"date", :datatype=>"require", :require=>"true" %>	
 						<%= label_tag 'Expiration Date', 'Expiration Date' %>
 						<% if @deal.published %>
-							<%= text_field_tag :expiration_date, @deal.expiration_date, :size=>"10", :class=>"date", :disabled=>true %>			
+							<%= text_field_tag :expiration_date, @deal.expiration_date.strftime(OPTIONS[:date_format]), :class=>"date", :disabled=>true %>			
 						<% else %>
-							<%= text_field_tag :expiration_date, @deal.expiration_date, :size=>"10", :class=>"date", :datatype=>"require", :require=>"true" %>							
+							<%= text_field_tag :expiration_date, @deal.expiration_date.strftime(OPTIONS[:date_format]), :class=>"date", :datatype=>"require", :require=>"true" %>							
 						<% end %>
 						<span class="hint">The deal starts at Start Date 00:00:00, ends at End Date 23:59:59.</span>
 					</div>

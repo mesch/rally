@@ -105,6 +105,7 @@ class MerchantController < ApplicationController
     @video = @deal.deal_video ? @deal.deal_video : nil
     
     @num_deal_codes = DealCode.count(:conditions => "deal_id = #{@deal.id}")
+    p @deal.start_date
   end
   
   def update_deal
@@ -196,9 +197,9 @@ class MerchantController < ApplicationController
   def home
     use_default = false
     if request.post?
-      if verify_date(params[:start_day]) && verify_date(params[:end_day])
-        start_date = Time.zone.parse(params[:start_day]).to_date
-        end_date = Time.zone.parse(params[:end_day]).to_date
+      if verify_date(params[:start_date]) && verify_date(params[:end_date])
+        start_date = Time.zone.parse(params[:start_date]).to_date
+        end_date = Time.zone.parse(params[:end_date]).to_date
 
         if start_date > end_date
           use_default = true
@@ -228,9 +229,6 @@ class MerchantController < ApplicationController
   
     @start_date = start_date
     @end_date = end_date.end_of_day
-    @start_day = @start_date.strftime(OPTIONS[:date_format])
-    @end_day = @end_date.strftime(OPTIONS[:date_format])
-
   end
   
   # Account methods

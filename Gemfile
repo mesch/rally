@@ -6,13 +6,14 @@ gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'ruby-debug'
 gem 'bartt-ssl_requirement', :require => 'ssl_requirement'
 
-gem 'compass', ">=0.10.6"
+gem 'compass', '>=0.10.6'
 gem 'delayed_job'
 gem 'koala'
 gem 'money'
 gem 'xml-simple'
 gem 'paperclip'
-gem "will_paginate", "~> 3.0.pre2"
+gem 'will_paginate', '~> 3.0.pre2'
+# gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_select.git', :branch => 'rails3test'
 
 gem 'aws-s3', :require => 'aws/s3'
 gem 'right_aws'
