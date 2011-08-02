@@ -63,14 +63,18 @@ window.addEvent('domready', function(){
 					</div>
 					<div class="field">
 						<%= label_tag 'Start Date', 'Start Date' %> 
-						<%= text_field_tag :start_date, @deal.start_date.strftime(OPTIONS[:date_format]), :class=>"date", :datatype=>"require", :require=>"true" %>
+						<%= text_field_tag :start_date, @deal.start_date ? @deal.start_date.strftime(OPTIONS[:date_format]) : nil, 
+							:class=>"date", :datatype=>"require", :require=>"true" %>
 						<%= label_tag 'End Date', 'End Date' %> 
-						<%= text_field_tag :end_date, @deal.end_date.strftime(OPTIONS[:date_format]), :class=>"date", :datatype=>"require", :require=>"true" %>	
+						<%= text_field_tag :end_date, @deal.end_date ? @deal.end_date.strftime(OPTIONS[:date_format]) : nil, 
+							:class=>"date", :datatype=>"require", :require=>"true" %>	
 						<%= label_tag 'Expiration Date', 'Expiration Date' %>
 						<% if @deal.published %>
-							<%= text_field_tag :expiration_date, @deal.expiration_date.strftime(OPTIONS[:date_format]), :class=>"date", :disabled=>true %>			
+							<%= text_field_tag :expiration_date, @deal.expiration_date ? @deal.expiration_date.strftime(OPTIONS[:date_format]) : nil, 
+								:class=>"date", :disabled=>true %>			
 						<% else %>
-							<%= text_field_tag :expiration_date, @deal.expiration_date.strftime(OPTIONS[:date_format]), :class=>"date", :datatype=>"require", :require=>"true" %>							
+							<%= text_field_tag :expiration_date, @deal.expiration_date ? @deal.expiration_date.strftime(OPTIONS[:date_format]) : nil, 
+								:class=>"date", :datatype=>"require", :require=>"true" %>							
 						<% end %>
 						<span class="hint">The deal starts at Start Date 00:00:00, ends at End Date 23:59:59.</span>
 					</div>

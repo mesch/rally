@@ -50,7 +50,7 @@ class Deal < ActiveRecord::Base
   
   # returns all purchased coupons
   def confirmed_coupon_count
-    count = Order.sum(:quantity, :conditions => ["deal_id = ? AND state != ?", self.id, OPTIONS[:order_states][:created]])
+    count = Order.sum(:quantity, :conditions => ["deal_id = ? AND state != ?", self.id, Order::CREATED])
   end
 
   def publish
@@ -170,20 +170,23 @@ class Deal < ActiveRecord::Base
       #p "Checking Deal #{deal.inspect}"
       if deal.is_tipped
         #p "  is tipped..."
-        # charge any authorized orders
-        orders = Order.find(:all, :conditions => ["deal_id = ? AND state = ?", deal.id, OPTIONS[:order_states][:authorized]])
-        considered = orders.length
-        for order in orders
-          #p "  Trying to capture Order #{order.inspect}"
-          if order.capture
-            successes += 1
-          else
-            failures += 1
+        begin
+          Deal.transaction do
+            # charge any authorized orders
+            orders = Order.find(:all, :conditions => ["deal_id = ? AND state = ?", deal.id, Order::AUTHORIZED], :lock => true)
+            considered += orders.length
+            for order in orders
+              #p "  Trying to capture Order #{order.inspect}"
+              order.update_attributes(:state => Order::PAYING)
+              order.delay(:priority=>20).capture
+            end
           end
+        rescue ActiveRecord::RecordInvalid => invalid
+          logger.error "Deal.charge_orders: Failed for Deal #{deal.inspect}", invalid
         end
       end
     end
-    return {:considered => considered, :successes => successes, :failures => failures}
+    return { :considered => considered, :successes => successes, :failures => failures }
   end
   
   # Deal statistics methods

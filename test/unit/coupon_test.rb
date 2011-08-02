@@ -48,7 +48,7 @@ class CouponTest < ActiveSupport::TestCase
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :min => 2)
     assert d.save
     # add an authorized order
-    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => OPTIONS[:order_states][:authorized])
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => Order::AUTHORIZED)
     assert o.save
     # with a coupon
     c = Coupon.new(:user_id => 1, :deal_id => d.id, :order_id => o.id)
@@ -69,7 +69,7 @@ class CouponTest < ActiveSupport::TestCase
     # the order gets paid - should be "Active"
     d.update_attributes(:expiration_date => Time.zone.today)
     assert !d.is_expired
-    o.update_attributes(:state => OPTIONS[:order_states][:paid])
+    o.update_attributes(:state => Order::PAID)
     c = Coupon.find_by_id(c.id)
     assert_equal c.state, "Active"
     # expire the deal - should be expired

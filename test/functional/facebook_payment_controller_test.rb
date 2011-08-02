@@ -94,13 +94,13 @@ class FacebookPaymentControllerTest < ActionController::TestCase
 
   def test_purchase_confirmed_order
     # authorized
-    @order.update_attributes(:state => OPTIONS[:order_states][:authorized])
+    @order.update_attributes(:state => Order::AUTHORIZED)
     self.login
     get :purchase, :order_id => @order.id
     assert_response :redirect
     assert_redirected_to :controller => @user_controller_name, :action=>'home'
     # paid
-    @order.update_attributes(:state => OPTIONS[:order_states][:paid])
+    @order.update_attributes(:state => Order::PAID)
     self.login
     get :purchase, :order_id => @order.id
     assert_response :redirect

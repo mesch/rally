@@ -93,13 +93,13 @@ class PaymentControllerTest < ActionController::TestCase
 
   def test_purchase_confirmed_order
     # authorized
-    @order.update_attributes(:state => OPTIONS[:order_states][:authorized])
+    @order.update_attributes(:state => Order::AUTHORIZED)
     self.login
     get :purchase, :order_id => @order.id
     assert_response :redirect
     assert_redirected_to :controller => @user_controller_name, :action=>'home'
     # paid
-    @order.update_attributes(:state => OPTIONS[:order_states][:paid])
+    @order.update_attributes(:state => Order::PAID)
     self.login
     get :purchase, :order_id => @order.id
     assert_response :redirect
@@ -155,7 +155,7 @@ class PaymentControllerTest < ActionController::TestCase
     assert_equal orders[0].deal, order.deal
     assert_equal orders[0].quantity, order.quantity
     assert_equal orders[0].amount, order.amount
-    assert_equal orders[0].state, OPTIONS[:order_states][:authorized]
+    assert_equal orders[0].state, Order::AUTHORIZED
     coupons = Coupon.find(:all)
     assert_equal coupons.size, 1
     assert_equal coupons[0].deal, order.deal
@@ -173,7 +173,7 @@ class PaymentControllerTest < ActionController::TestCase
     assert_equal orders[0].deal, order.deal
     assert_equal orders[0].quantity, order.quantity
     assert_equal orders[0].amount, order.amount
-    assert_equal orders[0].state, OPTIONS[:order_states][:authorized]
+    assert_equal orders[0].state, Order::AUTHORIZED
     coupons = Coupon.find(:all)
     assert_equal coupons.size, 1
     assert_equal coupons[0].deal, order.deal

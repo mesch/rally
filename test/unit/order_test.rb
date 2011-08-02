@@ -12,7 +12,7 @@ class OrderTest < ActiveSupport::TestCase
     o = Order.new(:user_id => 1000, :deal_id => 1)
     assert o.quantity, 0
     o.quantity = 3
-    assert_equal o.state, OPTIONS[:order_states][:created]
+    assert_equal o.state, Order::CREATED
     assert o.save
     assert_equal o.quantity, 3
     assert_equal o.amount, 0.to_money
@@ -29,13 +29,13 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   def test_order_state_enum
-    o = Order.new(:user_id => 1000, :deal_id => 1, :state => OPTIONS[:order_states][:created])
+    o = Order.new(:user_id => 1000, :deal_id => 1, :state => Order::CREATED)
     assert o.save
     o.state = 'SOMETHING_ELSE'
     assert !o.save
-    o = Order.new(:user_id => 1000, :deal_id => 1, :state => OPTIONS[:order_states][:authorized])
+    o = Order.new(:user_id => 1000, :deal_id => 1, :state => Order::AUTHORIZED)
     assert o.save
-    o = Order.new(:user_id => 1000, :deal_id => 1, :state => OPTIONS[:order_states][:paid])
+    o = Order.new(:user_id => 1000, :deal_id => 1, :state => Order::PAID)
     assert o.save
     o = Order.new(:user_id => 1000, :deal_id => 1, :state => 'SOMETHING_ELSE')
     assert !o.save
@@ -189,7 +189,7 @@ class OrderTest < ActiveSupport::TestCase
     # create order with single quantity
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save
-    assert o.state = OPTIONS[:order_states][:created]
+    assert o.state = Order::CREATED
     assert !o.authorized_at
     assert o.reserve_quantity(1)
     assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => '10.00', 
@@ -202,7 +202,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal ops[0].transaction_type, 'auth_only'
     assert_equal ops[0].amount, 10.to_money
     assert_equal ops[0].confirmation_code, 'XYZ123'
-    assert o.state = OPTIONS[:order_states][:authorized]
+    assert o.state = Order::AUTHORIZED
     assert o.authorized_at
     # reauthorize order won't change anything
     assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => '10.00', 
@@ -215,25 +215,25 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal ops[0].transaction_type, 'auth_only'
     assert_equal ops[0].amount, 10.to_money
     assert_equal ops[0].confirmation_code, 'XYZ123'
-    assert o.state = OPTIONS[:order_states][:authorized]
+    assert o.state = Order::AUTHORIZED
     assert o.authorized_at
     # can't be missing any fields in the method call
-    o.state = OPTIONS[:order_states][:created]
+    o.state = Order::CREATED
     assert o.save
     assert !o.process_authorization(:gateway => nil, :transaction_type => 'auth_only', :amount => '10.00', 
       :confirmation_code => 'XYZ123', :transaction_id => '1234')
     assert !o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => nil, 
       :confirmation_code => 'XYZ123', :transaction_id => '1234')
     # ok to be missing these fields? for now ...
-    o.state = OPTIONS[:order_states][:created]
+    o.state = Order::CREATED
     assert o.save
     assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => nil, :amount => '10.00', 
         :confirmation_code => 'XYZ123', :transaction_id => '1234')
-    o.state = OPTIONS[:order_states][:created]
+    o.state = Order::CREATED
     assert o.save
     assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => '10.00', 
       :confirmation_code => nil, :transaction_id => '1234')
-    o.state = OPTIONS[:order_states][:created]
+    o.state = Order::CREATED
     assert o.save
     assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => '10.00', 
         :confirmation_code => nil, :transaction_id => nil) 
@@ -251,7 +251,7 @@ class OrderTest < ActiveSupport::TestCase
     # create order with multiple quantity
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save
-    assert o.state = OPTIONS[:order_states][:created]
+    assert o.state = Order::CREATED
     assert !o.authorized_at
     assert o.reserve_quantity(3)
     assert o.process_authorization(:gateway => 'authorize_net', :transaction_type => 'auth_only', :amount => '30.00', 
@@ -264,7 +264,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal ops[0].transaction_type, 'auth_only'
     assert_equal ops[0].amount, 30.to_money
     assert_equal ops[0].confirmation_code, 'XYZ123'
-    assert o.state = OPTIONS[:order_states][:authorized]
+    assert o.state = Order::AUTHORIZED
     assert o.authorized_at
   end
   
@@ -292,7 +292,7 @@ class OrderTest < ActiveSupport::TestCase
     Order.reset_orders(timeout)
     o = Order.find_by_id(o.id)
     assert_equal o.quantity, 0
-    o = Order.new(:user_id => 1, :deal_id => 10, :quantity => 1, :amount => "10.00", :state => OPTIONS[:order_states][:authorized])
+    o = Order.new(:user_id => 1, :deal_id => 10, :quantity => 1, :amount => "10.00", :state => Order::AUTHORIZED)
     o.save
     # should remain - is confirmed
     sleep(timeout+1)

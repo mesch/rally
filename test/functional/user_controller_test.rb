@@ -390,7 +390,7 @@ class UserControllerTest < ActionController::TestCase
     assert deal.save
     assert deal.publish
     # Create Order
-    order = Order.new(:user_id => @test_user.id, :deal_id => deal.id, :state => OPTIONS[:order_states][:authorized])
+    order = Order.new(:user_id => @test_user.id, :deal_id => deal.id, :state => Order::AUTHORIZED)
     assert order.save
     # Create Coupon
     coupon = Coupon.new(:user_id => @test_user.id, :deal_id => deal.id, :order_id => order.id)
@@ -401,7 +401,7 @@ class UserControllerTest < ActionController::TestCase
     assert_response :redirect
     assert_redirected_to :action=>'home'
     # active - can view
-    order.state = OPTIONS[:order_states][:paid]
+    order.state = Order::PAID
     assert order.save
     coupon = Coupon.find_by_id(coupon.id)
     assert_equal coupon.state, 'Active'

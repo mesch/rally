@@ -191,7 +191,7 @@ class ApplicationController < ActionController::Base
         deal_id = nil
       end
     
-      ua = UserAction.delay.log(:controller => self.controller_name, :action => self.action_name, :method => request.method,
+      ua = UserAction.delay(:priority=>10).log(:controller => self.controller_name, :action => self.action_name, :method => request.method,
         :visitor_id => visitor_id, :user_id => user_id, :merchant_id => merchant_id, :deal_id => deal_id)
     end
   end

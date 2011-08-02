@@ -84,7 +84,7 @@ class PaymentController < ApplicationController
       return
     end
     # order is already authorized or paid
-    if @order.state != OPTIONS[:order_states][:created]
+    if @order.state != Order::CREATED
       go_home()
       return
     end

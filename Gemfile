@@ -13,10 +13,11 @@ gem 'money'
 gem 'xml-simple'
 gem 'paperclip'
 gem 'will_paginate', '~> 3.0.pre2'
-# gem 'calendar_date_select', :git => 'http://github.com/paneq/calendar_date_select.git', :branch => 'rails3test'
 
 gem 'aws-s3', :require => 'aws/s3'
 gem 'right_aws'
+
+gem 'hirefire'
 
 gem 'nokogiri'
 gem 'authorize-net', "1.5.2", :path => 'vendor/gems/authorize-net-1.5.2'

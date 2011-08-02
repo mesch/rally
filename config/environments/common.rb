@@ -38,9 +38,6 @@ OPTIONS[:time_format] = '%Y-%m-%d %H:%M:%S'
 # Order Timout
 OPTIONS[:order_timeout] = 10*60
 
-# Order States
-OPTIONS[:order_states] = {:created => 'CREATED', :authorized => 'AUTHORIZED', :paid => 'PAID'}
-
 # Order Payment Gateways
 OPTIONS[:gateways] = {:authorize_net  => 'AUTHORIZE_NET'}
 

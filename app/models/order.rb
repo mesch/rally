@@ -1,8 +1,14 @@
 require "exception"
 
 class Order < ActiveRecord::Base
+  # States
+  CREATED = 'CREATED'
+  AUTHORIZED = 'AUTHORIZED'
+  PAYING = 'PAYING'
+  PAID = 'PAID'
+
   validates_presence_of :user_id, :deal_id, :quantity, :amount
-  validates_inclusion_of :state, :in => [OPTIONS[:order_states][:created], OPTIONS[:order_states][:authorized], OPTIONS[:order_states][:paid]]
+  validates_inclusion_of :state, :in => [ CREATED, AUTHORIZED, PAYING, PAID ]
   
   money :amount, :currency => false
   
@@ -49,7 +55,7 @@ class Order < ActiveRecord::Base
         # lock order
         Order.find_by_id(self.id, :lock => true)
         # ignore any order state besides created - page refresh
-        if self.state == OPTIONS[:order_states][:created]
+        if self.state == Order::CREATED
           # create order_payment
           OrderPayment.create!(:user_id => self.user_id, :order_id => self.id, :gateway => gateway, 
             :transaction_type => transaction_type, :confirmation_code => confirmation_code, 
@@ -57,7 +63,7 @@ class Order < ActiveRecord::Base
           # create coupons
           self.create_coupons!
           # update order
-          self.update_attributes!(:state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+          self.update_attributes!(:state => Order::AUTHORIZED, :authorized_at => Time.zone.now)
         end
       end
       return true
@@ -101,7 +107,7 @@ class Order < ActiveRecord::Base
           order_payment.capture!
         end
         # update order
-        self.update_attributes!(:state => OPTIONS[:order_states][:paid], :paid_at => Time.zone.now)
+        self.update_attributes!(:state => Order::PAID, :paid_at => Time.zone.now)
       end
       return true
     rescue PaymentError => pe
@@ -140,21 +146,26 @@ class Order < ActiveRecord::Base
       timeout = OPTIONS[:order_timeout] + 5*60
     end
     
-    Order.transaction do
-      # select order and lock until all are updated
-      orders = Order.find(:all, :conditions => ["updated_at < ? AND state = ? AND quantity > 0", 
-        Time.zone.now - (timeout.seconds), OPTIONS[:order_states][:created]], :lock => true)
-      considered = orders.length
-	    # set quantity to 0, amount to 0
-	    for order in orders
-	      #p "Resetting Order #{order.inspect}"
-	      if order.update_attributes(:quantity => 0, :amount => 0)
-	        successes += 1
-	      else
-	        failures += 1
-	      end
+    begin
+      Order.transaction do
+        # select order and lock until all are updated
+        orders = Order.find(:all, :conditions => ["updated_at < ? AND state = ? AND quantity > 0", 
+          Time.zone.now - (timeout.seconds), Order::CREATED], :lock => true)
+        considered = orders.length
+  	    # set quantity to 0, amount to 0
+  	    for order in orders
+  	      #p "Resetting Order #{order.inspect}"
+  	      if order.update_attributes(:quantity => 0, :amount => 0)
+  	        successes += 1
+  	      else
+  	        failures += 1
+  	      end
+        end
       end
+    rescue
+      logger.error "Order.reset_orders: Failed", invalid
     end
+    
     return {:considered => considered, :successes => successes, :failures => failures}
   end
 

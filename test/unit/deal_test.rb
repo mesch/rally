@@ -170,11 +170,11 @@ class DealTest < ActiveSupport::TestCase
     assert o.save
     assert_equal d.coupon_count, 1
     # update order as authorized - no change
-    o.state = OPTIONS[:order_states][:authorized]
+    o.state = Order::AUTHORIZED
     assert o.save
     assert_equal d.coupon_count, 1
     # update order as paid - no change
-    o.state = OPTIONS[:order_states][:paid]
+    o.state = Order::PAID
     assert o.save
     assert_equal d.coupon_count, 1
     # order with different deal_id with no quantity - no change
@@ -208,11 +208,11 @@ class DealTest < ActiveSupport::TestCase
     assert o.save
     assert_equal d.confirmed_coupon_count, 0
     # update order as authorized - +1
-    o.state = OPTIONS[:order_states][:authorized]
+    o.state = Order::AUTHORIZED
     assert o.save
     assert_equal d.coupon_count, 1
     # update order as paid - no change
-    o.state = OPTIONS[:order_states][:paid]
+    o.state = Order::PAID
     assert o.save
     assert_equal d.coupon_count, 1
     # order with different deal_id with no quantity - no change
@@ -225,15 +225,15 @@ class DealTest < ActiveSupport::TestCase
     assert o.save
     assert_equal d.confirmed_coupon_count, 1
     # order with different deal_id as authorized - no change  
-    o.state = OPTIONS[:order_states][:authorized]
+    o.state = Order::AUTHORIZED
     assert o.save
     assert_equal d.confirmed_coupon_count, 1      
     # order with new user_id with 2 quantity and authorized - +2 count
-    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20', :state => OPTIONS[:order_states][:authorized])
+    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20', :state => Order::AUTHORIZED)
     assert o.save
     assert_equal d.confirmed_coupon_count, 3
     # order with new user_id with 2 quantity and paid - +2 count
-    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20', :state => OPTIONS[:order_states][:paid])
+    o = Order.new(:user_id => 2, :deal_id => d.id, :quantity => 2, :amount => '20', :state => Order::PAID)
     assert o.save
     assert_equal d.confirmed_coupon_count, 5
   end
@@ -286,15 +286,15 @@ class DealTest < ActiveSupport::TestCase
     assert o.save
     assert !d.is_tipped
     # add one authorized - tipped
-    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => OPTIONS[:order_states][:authorized])
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => Order::AUTHORIZED)
     assert o.save 
     assert d.is_tipped
     # make it paid - still tipped
-    o.state = OPTIONS[:order_states][:paid]
+    o.state = Order::PAID
     assert o.save
     assert d.is_tipped
     # add another authorized - still tipped
-    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => OPTIONS[:order_states][:authorized])
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => Order::AUTHORIZED)
     assert o.save 
     assert d.is_tipped
         
@@ -452,11 +452,11 @@ class DealTest < ActiveSupport::TestCase
     assert o.save
     assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 0
     # authorize
-    o.update_attributes(:state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+    o.update_attributes(:state => Order::AUTHORIZED, :authorized_at => Time.zone.now)
     assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
     # authorized order for another deal - no change
     o = Order.new(:user_id => 1000, :deal_id => d.id + 1, :quantity => 1, :amount => '10.00', 
-      :state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+      :state => Order::AUTHORIZED, :authorized_at => Time.zone.now)
     assert o.save
     assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
 
@@ -467,7 +467,7 @@ class DealTest < ActiveSupport::TestCase
     
     # add another
     o = Order.new(:user_id => 1000, :deal_id => d.id, :quantity => 1, :amount => '10.00', 
-      :state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+      :state => Order::AUTHORIZED, :authorized_at => Time.zone.now)
     assert o.save
     assert_equal d.orders_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2    
   end
@@ -477,7 +477,7 @@ class DealTest < ActiveSupport::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     o = Order.new(:user_id => 1000, :deal_id => d.id, :quantity => 1, :amount => '10.00', 
-      :state => OPTIONS[:order_states][:authorized], :authorized_at => Time.zone.now)
+      :state => Order::AUTHORIZED, :authorized_at => Time.zone.now)
     assert o.save
     # Pending coupon
     c = Coupon.new(:user_id => 1000, :deal_id => d.id, :order_id => o.id)
@@ -485,7 +485,7 @@ class DealTest < ActiveSupport::TestCase
     assert_equal c.state, 'Pending'
     assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
     # Pending coupon - still counts
-    o.update_attributes(:state => OPTIONS[:order_states][:paid])
+    o.update_attributes(:state => Order::PAID)
     c = Coupon.find_by_id(c.id)
     assert_equal c.state, 'Active'
     assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1    

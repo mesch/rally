@@ -34,12 +34,12 @@ class MerchantController < ApplicationController
   def new_deal
     unless @deal
       @deal = Deal.new()
+      
+      # Set some deafults
+      @deal.start_date = Time.zone.today
+      @deal.end_date = Time.zone.today + 1.weeks
+      @deal.expiration_date = Time.zone.today + 2.months
     end
-    
-    # Set some deafults
-    @deal.start_date = Time.zone.today
-    @deal.end_date = Time.zone.today + 1.weeks
-    @deal.expiration_date = Time.zone.today + 2.months
   end
 
   def create_deal
@@ -105,7 +105,6 @@ class MerchantController < ApplicationController
     @video = @deal.deal_video ? @deal.deal_video : nil
     
     @num_deal_codes = DealCode.count(:conditions => "deal_id = #{@deal.id}")
-    p @deal.start_date
   end
   
   def update_deal

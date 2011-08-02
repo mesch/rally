@@ -62,11 +62,11 @@ Given /^the deal "([^"]*)" has (\d) (created|authorized|paid) order(?:s)? of (\d
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
   case type
     when "created" then
-      state = OPTIONS[:order_states][:created]
+      state = Order::CREATED
     when "authorized" then 
-      state = OPTIONS[:order_states][:authorized]
+      state = Order::AUTHORIZED
     when "paid" then
-      state = OPTIONS[:order_states][:paid]    
+      state = Order::PAID    
   end
   for i in (1..num_orders)
     Order.create!(:user_id => @current_user.id, :deal_id => deal.id, 
@@ -79,11 +79,11 @@ Given /^the deal "([^"]*)" has 1 (authorized|paid) coupon(?: with a deal code "(
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
   case type
     when "created" then
-      state = OPTIONS[:order_states][:created]
+      state = Order::CREATED
     when "authorized" then 
-      state = OPTIONS[:order_states][:authorized]
+      state = Order::AUTHORIZED
     when "paid" then
-      state = OPTIONS[:order_states][:paid]    
+      state = Order::PAID    
   end
   o = Order.create!(:user_id => @current_user.id, :deal_id => deal.id, :quantity => 1, :amount => 1*deal.deal_price.to_f,
     :state => state)

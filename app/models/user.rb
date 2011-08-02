@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
 
   # Tries to find an existing unconfirmed order for the deal - else return a new order
   def unconfirmed_order(deal_id)
-    if order = Order.find(:first, :conditions => ["user_id = ? AND deal_id = ? AND state = ?", self.id, deal_id, OPTIONS[:order_states][:created]])
+    if order = Order.find(:first, :conditions => ["user_id = ? AND deal_id = ? AND state = ?", self.id, deal_id, Order::CREATED])
       return order
     else
       return Order.new(:user_id => self.id, :deal_id => deal_id)

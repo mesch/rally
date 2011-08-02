@@ -3,7 +3,7 @@ burger_order:
     deal: burger_deal
     quantity: 2
     amount_in_cents: 2000
-    state: <%= OPTIONS[:order_states][:paid] %>
+    state: <%= Order::PAID %>
     authorized_at: "2011-07-01T00:00:00"
     paid_at: "2011-07-01T00:00:00"
     
@@ -12,7 +12,7 @@ burger_order2:
     deal: burger_deal
     quantity: 1
     amount_in_cents: 1000
-    state: <%= OPTIONS[:order_states][:authorized] %>
+    state: <%= Order::AUTHORIZED %>
     authorized_at: "2011-07-01T00:00:00"
 
 current_order:
@@ -20,5 +20,5 @@ current_order:
     deal: current_deal
     quantity: 1
     amount_in_cents: 1000
-    state: <%= OPTIONS[:order_states][:authorized] %>
+    state: <%= Order::AUTHORIZED %>
     authorized_at: "2011-07-01T00:00:00"
