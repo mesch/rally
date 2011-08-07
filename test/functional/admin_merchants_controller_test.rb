@@ -208,4 +208,11 @@ class Admin::MerchantsControllerTest < ActionController::TestCase
     assert_equal Merchant.find(@bob.id).time_zone, 'Hawaii'
   end
   
+  def test_impersonate
+    get :impersonate, :id => @bob.id
+    assert_response :redirect
+    assert_redirected_to :controller => "/merchant", :action => :home
+    assert_equal session[:merchant_id], @bob.id
+  end
+  
 end

@@ -5,7 +5,7 @@ class DealTest < ActiveSupport::TestCase
   fixtures :deals
   
   def setup
-    @m = Merchant.find(:first)
+    @m = @emptybob
     @start = Time.zone.today
     @end = Time.zone.today + 1.days
     @expiration = Time.zone.today + 1.months
@@ -276,6 +276,53 @@ class DealTest < ActiveSupport::TestCase
     assert_equal d.max, 3
   end
   
+  def test_delete
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    assert_equal d.active, true
+    assert d.delete
+    assert_equal d.active, false
+  end
+  
+  def test_force_tip
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :min => 0)
+    assert d.save
+    # no orders - do nothing
+    assert_equal d.confirmed_coupon_count, 0
+    assert d.force_tip
+    assert_equal d.min, 0
+    # add an authorized order - still do nothing
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => Order::AUTHORIZED)
+    assert o.save
+    assert_equal d.confirmed_coupon_count, 1
+    assert d.force_tip
+    assert_equal d.min, 0
+    # increase min to 1 - still do nothing
+    assert d.update_attributes(:min => 1)
+    assert_equal d.confirmed_coupon_count, 1
+    assert d.force_tip
+    assert_equal d.min, 1
+    # increase min to 2 - sets to 1
+    assert d.update_attributes(:min => 2)
+    assert_equal d.confirmed_coupon_count, 1
+    assert d.force_tip
+    assert_equal d.min, 1
+    # remove order - sets to 0
+    assert o.update_attributes(:state => Order::CREATED)
+    assert_equal d.confirmed_coupon_count, 0
+    assert d.force_tip
+    assert_equal d.min, 0
+    # reset min to 1 and add a created order - still sets to 0
+    assert d.update_attributes(:min => 1)
+    o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20')
+    assert o.save    
+    assert_equal d.confirmed_coupon_count, 0
+    assert d.force_tip
+    assert_equal d.min, 0
+  end
+  
   def test_is_tipped
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :min => 1)
@@ -319,6 +366,25 @@ class DealTest < ActiveSupport::TestCase
     assert !d.is_maxed(0)
     assert d.is_maxed(1)
     assert d.is_maxed(2)
+  end
+  
+  def test_is_started
+    today = Time.zone.today
+    yesterday = Time.zone.today - 1.days
+    tomorrow = Time.zone.today + 1.days
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today, :end_date => today, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.is_started
+    assert !d.is_started(yesterday)
+    assert d.is_started(tomorrow)
+    
+    # start_date yesterday - true
+    d.start_date = yesterday
+    assert d.is_started
+    
+    # start_date tomorrow - false
+    d.start_date = tomorrow
+    assert !d.is_started
   end
   
   def test_is_ended

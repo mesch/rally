@@ -186,11 +186,49 @@ class MerchantController < ApplicationController
       redirect_to :controller => self.controller_name, :action => :deals, :selector => 'current'
       return
     else
-      flash[:error] = "There was a problem publishing your deal."
-      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'current'
+      flash[:error] = "There was a problem publishing your deal. Please try again."
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
       return
     end        
   end
+
+  def delete_deal
+    deal = Deal.find_by_id(params[:id])
+    
+    unless deal.merchant == @current_merchant
+      go_home
+      return
+    end
+    
+    if deal.delete
+      flash[:notice] = "Your draft was deleted."
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
+      return
+    else
+      flash[:error] = "There was a problem publishing your deal. Please try again."
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
+      return
+    end
+  end
+  
+  def tip_deal
+    deal = Deal.find_by_id(params[:id])
+
+    unless deal.merchant == @current_merchant
+      go_home
+      return
+    end
+
+    if deal.force_tip
+      flash[:notice] = "Your deal is tipped."
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'success'
+      return
+    else
+      flash[:error] = "There was a problem tipping your deal. Please try again."
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'failure'
+      return
+    end
+  end        
 
   # Home
   def home

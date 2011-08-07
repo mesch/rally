@@ -65,6 +65,17 @@ Feature: View Deals
 		When I go to the deal page for "Cool New Deal"
 		Then I should not see "Dealio"
 
+	Scenario: Deal Page (Not Started)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has changed the start date of deal "Cool New Deal" to tomorrow
+		When I go to the deal page for "Cool New Deal"
+		Then I should not see the Buy button
+		And I should not see the Expired button
+		And I should not see the Soldout button
+		And I should not see "Buy 1 More To Tip This Deal!"
+		And I should not see "The deal is tipped!"
+		And I should see "Total 0 bought."	
+
 	Scenario: Deal Page (Not Tipped, Not Maxed, Not Ended)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the min of deal "Cool New Deal" to 1
@@ -133,6 +144,12 @@ Feature: View Deals
 		And I should not see "Buy 1 More To Tip This Deal!"
 		And I should not see "The deal is tipped!"
 		And I should see "Total 1 bought."
+		
+	Scenario: Deal List
+		Given a merchant has published deals titled "Cool New Deal", "Dealio"
+		When I go to the list of deals
+		Then I should see "Cool New Deal"
+		And I should see "Dealio"
 
 	Scenario: Order Page (Not Logged In)
 		Given a merchant has published a deal titled "Cool New Deal"

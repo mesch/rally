@@ -36,6 +36,15 @@ class FacebookController < UserController
           p @merchant_subdomain
           if @merchant_subdomain
             @app_url += "?sd=#{@merchant_subdomain.subdomain}"
+            
+            # TODO: Move this query into deal.rb? or user.rb?
+            @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
+
+            # filter out other merchants if on a merchant subdomain
+            if @merchant_subdomain and @merchant_subdomain.merchant
+              @deals.delete_if {|deal| deal.merchant_id != @merchant_subdomain.merchant.id}
+            end
+            
           end
         end
       end

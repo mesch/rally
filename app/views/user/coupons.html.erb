@@ -9,34 +9,38 @@
                     <h2>Coupons</h2>
 				</div>
                 <div class="sect">
-					<table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">
-						<tr>
-							<th width="100">Merchant</th>
-							<th width="200">Title</th>
-							<th width="60" nowrap>State</th>
-							<th width="80" nowrap>Purchased</th>
-							<th width="80" nowrap>Expiration</th>
-							<th width="60" nowrap>Action</th>
-						</tr>							
-						<% for coupon in @coupons %>
+					<% if @coupons.size > 0 %>	
+						<table id="orders-list" cellspacing="0" cellpadding="0" border="0" class="coupons-table">
 							<tr>
-								<td><%= coupon.deal.merchant.name %></td>
-								<td><%= coupon.deal.title %></td>
-								<td><%= coupon.state %></td>
-								<td><%= coupon.created_at.strftime(OPTIONS[:date_format]) %></td>
-								<td><%= coupon.deal.expiration_date.strftime(OPTIONS[:date_format]) %></td>
-								<td>
-								<% if coupon.state == 'Active' or coupon.state == 'Expired' %>
-									<%= link_to "Print", 
-										url_for(:controller => controller.controller_name, 
-												:action => 'coupon', :id => coupon.id), 
-												:target=>"_blank" %>
-									
-								<% end %>
-								</td>
+								<th width="100">Merchant</th>
+								<th width="200">Title</th>
+								<th width="60" nowrap>State</th>
+								<th width="80" nowrap>Purchased</th>
+								<th width="80" nowrap>Expiration</th>
+								<th width="60" nowrap>Action</th>
 							</tr>
-						<% end %>
-                    </table>
+							<% for coupon in @coupons %>
+								<tr>
+									<td><%= coupon.deal.merchant.name %></td>
+									<td><%= coupon.deal.title %></td>
+									<td><%= coupon.state %></td>
+									<td><%= coupon.created_at.strftime(OPTIONS[:date_format]) %></td>
+									<td><%= coupon.deal.expiration_date.strftime(OPTIONS[:date_format]) %></td>
+									<td>
+									<% if coupon.state == 'Active' or coupon.state == 'Expired' %>
+										<%= link_to "Print", 
+											url_for(:controller => controller.controller_name, 
+													:action => 'coupon', :id => coupon.id), 
+													:target=>"_blank" %>
+									
+									<% end %>
+									</td>
+								</tr>
+							<% end %>
+						</table>
+					<% else %>
+						You have not purchased any coupons. Please check out our active deals.
+					<% end %>
 				</div>
             </div>
             <div class="box-bottom"></div>

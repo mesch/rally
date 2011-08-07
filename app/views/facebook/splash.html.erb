@@ -4,14 +4,15 @@
 	<meta http-equiv=content-type content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<title>Splash Page</title>
+	<%= raw stylesheet_link_tag 'facebook.css', :media => "screen", :charset => "utf-8" %>	
 	<%= render :partial => 'layouts/block/google_analytics' %>
 </head>
 
 <style type="text/css">
 body{ background:#fff;}
 *{ margin: 0 auto;}
-#logo{font-size:32px; margin-top:40px; text-align:center; width:280px;}
-#goto{font-size:32px; margin-top:40px; text-align:center; width:280px;}
+#logo{font-size:32px; margin-top:20px; margin-bottom:20px; text-align:left; width:400px;}
+#goto{margin-left: 20px; margin-top:20px; margin-bottom:20px; text-align:left; width:500px;}
 </style>
 
 <div id="logo">
@@ -22,8 +23,43 @@ body{ background:#fff;}
 	<% end %>
 </div>
 
-<div id="goto">
-<%= link_to "Go to Deals!", @app_url, :target => "_blank" %>
-</div>
+
+<h2>Deals</h2>
+<% if @deals and @deals.size > 0 %>
+	<div id="recent-deals">
+		<ul class="deals-list">
+		<% for deal in @deals %>
+			<li class="alt">
+				<p class="time">Ends on <%= deal.end_date.strftime(OPTIONS[:date_format]) %>!</p>
+				<h4><%= deal.merchant.name %> - <%= link_to deal.title, @app_url, :target => "_blank" %></h4>
+				<div class="pic">
+					<div class="<%= deal.is_maxed ? 'soldout' : 'isopen' %>"></div>
+					<% if deal.deal_images[0] %>
+						<%= link_to image_tag(deal.deal_images[0].image.url(:display), :width => "200", :height => "125", :alt => deal.title),
+								@app_url, :target => "_blank", :title => deal.title  %>									
+					<% end %>
+				</div>
+				<div class="info">
+					<p class="total"><strong class="count"><%= deal.confirmed_coupon_count %></strong> Buyers&nbsp;
+						<% if deal.max != 0 %>
+							<strong class="count"><%= deal.max - deal.confirmed_coupon_count %></strong> Left!</p>
+						<% end %>
+					<p class="price">
+						Value：<strong class="old"><%= deal.deal_value.format(:no_cents) %></strong><br />
+						Discount: <strong class="discount"><%= deal.discount %>%</strong><br />
+						Price: <strong><%= deal.deal_price.format(:no_cents) %></strong><br />
+						You save: <strong><%= deal.savings.format(:no_cents) %></strong><br />
+					</p>
+				</div>
+			</li>
+		<% end %>
+		</ul>
+		<div class="clear"></div>
+	</div>
+<% else %>
+	<div id="goto">
+		There are currently no active deals. <%= link_to "Login", @app_url, :target => "_blank" %> to redeem your coupons.
+	</div>
+<% end %>
 
 </body></html>

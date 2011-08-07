@@ -67,6 +67,29 @@ class Deal < ActiveRecord::Base
     return false
   end
 
+  def delete
+    begin
+      self.update_attributes!(:active => false)
+      return true
+    rescue ActiveRecord::RecordInvalid => invalid
+      logger.error "Deal.delete: Failed for Deal #{self.inspect}", invalid
+    end
+    return false
+  end
+  
+  def force_tip
+    if self.min > self.confirmed_coupon_count
+      begin
+        self.update_attributes!(:min => self.confirmed_coupon_count)
+        return true
+      rescue ActiveRecord::RecordInvalid => invalid
+        logger.error "Deal.force_tip: Failed for Deal #{self.inspect}", invalid
+      end
+      return false
+    end
+    return true
+  end
+
   def is_tipped(coupon_count=nil)
     if self.min == 0
       return true
@@ -93,6 +116,19 @@ class Deal < ActiveRecord::Base
     end
 
     if coupon_count >= self.max
+      return true
+    else
+      return false
+    end
+  end
+
+  # datetime needs to have timezone information, i.e. Time.zone.now  
+  def is_started(datetime=nil)
+    unless datetime
+      datetime = Time.zone.now
+    end
+    
+    if self.start_date.to_date.beginning_of_day < datetime
       return true
     else
       return false

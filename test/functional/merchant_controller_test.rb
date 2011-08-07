@@ -745,7 +745,60 @@ class MerchantControllerTest < ActionController::TestCase
     assert deal.published
     assert_equal deal.max, 0    
   end
-
+  
+  def test_delete_deal
+    self.login
+    # create
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert_equal deal.active, true
+    # delete
+    get :delete_deal, :id => deal.id
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert_equal deal.active, false
+  end
+  
+  def test_tip_deal
+    self.login
+    # create
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert_equal deal.min, 1
+    assert_equal deal.confirmed_coupon_count, 0
+    # delete
+    get :tip_deal, :id => deal.id
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'success'
+    # verify in DB
+    deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert_equal deals.size, 1
+    deal = deals[0]
+    assert_equal deal.min, 0    
+  end
+    
   def test_access_other_deals
     Deal.delete_all
     # can access my deal (edit/update/publish)
@@ -770,6 +823,14 @@ class MerchantControllerTest < ActionController::TestCase
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals', :selector=>'current'
+    get :delete_deal, :id => deal.id
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    get :tip_deal, :id => deal.id
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'success'    
     # others can't access my deal
     post :login, :username => "emptybob", :password => "test"
     get :edit_deal, :id => deal.id
@@ -785,7 +846,15 @@ class MerchantControllerTest < ActionController::TestCase
     get :publish_deal, :id => deal.id
     assert_nil flash[:notice]
     assert_response :redirect
-    assert_redirected_to :action=>'home'  
+    assert_redirected_to :action=>'home'
+    get :delete_deal, :id => deal.id
+    assert_nil flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'home'
+    get :tip_deal, :id => deal.id
+    assert_nil flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'home'    
   end
 
   def test_subdomain_general

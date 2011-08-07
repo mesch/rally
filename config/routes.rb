@@ -109,6 +109,8 @@ Rally::Application.routes.draw do
       match '/deal' => :new_deal, :as => :new_deal
       match '/deal/:id' => :edit_deal, :as => :edit_deal
       match '/deal/publish/:id' => :publish_deal, :as => :publish_deal
+      match '/deal/delete/:id' => :delete_deal, :as => :delete_deal
+      match '/deal/tip/:id' => :tip_deal, :as => :tip_deal
       match :connect
       match :connect_success
     end
@@ -138,9 +140,12 @@ Rally::Application.routes.draw do
       get 'change_password', :on => :member
       post 'change_password', :on => :member
       get 'send_activation', :on => :member
+      get 'impersonate', :on => :member
     end
     resources :users
-    resources :deals
+    resources :deals do
+      get 'deal_codes', :on => :member
+    end
     resources :coupons
     resources :orders
     resources :payments

@@ -37,6 +37,11 @@
 						<strong><%= @deal.deal_price.format(:no_cents) %></strong>
 						<span class="deal-price-expire"></span>
 					</p>
+				<% elsif !@deal.is_started %>
+					<p class="deal-price">
+						<strong><%= @deal.deal_price.format(:no_cents) %></strong>
+						<!-- <span><%= image_tag("/stylesheets/i/button-deal-buy.png") %></span>-->				
+					</p>
 				<% else %>
 					<p class="deal-price">
 						<strong><%= @deal.deal_price.format(:no_cents) %></strong>
@@ -64,11 +69,17 @@
                         <td><%= @deal.savings.format(:no_cents) %></td>
                     </tr>
                	</table>
+				
 				<% if @deal.is_ended %>
 	                <div class="deal-box deal-timeleft deal-off" id="deal-timeleft" curtime="<%= @now %>000" diff="<%= @diff %>000">
 						<h3>Deal was over at: </h3>
-						<div class="limitdate"><p class="deal-buy-ended"><%= @deal.end_date %><br>23:59:59</p></div>
+						<div class="limitdate"><p class="deal-buy-ended"><%= @deal.end_date.strftime(OPTIONS[:time_format]) %></p></div>
 					</div>
+				<% elsif !@deal.is_started %>
+                	<div class="deal-box deal-timeleft deal-before" id="deal-timeleft" curtime="<%= @now %>000" diff="<%= @diff %>000">
+						<h3>Deal will start at: </h3>
+						<div class="limitdate"><p class="deal-buy-ended"><%= @deal.start_date.strftime(OPTIONS[:time_format]) %></p></div>
+					</div>				
 				<% else %>
 	                <div class="deal-box deal-timeleft deal-on" id="deal-timeleft" curtime="<%= @now %>000" diff="<%= @diff %>000">
 						<h3>Time Left To Buy</h3>
@@ -94,26 +105,30 @@
 				<% else %>
 					<div class="deal-buy-failure"></div>
 				<% end %>
-				<p class="deal-buy-tip-total">Total <strong><%= @deal.coupon_count %></strong> bought.</p></div>
+				<p class="deal-buy-tip-total">Total <strong><%= @deal.confirmed_coupon_count %></strong> bought.</p></div>
+			<% elsif !@deal.is_started %>
+				<div class="deal-box deal-status" id="deal-status">
+				<div class="deal-buy-before"></div>
+				<p class="deal-buy-tip-total">Total <strong>0</strong> bought.</p></div>
 			<% else %>
 				<% if @deal.is_tipped %>
-				<div class="deal-box deal-status deal-status-open" id="deal-status">
-					<p class="deal-buy-tip-top"><strong><%= @deal.confirmed_coupon_count %></strong> bought </p>
-					<p class="deal-buy-on" style="line-height:200%;">
-						<%= image_tag "/stylesheets/i/deal-buy-succ.gif" %>The deal is tipped!<br/>
-						<% if !@deal.is_maxed %>You can buy it now.<% end %></p>
-				</div>
+					<div class="deal-box deal-status deal-status-open" id="deal-status">
+						<p class="deal-buy-tip-top"><strong><%= @deal.confirmed_coupon_count %></strong> bought </p>
+						<p class="deal-buy-on" style="line-height:200%;">
+							<%= image_tag "/stylesheets/i/deal-buy-succ.gif" %>The deal is tipped!<br/>
+							<% if !@deal.is_maxed %>You can buy it now.<% end %></p>
+					</div>
 				<% else %>
-				<div class="deal-box deal-status" id="deal-status">
-					<p class="deal-buy-tip-top"><strong><%= @deal.confirmed_coupon_count %></strong> bought </p>
-					<div class="progress-pointer" style="padding-left:<%= @bar_size-@bar_offset %>px;"><span></span></div>
-					<div class="progress-bar"><div class="progress-left" style="width:<%= @bar_size-@bar_offset %>px;"></div>
-					<div class="progress-right "></div>
-				</div>
-				<div class="cf"><div class="min">0</div><div class="max"><%= @deal.min %></div>
-				</div>
-					<p class="deal-buy-tip-btm">Buy <strong><%= @deal.min - @deal.confirmed_coupon_count %></strong> More To Tip This Deal!</p>
-				</div>
+					<div class="deal-box deal-status" id="deal-status">
+						<p class="deal-buy-tip-top"><strong><%= @deal.confirmed_coupon_count %></strong> bought </p>
+						<div class="progress-pointer" style="padding-left:<%= @bar_size-@bar_offset %>px;"><span></span></div>
+						<div class="progress-bar"><div class="progress-left" style="width:<%= @bar_size-@bar_offset %>px;"></div>
+						<div class="progress-right "></div>
+					</div>
+					<div class="cf"><div class="min">0</div><div class="max"><%= @deal.min %></div>
+					</div>
+						<p class="deal-buy-tip-btm">Buy <strong><%= @deal.min - @deal.confirmed_coupon_count %></strong> More To Tip This Deal!</p>
+					</div>
 				<% end %>
 			<% end %>
 			</div>
@@ -169,7 +184,15 @@
 								<div style="margin-top:10px;">
 									<%= link_to @deal.merchant.website, @deal.merchant.website, :target => "_blank"%>
 								</div>
-							<% end %>
+							<% end %>							
+						</div>
+					</div>
+					<div class="side">
+						<div>
+							<h2>Valid Until</h2>
+							<div style="margin-top:10px;">
+								<%= @deal.expiration_date.strftime(OPTIONS[:date_format]) %>
+							</div>
 						</div>
 					</div>
                     <div class="clear"></div>

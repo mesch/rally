@@ -24,6 +24,7 @@
 						<th width="60" nowrap>Sold</th>
 						<th width="60" nowrap>Min</th>
 						<th width="60" nowrap>Max</th>
+						<th width="60" nowrap>Codes</th>
 					</tr>
 					<% for deal in @deals %>
 					<tr class="alt">
@@ -41,6 +42,7 @@
 						<td nowrap><%= deal.confirmed_coupon_count %></td>
 						<td nowrap><%= deal.min %></td>
 						<td nowrap><%= deal.max %></td>
+						<td nowrap><%= link_to "View", deal_codes_admin_deal_url(deal.id) %></td>
 					</tr>
 					<% end %>
                     </table>

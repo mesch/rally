@@ -35,49 +35,71 @@
 				<% end %>
 				</div>
                 <div class="sect">
-					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">					
-					<tr>
-						<th width="40">Id</th>
-						<th width="300">Title</th>
-						<th width="60">Start / End</th>
-						<th width="60" nowrap>Price / Value</th>
-						<th width="50" nowrap>Sold</th>
-						<th width="50" nowrap>Min</th>
-						<th width="50" nowrap>Max</th>
-						<th width="140">Actions</th>
-					</tr>
-					<% for deal in @deals %>
-					<tr class="alt" id="team-list-id-<%= deal.id %>">
-						<td><%= deal.id %></td>
-						<td><%= deal.title %></td>
-						<td nowrap>
-							<%= deal.start_date.strftime(OPTIONS[:date_format]) %><br/>
-							<%= deal.end_date.strftime(OPTIONS[:date_format]) %>
-						</td>
-						<td nowrap>
-							<%= deal.deal_price.format %><br/>
-							<%= deal.deal_value.format %>
-						</td>
-						<td nowrap><%= deal.confirmed_coupon_count %></td>
-						<td nowrap><%= deal.min %></td>
-						<td nowrap><%= deal.max %></td>
-						<td class="op">
-							<% if @current_merchant.merchant_subdomain %>
-								<%= link_to "View", 
-									url_for(:host => @deal_store_url, :controller => 'user', :action => 'deal', :id => deal.id), 
-									:target=> "_blank" %>
-							<% else %>
-								<%= link_to "View", deal_url(deal.id), :target=> "_blank" %>
-							<% end %>
-							<% if !deal.is_ended %>
-							| <%= link_to "Edit", merchant_edit_deal_url(deal.id) %>
-							<% end %>
-							<% if !deal.published %>
-							| <%= link_to "Publish", merchant_publish_deal_url(deal.id) %>
-							<% end %></td>
-					</tr>
+					<% if @deals.size > 0 %>
+						<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">					
+						<tr>
+							<th width="40">Id</th>
+							<th width="300">Title</th>
+							<th width="60">Start / End</th>
+							<th width="60" nowrap>Price / Value</th>
+							<th width="50" nowrap>Sold</th>
+							<th width="50" nowrap>Min</th>
+							<th width="50" nowrap>Max</th>
+							<th width="200">Actions</th>
+						</tr>
+							<% for deal in @deals %>
+							<tr class="alt" id="team-list-id-<%= deal.id %>">
+								<td><%= deal.id %></td>
+								<td><%= deal.title %></td>
+								<td nowrap>
+									<%= deal.start_date.strftime(OPTIONS[:date_format]) %><br/>
+									<%= deal.end_date.strftime(OPTIONS[:date_format]) %>
+								</td>
+								<td nowrap>
+									<%= deal.deal_price.format %><br/>
+									<%= deal.deal_value.format %>
+								</td>
+								<td nowrap><%= deal.confirmed_coupon_count %></td>
+								<td nowrap><%= deal.min %></td>
+								<td nowrap><%= deal.max %></td>
+								<td class="op">
+									<% if @current_merchant.merchant_subdomain %>
+										<%= link_to "View", 
+											url_for(:host => @deal_store_url, :controller => 'user', :action => 'deal', :id => deal.id), 
+											:target=> "_blank" %>
+									<% else %>
+										<%= link_to "View", deal_url(deal.id), :target=> "_blank" %>
+									<% end %>
+									<% if !deal.is_ended %>
+									| <%= link_to "Edit", merchant_edit_deal_url(deal.id) %>
+									<% end %>
+									<% if !deal.published %>
+									| <%= link_to "Publish", merchant_publish_deal_url(deal.id),
+									 	:confirm => 'Publishing this deal will allow all users to view it. Are you sure you want to publish this deal?'%>
+									<% end %>
+									<% if !deal.published %>
+									| <%= link_to "Delete", merchant_delete_deal_url(deal.id),
+										:confirm => 'Are you sure you want to delete this draft?' %>
+									<% end %>
+									<% if deal.is_ended and !deal.is_tipped and deal.start_date + 15.days > Time.zone.today %>
+									| <%= link_to "Force Tip", merchant_tip_deal_url(deal.id),
+										:confirm => 'Tipping this deal will charge all current orders. Are you sure you want to tip this deal?' %>
+									<% end %>									
+								</td>	
+							</tr>
+						<% end %>
+	                    </table>
+					<% else %>
+						<% if @selector == 'drafts' %>
+							You do not have any drafts. Create a new deal to get started.
+						<% elsif @selector == 'success' %>
+		                    You do not have any deals that met the minimum.
+						<% elsif @selector == 'failure' %>				
+		                    You do not have any failed deals.
+						<% else %>
+		                    You do not have any current deals. Publish a draft to get started.
+						<% end %>
 					<% end %>
-                    </table>
 				</div>
             </div>
             <div class="box-bottom"></div>

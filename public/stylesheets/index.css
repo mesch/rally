@@ -484,7 +484,7 @@ dd#bd{position:relative;z-index:1;width:960px;margin:0 auto;padding:30px 0 65px;
 #deal-intro .deal-today-link{text-decoration:none;}
 #deal-intro .deal-price-tag{position:absolute;z-index:1;left:-72px;width:237px;height:97px;padding-left:50px;background:url(i/bg-deal-price.png) no-repeat 0 0;_background:transparent;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/static/css/i/bg-deal-price.png');}
 #deal-intro .deal-price{position:absolute;z-index:2;left:-72px;width:237px;height:97px;line-height:82px;padding-left:50px;}
-#deal-intro .deal-price span{position:absolute;z-index:2;top:0;left:146px;color:#fff;}
+#deal-intro .deal-price span{position:absolute;z-index:2;top:0;left:144px;color:#fff;}
 #deal-intro .deal-price span.deal-price-expire,#deal-intro .deal-price span.deal-price-soldout{padding-left:10px;width:140px;background:url(i/bg-deal-close-text.gif) no-repeat 0 16px;color:#666;}
 #deal-intro .deal-price span.deal-price-expire{width:140px;height:84px;background:url(i/bg-deal-expired-text.gif) no-repeat 6px 17px;}
 #deal-intro .deal-price span.deal-price-soldout{width:140px;height:84px;background:url(i/bg-deal-soldout-text.gif) no-repeat 6px 17px;}
@@ -529,6 +529,7 @@ dd#bd{position:relative;z-index:1;width:960px;margin:0 auto;padding:30px 0 65px;
 .deal-timeleft li{font-weight:bold;}
 .deal-timeleft li span{float:left;width:22px;font-weight:bold;margin-right:4px;text-align:right;*margin-top:-1px;padding-right:2px;*padding-right:0;}
 .deal-off{background-image:url(i/bg-deal-end.gif);}
+.deal-before{background-image:url(i/bg-deal-start.gif);}
 .deal-status{padding:15px 8px;text-align:center;}
 .deal-available-tip{clear:both;font-size:12px;color:#333;}
 
@@ -540,6 +541,7 @@ dd#bd{position:relative;z-index:1;width:960px;margin:0 auto;padding:30px 0 65px;
 .deal-buy-on img{position:relative;left:-9px;top:9px;}
 .deal-buy-tip-btm{font-size:12px;}
 
+.deal-buy-before{height:89px;}
 .deal-buy-soldout{height:89px;background:url(i/bg-sold-out.gif) no-repeat 50% 0;}
 .deal-buy-success{height:89px;background:url(i/bg-deal-expired-success.gif) no-repeat 50% 0;}
 .deal-buy-failure{height:89px;background:url(i/bg-deal-expired-fail.gif) no-repeat 50% 0;}
@@ -787,7 +789,6 @@ dd#consult .deal-info .link h2 span{font-family:arial,sans-serif;}
 #recent-deals .pic .isopenlink{display:block;position:absolute;z-index:2;right:-13px;bottom:-7px;width:65px;height:66px;outline:0;text-indent:-999em;}
 #recent-deals .pic img{display:block;}
 #recent-deals .info{float:left;padding-top:5px;padding-left:30px;width:160px;height:180px;color:#666;font-size:12px;}
-#recent-deals .description{float:left;padding-top:5px;padding-left:15px;width:200px;height:180px;color:#666;font-size:12px;}
 #recent-deals .total strong{color:#c33;font-size:20px;}
 #recent-deals .price{margin-top:10px;*margin-top:6px;font-size:12px;line-height:1.5;}
 #recent-deals .price strong{color:#000;font-size:14px;font-weight:bold;}

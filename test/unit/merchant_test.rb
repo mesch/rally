@@ -313,7 +313,10 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
-    assert_equal m.deals_in_date_range(Time.zone.today, Time.zone.today).size, 2        
+    assert_equal m.deals_in_date_range(Time.zone.today, Time.zone.today).size, 2
+    # delete - still show up
+    assert d.delete
+    assert_equal m.deals_in_date_range(Time.zone.today, Time.zone.today).size, 2          
   end
   
   def test_drafts
@@ -342,7 +345,10 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
-    assert_equal m.drafts().size, 2    
+    assert_equal m.drafts().size, 2
+    # delete a draft
+    assert d.delete
+    assert_equal m.drafts().size, 1  
   end
   
   def test_current_deals
@@ -368,8 +374,11 @@ class MerchantTest < ActiveSupport::TestCase
     assert d.save
     assert_equal m.current_deals().size, 1
     # publish
-    d.publish
+    assert d.publish
     assert_equal m.current_deals().size, 2
+    # delete
+    assert d.delete
+    assert_equal m.current_deals().size, 1    
   end
   
   def test_good_deals
@@ -398,7 +407,10 @@ class MerchantTest < ActiveSupport::TestCase
     d.publish
     assert_equal m.good_deals().size, 1
     d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
-    assert_equal m.good_deals().size, 2    
+    assert_equal m.good_deals().size, 2
+    # delete
+    assert d.delete
+    assert_equal m.good_deals().size, 1  
   end
   
   def test_failed_deals
@@ -433,7 +445,10 @@ class MerchantTest < ActiveSupport::TestCase
     assert_equal m.failed_deals().size, 1
     # set min to 1
     d.update_attributes(:min => 1)
-    assert_equal m.failed_deals().size, 2        
+    assert_equal m.failed_deals().size, 2
+    # delete
+    assert d.delete
+    assert_equal m.failed_deals().size, 1      
   end  
       
 end

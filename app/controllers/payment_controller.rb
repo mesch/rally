@@ -44,6 +44,12 @@ class PaymentController < ApplicationController
       return
     end
     
+    # check if deal hasn't started
+    if !@deal.is_started
+      go_home()
+      return
+    end
+    
     # find (or create) an unconfirmed order
     @order = @current_user.unconfirmed_order(@deal.id)
 
@@ -103,6 +109,12 @@ class PaymentController < ApplicationController
     # check if deal has ended
     if deal.is_ended
       flash[:error] = "This deal has ended. Checkout out some of our other deals!"
+      go_home()
+      return
+    end
+    
+    # check if deal hasn't started
+    if !deal.is_started
       go_home()
       return
     end

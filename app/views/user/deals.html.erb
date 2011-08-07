@@ -8,33 +8,37 @@
                 <div class="head"><h2>Deals</h2></div>
 				<div class="sect">
 					<ul class="deals-list">
-					<% for deal in @deals %>
-						<li class="alt">
-							<p class="time">Ends on <%= deal.end_date.strftime(OPTIONS[:date_format]) %>!</p>
-							<h4><%= deal.merchant.name %> - <%= link_to deal.title, 
-								url_for(:controller => controller.controller_name, :action => 'deal', :id => deal.id) %></h4>
-							<div class="pic">
-								<div class="<%= deal.is_maxed ? 'soldout' : 'isopen' %>"></div>
-								<% if deal.deal_images[0] %>
-									<%= link_to image_tag(deal.deal_images[0].image.url(:display), 
-											:width => "200", :height => "125", :alt => deal.title), 
-											url_for(:controller => controller.controller_name, :action => 'deal', :id => deal.id), 
-											:title => deal.title  %>									
-								<% end %>
-							</div>
-							<div class="info">
-								<p class="total"><strong class="count"><%= deal.confirmed_coupon_count %></strong> Buyers&nbsp;
-									<% if deal.max != 0 %>
-										<strong class="count"><%= deal.max - deal.confirmed_coupon_count %></strong> Left!</p>
+					<% if @deals.size > 0 %>
+						<% for deal in @deals %>
+							<li class="alt">
+								<p class="time">Ends on <%= deal.end_date.strftime(OPTIONS[:date_format]) %>!</p>
+								<h4><%= deal.merchant.name %> - <%= link_to deal.title, 
+									url_for(:controller => controller.controller_name, :action => 'deal', :id => deal.id) %></h4>
+								<div class="pic">
+									<div class="<%= deal.is_maxed ? 'soldout' : 'isopen' %>"></div>
+									<% if deal.deal_images[0] %>
+										<%= link_to image_tag(deal.deal_images[0].image.url(:display), 
+												:width => "200", :height => "125", :alt => deal.title), 
+												url_for(:controller => controller.controller_name, :action => 'deal', :id => deal.id), 
+												:title => deal.title  %>									
 									<% end %>
-								<p class="price">
-									Value：<strong class="old"><%= deal.deal_value.format(:no_cents) %></strong><br />
-									Discount: <strong class="discount"><%= deal.discount %>%</strong><br />
-									Price: <strong><%= deal.deal_price.format(:no_cents) %></strong><br />
-									You save: <strong><%= deal.savings.format(:no_cents) %></strong><br />
-								</p>
-							</div>
-						</li>
+								</div>
+								<div class="info">
+									<p class="total"><strong class="count"><%= deal.confirmed_coupon_count %></strong> Buyers&nbsp;
+										<% if deal.max != 0 %>
+											<strong class="count"><%= deal.max - deal.confirmed_coupon_count %></strong> Left!</p>
+										<% end %>
+									<p class="price">
+										Value：<strong class="old"><%= deal.deal_value.format(:no_cents) %></strong><br />
+										Discount: <strong class="discount"><%= deal.discount %>%</strong><br />
+										Price: <strong><%= deal.deal_price.format(:no_cents) %></strong><br />
+										You save: <strong><%= deal.savings.format(:no_cents) %></strong><br />
+									</p>
+								</div>
+							</li>
+						<% end %>
+					<% else %>
+						There are currently no active deals. Please check back later.
 					<% end %>
 					</ul>
 					<div class="clear"></div>

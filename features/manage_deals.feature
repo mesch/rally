@@ -3,7 +3,18 @@ Feature: Manage Deals
 	As a merchant
 	I want to create and manage deals
 	
-	Scenario: Deal List
+	Scenario: Deal List (No deals)
+		Given I am logged in as merchant "emptybob" with password "test"		
+		When I go to the merchant list of deals
+		Then I should see "You do not have any drafts"
+		When I follow "Current Deals"
+		Then I should see "You do not have any current deals"
+		When I follow "Good Deals"
+		Then I should see "You do not have any deals"
+		When I follow "Failed Deals"
+		Then I should see "You do not have any failed deals"
+			
+	Scenario: Deal List (Draft)
 		Given I am logged in as merchant "emptybob" with password "test"
 		And I have created deals titled "Cool New Deal", "Dealio"
 		When I go to the merchant list of deals
@@ -36,6 +47,8 @@ Feature: Manage Deals
 		And I should see "Edit"
 		And I should see "View"
 		And I should see "Publish"
+		And I should see "Delete"
+		And I should not see "Force Tip"
 		
 	Scenario: Create Deal with 0 codes
 		Given I am logged in as merchant "emptybob" with password "test"
@@ -53,6 +66,8 @@ Feature: Manage Deals
 		And I should see "Edit"
 		And I should see "View"
 		And I should see "Publish"
+		And I should see "Delete"
+		And I should not see "Force Tip"
 	
 	Scenario: Edit Deal (Unpublished)
 		Given I am logged in as merchant "emptybob" with password "test"
@@ -83,6 +98,21 @@ Feature: Manage Deals
 		And I press "Update Deal"
 		Then I should see "Your deal was updated successfully."
 		And I should see "Even Cooler New Deal"
+
+	Scenario: Delete Deal
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have created a deal titled "Cool New Deal"
+		When I go to the merchant list of deals
+		And I follow "Delete"
+		Then I should see "Your draft was deleted."
+		And I should see "Drafts"
+		And I should not see "Cool New Deal"
+		When I follow "Current Deals"
+		Then I should not see "Cool New Deal"
+		When I follow "Good Deals"
+		Then I should not see "Cool New Deal"
+		When I follow "Failed Deals"
+		Then I should not see "Cool New Deal"
 		
 	Scenario: Publish Deal
 		Given I am logged in as merchant "emptybob" with password "test"
@@ -90,10 +120,19 @@ Feature: Manage Deals
 		When I go to the merchant list of deals
 		And I follow "Publish"
 		Then I should see "Your deal was published successfully."
+		And I should see "Current Deals"
 		And I should see "Cool New Deal"
 		And I should see "Edit"
 		And I should see "View"
 		And I should not see "Publish"
+		And I should not see "Delete"
+		And I should not see "Force Tip"
+		When I follow "Drafts"
+		Then I should not see "Cool New Deal"
+		When I follow "Good Deals"
+		Then I should not see "Cool New Deal"
+		When I follow "Failed Deals"
+		Then I should not see "Cool New Deal"
 
 	Scenario: Deal List (Published)
 		Given I am logged in as merchant "emptybob" with password "test"
@@ -154,6 +193,8 @@ Feature: Manage Deals
 		And I should see "View"
 		And I should not see "Edit"
 		And I should not see "Publish"
+		And I should not see "Delete"
+		And I should not see "Force Tip"
 		When I follow "Failed Deals"
 		Then I should not see "Cool New Deal"
 
@@ -172,4 +213,29 @@ Feature: Manage Deals
 		Then I should see "Cool New Deal"
 		And I should see "View"
 		And I should not see "Edit"
-		And I should not see "Publish"	
+		And I should not see "Publish"
+		And I should not see "Delete"
+		And I should see "Force Tip"
+		
+	Scenario: Publish Deal
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have published a deal titled "Cool New Deal"
+		And I have changed the end date of deal "Cool New Deal" to yesterday
+		And I have changed the min of deal "Cool New Deal" to 1	
+		When I go to the merchant list of deals
+		And I follow "Failed Deals"
+		And I follow "Force Tip"
+		Then I should see "Your deal is tipped."
+		And I should see "Good Deals"
+		And I should see "Cool New Deal"
+		And I should see "View"
+		And I should not see "Edit"
+		And I should not see "Publish"
+		And I should not see "Delete"
+		And I should not see "Force Tip"
+		When I follow "Drafts"
+		Then I should not see "Cool New Deal"
+		When I follow "Current Deals"
+		Then I should not see "Cool New Deal"
+		When I follow "Failed Deals"
+		Then I should not see "Cool New Deal"

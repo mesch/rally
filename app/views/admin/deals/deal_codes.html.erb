@@ -1,0 +1,39 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Deal Codes</h2>
+					&nbsp;&nbsp;<%= link_to "Back to Deals", admin_deals_url %>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">
+						<tr><th width="40">Id</th>
+							<th width="40">Deal Id</th>
+							<th width="100">Code</th>
+							<th width="40">Created</th>
+							<th width="40">Reserved</th>
+						</tr>							
+						<% for deal_code in @deal_codes %>
+						<tr>
+							<td><%= deal_code.id %></td>
+							<td><%= deal_code.deal_id %></td>
+							<td><%= deal_code.code %></td>
+							<td><%= deal_code.created_at.strftime(OPTIONS[:date_format]) %></td>
+							<td><%= deal_code.reserved %></td>
+						</tr>
+						<% end %>
+                    </table>
+					<%= page_entries_info @deal_codes %>
+					<%= will_paginate @deal_codes %>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

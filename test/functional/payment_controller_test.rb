@@ -61,7 +61,16 @@ class PaymentControllerTest < ActionController::TestCase
     get :order, :deal_id => @deal.id
     assert_response :redirect
     assert_redirected_to :controller => @user_controller_name, :action=>'home'    
-  end  
+  end
+  
+  def test_order_deal_not_started
+    @deal.update_attributes(:start_date => Time.zone.today + 1.days)
+    assert !@deal.is_started
+    self.login
+    get :order, :deal_id => @deal.id
+    assert_response :redirect
+    assert_redirected_to :controller => @user_controller_name, :action=>'home'    
+  end 
   
   # purchase page
   def test_purchase_basic
@@ -130,6 +139,15 @@ class PaymentControllerTest < ActionController::TestCase
   def test_purchase_deal_ended
     @deal.update_attributes(:end_date => Time.zone.today - 1.days)
     assert @deal.is_ended
+    self.login
+    get :purchase, :order_id => @order.id
+    assert_response :redirect
+    assert_redirected_to :controller => @user_controller_name, :action=>'home'    
+  end
+  
+  def test_purchase_deal_not_started
+    @deal.update_attributes(:start_date => Time.zone.today + 1.days)
+    assert !@deal.is_started
     self.login
     get :purchase, :order_id => @order.id
     assert_response :redirect

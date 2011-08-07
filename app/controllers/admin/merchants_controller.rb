@@ -54,7 +54,6 @@ class Admin::MerchantsController < AdminController
     return
   end  
   
-  
   def new
     unless @merchant
       @merchant = Merchant.new()
@@ -148,6 +147,12 @@ class Admin::MerchantsController < AdminController
       redirect_to :controller => self.controller_name, :action => :edit, :id => params[:id]
       return
     end
+  end
+  
+  def impersonate
+    @merchant = Merchant.find_by_id(params[:id])
+    session[:merchant_id] = @merchant.id
+    redirect_to :controller => "/merchant", :action => 'home'
   end
 
 end
