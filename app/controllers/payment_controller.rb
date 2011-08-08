@@ -146,9 +146,6 @@ class PaymentController < ApplicationController
   # Returns relay response when Authorize.Net POSTs to us.
   def relay_response
     sim_response = AuthorizeNet::SIM::Response.new(params)
-    p sim_response
-    p AUTHORIZE_NET_CONFIG['api_login_id']
-    p AUTHORIZE_NET_CONFIG['merchant_hash_value']
     if sim_response.success?(AUTHORIZE_NET_CONFIG['api_login_id'], AUTHORIZE_NET_CONFIG['merchant_hash_value'])
       render :text => sim_response.direct_post_reply(
                         url_for(:controller => self.controller_name, :action => 'receipt', :only_path => false, 

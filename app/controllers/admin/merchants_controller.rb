@@ -44,7 +44,7 @@ class Admin::MerchantsController < AdminController
         end
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      logger.error "AdminMerchants.edit: Couldn't update Merchant #{@merchant}", invalid
+      logger.error "AdminMerchants.edit: Couldn't update Merchant #{@merchant}: #{invalid}"
       flash.now[:error] = "#{pp_errors(@merchant.errors)}"
       render(:action => :edit)
       return        
@@ -86,7 +86,7 @@ class Admin::MerchantsController < AdminController
         end
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      logger.error "AdminMerchants.create: Couldn't create Merchant #{@merchant}", invalid
+      logger.error "AdminMerchants.create: Couldn't create Merchant #{@merchant} #{invalid}"
       flash.now[:error] = "#{pp_errors(invalid.record.errors)}"
       render(:action => :new)
       return  
