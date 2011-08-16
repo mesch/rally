@@ -9,9 +9,6 @@ class DealCode < ActiveRecord::Base
   
   # Paginate methods
   def self.search(search="", page=1, per_page=10)
-    p search
-    p page
-    p per_page
     paginate :per_page => per_page, :page => page,
              :conditions => ['deal_id = ?', "#{search}"],
              :order => 'created_at asc'

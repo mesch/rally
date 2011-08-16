@@ -40,12 +40,10 @@ burger_code9:
 burger_code10:
     deal: burger_deal
     code: '1234abc10'
-    reserved: true
 
 burger_code11:
     deal: burger_deal
     code: '1234abc11'
-    reserved: true
 
 burger_code12:
     deal: burger_deal

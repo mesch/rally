@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110725180653) do
+ActiveRecord::Schema.define(:version => 20110808231657) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -95,6 +95,21 @@ ActiveRecord::Schema.define(:version => 20110725180653) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
+  create_table "merchant_reports", :force => true do |t|
+    t.integer  "merchant_id"
+    t.string   "report_type"
+    t.integer  "deal_id"
+    t.datetime "start"
+    t.datetime "end"
+    t.string   "state"
+    t.datetime "generated_at"
+    t.string   "report_file_name"
+    t.string   "report_content_type"
+    t.integer  "report_file_size"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "merchant_subdomains", :force => true do |t|
     t.string   "subdomain"

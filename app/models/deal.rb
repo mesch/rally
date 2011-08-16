@@ -43,16 +43,16 @@ class Deal < ActiveRecord::Base
     return DealImage.find(:all, :conditions => {:deal_id => self.id}, :order => "counter ASC")
   end
 
-  # returns all reserved coupons - whether or not they have been purchased
+  # returns number of all coupons - whether or not they have been authorized
   def coupon_count
     count = Order.sum(:quantity, :conditions => ["deal_id = ?", self.id])
   end
   
-  # returns all purchased coupons
+  # returns number of all authorized coupons
   def confirmed_coupon_count
     count = Order.sum(:quantity, :conditions => ["deal_id = ? AND state != ?", self.id, Order::CREATED])
   end
-
+  
   def publish
     begin
       Deal.transaction do
@@ -62,7 +62,7 @@ class Deal < ActiveRecord::Base
       end
       return true
     rescue ActiveRecord::RecordInvalid => invalid
-      logger.error "Deal.publish: Failed for Deal #{self.inspect}", invalid
+      logger.error "Deal.publish: Failed for Deal #{self.inspect} #{invalid}"
     end
     return false
   end
@@ -72,7 +72,7 @@ class Deal < ActiveRecord::Base
       self.update_attributes!(:active => false)
       return true
     rescue ActiveRecord::RecordInvalid => invalid
-      logger.error "Deal.delete: Failed for Deal #{self.inspect}", invalid
+      logger.error "Deal.delete: Failed for Deal #{self.inspect} #{invalid}"
     end
     return false
   end
@@ -83,7 +83,7 @@ class Deal < ActiveRecord::Base
         self.update_attributes!(:min => self.confirmed_coupon_count)
         return true
       rescue ActiveRecord::RecordInvalid => invalid
-        logger.error "Deal.force_tip: Failed for Deal #{self.inspect}", invalid
+        logger.error "Deal.force_tip: Failed for Deal #{self.inspect} #{invalid}"
       end
       return false
     end
@@ -218,7 +218,7 @@ class Deal < ActiveRecord::Base
             end
           end
         rescue ActiveRecord::RecordInvalid => invalid
-          logger.error "Deal.charge_orders: Failed for Deal #{deal.inspect}", invalid
+          logger.error "Deal.charge_orders: Failed for Deal #{deal.inspect} #{invalid}"
         end
       end
     end

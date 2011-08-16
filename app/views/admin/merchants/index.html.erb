@@ -24,7 +24,7 @@
 							<th width="40">Active</th>
 							<th width="60">Created</th>
 							<th width="40">Deals</th>
-							<th width="40">Actions</th> 
+							<th width="80">Actions</th> 
 						</tr>							
 						<% for merchant in @merchants %>
 						<tr>
@@ -36,7 +36,8 @@
 							<td><%= merchant.active %></td>
 							<td><%= merchant.created_at.strftime(OPTIONS[:date_format]) %></td>
 							<td><%= merchant.deals.size %></td>
-							<td><%= link_to "Impersonate", impersonate_admin_merchant_url(merchant.id) %></td>
+							<td><%= link_to "Impersonate", impersonate_admin_merchant_url(merchant.id) %>
+								|  <%= link_to "Reports", reports_admin_merchant_url(merchant.id) %></td>
 						</tr>
 						<% end %>
                     </table>

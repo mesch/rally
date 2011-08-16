@@ -54,6 +54,7 @@ class Merchant < ActiveRecord::Base
   
   has_many :deals
   has_one :merchant_subdomain
+  has_many :merchant_reports
   
   # Logo methods
   def get_logo

@@ -1,5 +1,5 @@
 class DealImage < ActiveRecord::Base
-  MAX_IMAGE_SIZE = 1048576 # Max bytes (1 MB)
+  MAX_IMAGE_SIZE = 1.megabytes # Max bytes (1 MB)
   CONTENT_TYPES = ['image/jpg', 'image/jpeg', 'image/pjpeg', 'image/gif', 'image/png', 'image/x-png', 'image/bmp']
   THUMB_SIZE = "100x100!"
   DISPLAY_SIZE = "440x275!"

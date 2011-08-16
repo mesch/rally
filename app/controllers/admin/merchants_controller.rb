@@ -49,7 +49,7 @@ class Admin::MerchantsController < AdminController
       render(:action => :edit)
       return        
     end
-    flash.now[:notice] = "Account updated."
+    flash[:notice] = "Account updated."
     redirect_to :controller => self.controller_name, :action => :index
     return
   end  
@@ -153,6 +153,40 @@ class Admin::MerchantsController < AdminController
     @merchant = Merchant.find_by_id(params[:id])
     session[:merchant_id] = @merchant.id
     redirect_to :controller => "/merchant", :action => 'home'
+  end
+
+  def reports
+    @reports = MerchantReport.search(params[:id], params[:page])
+  end
+  
+  def new_report
+    @merchant = Merchant.find_by_id(params[:id])
+    @deals = @merchant.good_deals + @merchant.failed_deals
+  end
+  
+  def create_report
+    @merchant = Merchant.find_by_id(params[:id])
+    report = MerchantReport.new(:merchant_id => @merchant.id, :report_type => params[:report_type], 
+      :state => MerchantReport::GENERATING, :deal_id => params[:deal_id])
+    
+    if report.save and report.delay(:priority=>1).generate_report(params[:all])
+      flash[:notice] = "Your report is generating."
+      redirect_to :controller => self.controller_name, :action => 'reports', :id => params[:id]
+    else
+      flash[:error] = "There was a problem generating your report. Please try again."
+      redirect_to :controller => self.controller_name, :action => 'reports', :id => params[:id]
+    end
+  end
+  
+  def delete_report
+    @merchant = Merchant.find_by_id(params[:id])
+    if MerchantReport.destroy(params[:report_id])
+      flash[:notice] = "Your report was deleted."
+      redirect_to :controller => self.controller_name, :action => 'reports', :id => params[:id]
+    else
+      flash[:error] = "There was a problem deleting your report. Please try again."
+      redirect_to :controller => self.controller_name, :action => 'reports', :id => params[:id]      
+    end 
   end
 
 end

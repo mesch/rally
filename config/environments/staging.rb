@@ -50,6 +50,10 @@ Rally::Application.configure do
     :path => ":class/:attachment/:id/:style.:extension"
   }
   
+  OPTIONS[:paperclip_report_storage_options] = OPTIONS[:paperclip_storage_options].merge(
+    { :path => ":class/:attachment/:id/:basename.:extension" }
+  )
+  
   # Facebook logins
   OPTIONS[:facebook_app_id] = "218320038188280"
   OPTIONS[:facebook_api_key] = "347577002d2940ab5c2842910a19d688"

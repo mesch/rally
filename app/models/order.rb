@@ -38,7 +38,7 @@ class Order < ActiveRecord::Base
         end
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      logger.error "Order.reserce_quantity: Failed for Order #{self.inspect}", invalid
+      logger.error "Order.reserce_quantity: Failed for Order #{self.inspect} #{invalid}"
     end
     return false
   end
@@ -68,7 +68,7 @@ class Order < ActiveRecord::Base
       end
       return true
     rescue ActiveRecord::RecordInvalid => invalid
-      logger.error "Order.process_authorization: Failed for Order #{self.inspect}", invalid
+      logger.error "Order.process_authorization: Failed for Order #{self.inspect} #{invalid}"
     end
     return false
   end
@@ -112,10 +112,10 @@ class Order < ActiveRecord::Base
       return true
     rescue PaymentError => pe
       p "Order.capture: Failed for Order #{self.inspect} #{pe}"
-      logger.error "Order.capture: Failed for Order #{self.inspect}", pe
+      logger.error "Order.capture: Failed for Order #{self.inspect} #{pe}"
     rescue ActiveRecord::RecordInvalid => invalid
       p "Order.capture: Failed for Order #{self.inspect} #{invalid}"
-      logger.error "Order.capture: Failed for Order #{self.inspect}", invalid
+      logger.error "Order.capture: Failed for Order #{self.inspect} #{invalid}"
     end
     return false
   end
@@ -163,7 +163,7 @@ class Order < ActiveRecord::Base
         end
       end
     rescue
-      logger.error "Order.reset_orders: Failed", invalid
+      logger.error "Order.reset_orders: Failed #{invalid}"
     end
     
     return {:considered => considered, :successes => successes, :failures => failures}

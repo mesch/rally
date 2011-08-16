@@ -39,6 +39,8 @@ class OrderTest < ActiveSupport::TestCase
     assert o.save
     o = Order.new(:user_id => 1000, :deal_id => 1, :state => 'SOMETHING_ELSE')
     assert !o.save
+    o = Order.new(:user_id => 1000, :deal_id => 1, :state => nil)
+    assert !o.save
   end
   
   def test_order_create_multiple

@@ -33,6 +33,19 @@ module NavigationHelpers
       payment_order_path(:deal_id => deal.id)    
     when /the list of coupons/
       coupons_path
+    # admin
+    when /the admin home page/
+      admin_home_path
+    when /the admin list of merchants/
+      admin_merchants_path
+    when /the admin new merchant page/
+      new_admin_merchant_path
+    when /the admin edit merchant page for "([^"]*)"/
+      merchant = Merchant.find_by_username($1)
+      edit_admin_merchant_path(merchant.id)
+    when /the admin merchant reports page for "([^"]*)"/
+      merchant = Merchant.find_by_username($1)
+      reports_admin_merchant_path(merchant.id)      
     # subdomain
     when /the "([^"]*)" subdomain/       
       url = "http://#{$1}.#{@base_host}"

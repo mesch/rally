@@ -44,4 +44,9 @@ Rally::Application.configure do
     :url => "/system/#{Rails.env}/:class/:attachment/:id/:style.:extension"
   }
   
+  OPTIONS[:paperclip_report_storage_options] = OPTIONS[:paperclip_storage_options].merge(
+    { :path => ":rails_root/public/system/#{Rails.env}/:class/:attachment/:id/:basename.:extension",
+      :url => "/system/#{Rails.env}/:class/:attachment/:id/:basename.:extension" }
+  )
+  
 end

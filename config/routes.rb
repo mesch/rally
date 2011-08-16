@@ -141,6 +141,10 @@ Rally::Application.routes.draw do
       post 'change_password', :on => :member
       get 'send_activation', :on => :member
       get 'impersonate', :on => :member
+      get 'reports', :on => :member
+      get 'new_report', :on => :member
+      post 'create_report', :on => :member
+      get 'delete_report', :on => :member
     end
     resources :users
     resources :deals do

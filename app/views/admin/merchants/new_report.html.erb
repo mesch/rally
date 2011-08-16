@@ -1,0 +1,40 @@
+<%= form_tag(create_report_admin_merchant_url) %>
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+	<div id="content" class="clear mainwide">
+        <div class="clear box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+					<h2>Generate Report</h2>
+				</div>
+                <div class="sect">
+					<div class="field">
+						<%= label_tag 'Report Type', 'Report Type' %> 
+						<%= select_tag :report_type, ("<option>" + MerchantReport::REPORT_TYPES.join("</option><option>") + "</option>").html_safe %>
+					</div>			
+					<div class="field">
+						<%= label_tag 'Deal' %> 
+						<%= select_tag :deal_id, options_from_collection_for_select(@deals, 'id', 'title') %>
+					</div>
+					<div class="field">
+						<%= check_box_tag :all, 1, false %>
+						Include unreserved coupon codes
+					</div>
+					<div class="act">
+						<%= submit_tag :submit, :class=>"formbutton", :value => "Generate Report" %>
+						or <%= link_to "cancel", reports_admin_merchant_url(@merchant.id) %>
+					</div>
+                </div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+	</div>
+
+<div id="sidebar">
+</div>
+
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

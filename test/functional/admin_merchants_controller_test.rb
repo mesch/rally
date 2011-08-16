@@ -215,4 +215,21 @@ class Admin::MerchantsControllerTest < ActionController::TestCase
     assert_equal session[:merchant_id], @bob.id
   end
   
+  def test_coupon_reports
+    MerchantReport.delete_all
+    post :create_report, :id => @bob.id, :deal_id => @burger_deal.id, :report_type => MerchantReport::COUPON_REPORT, :all => 1
+    assert_response :redirect
+    assert flash[:notice]
+    assert_redirected_to :action => 'reports'  
+    r = MerchantReport.find(:all)
+    assert_equal r.size, 1
+    
+    get :delete_report, :id => @bob.id, :report_id => r[0].id
+    assert_response :redirect
+    assert flash[:notice]
+    assert_redirected_to :action => 'reports'
+    r = MerchantReport.find(:all)
+    assert_equal r.size, 0
+  end
+  
 end

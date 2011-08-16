@@ -1,5 +1,5 @@
 class DealVideo < ActiveRecord::Base
-  MAX_VIDEO_SIZE = 20971520 # Max bytes (20 MB)
+  MAX_VIDEO_SIZE = 20.megabytes # Max bytes (20 MB)
   CONTENT_TYPES = ['application/x-shockwave-flash', 'application/flv', 'video/x-flv', 'flv-application/octet-stream', 'application/octet-stream']
 
   validates_attachment_presence :video

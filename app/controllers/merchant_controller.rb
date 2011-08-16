@@ -228,8 +228,8 @@ class MerchantController < ApplicationController
       redirect_to :controller => self.controller_name, :action => :deals, :selector => 'failure'
       return
     end
-  end        
-
+  end
+  
   # Home
   def home
     use_default = false
@@ -303,7 +303,7 @@ class MerchantController < ApplicationController
           end
         end
       rescue ActiveRecord::RecordInvalid => invalid
-        logger.error "Merchant.account: Couldn't update Merchant #{@merchant}", invalid
+        logger.error "Merchant.account: Couldn't update Merchant #{@merchant} #{invalid}"
         flash.now[:error] = "#{pp_errors(invalid.record.errors)}"
         return      
       end
@@ -362,12 +362,12 @@ class MerchantController < ApplicationController
           end
         end
       rescue ActiveRecord::RecordInvalid => invalid
-        logger.error "Merchant.signup: Couldn't create Merchant #{@merchant}", invalid
+        logger.error "Merchant.signup: Couldn't create Merchant #{@merchant} #{invalid}"
         flash.now[:error] = "Signup unsuccessful. Please try again."
         render(:action => :signup)
         return
       rescue EmailError => e
-        logger.error "Merchant.signup: Couldn't send activation email for Merchant#{@merchant}", e    
+        logger.error "Merchant.signup: Couldn't send activation email for Merchant#{@merchant} #{e}"   
       end
       
       flash[:notice] = "Signup successful. An activation code has been sent."

@@ -94,7 +94,6 @@ Given /^the deal "([^"]*)" has 1 (authorized|paid) coupon(?: with a deal code "(
     Coupon.create!(:user_id => @current_user.id, :deal_id => deal.id, :order_id => o.id)    
   end
 end
-      
 
 # User Givens
 Given /^I am logged in as user "(.+?)" with password "(.+?)"/ do |email, password|
@@ -104,6 +103,11 @@ Given /^I am logged in as user "(.+?)" with password "(.+?)"/ do |email, passwor
   click_button "Log In"
   # switch user
   @current_user = User.find_by_email(email)
+end
+
+# Admin Givens
+Given /^I am logged in as admin$/ do
+  page.driver.basic_authorize(OPTIONS[:admin_user_name], OPTIONS[:admin_password])
 end
 
 # When

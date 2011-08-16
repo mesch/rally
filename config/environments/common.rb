@@ -33,7 +33,8 @@ OPTIONS[:enable_starttls_auto] = false
 
 # Date / Time formatting
 OPTIONS[:date_format] = '%m/%d/%Y'
-OPTIONS[:time_format] = '%Y-%m-%d %H:%M:%S'
+OPTIONS[:time_format] = '%m/%d/%Y %H:%M:%S'
+OPTIONS[:time_format_file] = '%m%d%Y_%H%M%S'
 
 # Order Timout
 OPTIONS[:order_timeout] = 10*60
@@ -45,3 +46,9 @@ OPTIONS[:gateways] = {:authorize_net  => 'AUTHORIZE_NET'}
 OPTIONS[:logo_default_url] = '/images/logo_:style.gif'
 OPTIONS[:deal_image_default_url] = '/images/missing_deal_image.gif'
 OPTIONS[:deal_video_default_url] = '/images/missing_deal_video.gif'
+
+# Temp Files
+OPTIONS[:temp_file_directory] = Rails.root + Pathname.new('tmp')
+
+# Report Expiration
+OPTIONS[:report_expiration] = 60*60

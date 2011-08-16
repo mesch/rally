@@ -1,0 +1,59 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Merchant Reports</h2>
+					<%= link_to "New Report", new_report_admin_merchant_url %>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">
+						<tr><th width="40">Id</th>
+							<th width="200">Merchant</th>
+							<th width="60">Type</th>
+							<th width="60">Deal Id</th>
+							<th width="60">Start / End</th>
+							<th width="60">State</th>
+							<th width="60">Generated</th>
+							<th width="40">Actions</th> 
+						</tr>							
+						<% for report in @reports %>
+						<tr>
+							<td><%= report.id %></td>
+							<td><%= report.merchant.name %></td>
+							<td><%= report.report_type %></td>
+							<td><%= report.deal_id %></td>
+							<td nowrap>
+								<% if report.start and report.end %>
+									<%= report.start.strftime(OPTIONS[:date_format]) %><br/>
+									<%= report.end.strftime(OPTIONS[:date_format]) %>
+								<% end %>
+							</td>
+							<td><%= report.state %></td>
+							<td> 
+								<% if report.generated_at %>
+									<%= report.generated_at.strftime(OPTIONS[:time_format]) %>
+								<% end %>
+							</td>
+							<td>
+								<% if report.state == MerchantReport::GENERATED %>
+									<%= link_to 'Download', report.report.url %> |
+									<%= link_to 'Delete', delete_report_admin_merchant_url(:report_id => report.id), :confirm=>"Are you sure?" %>
+								<% end %>
+							</td>
+						</tr>
+						<% end %>
+                    </table>
+					<%= page_entries_info @reports %>
+					<%= will_paginate @reports %>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

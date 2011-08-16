@@ -74,8 +74,7 @@ Feature: Manage Merchant Account
 		And I should see the merchant logo
 		When I go to the "newbob" subdomain
 		Then I should see the merchant logo
-	
-	
+
 	
 	
 	
