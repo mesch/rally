@@ -1,4 +1,5 @@
 require "exception"
+require "fastercsv"
 
 class MerchantController < ApplicationController
   before_filter :require_merchant, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :connect_success]
@@ -71,8 +72,8 @@ class MerchantController < ApplicationController
             dv.save!
         end
         if (file = params[:codes_file])
-          while (line = file.gets)
-            dc = DealCode.new(:deal_id => @deal.id, :code => line.strip)
+          FasterCSV.foreach(file.path) do |row|
+            dc = DealCode.new(:deal_id => @deal.id, :code => row[0])
             dc.save!
           end
         end       
@@ -152,8 +153,8 @@ class MerchantController < ApplicationController
         end       
         if (file = params[:codes_file] and !@deal.published)
           DealCode.delete_all(["deal_id = ?", @deal.id])
-          while (line = file.gets)
-            dc = DealCode.new(:deal_id => @deal.id, :code => line.strip)
+          FasterCSV.foreach(file.path) do |row|
+            dc = DealCode.new(:deal_id => @deal.id, :code => row[0])
             dc.save!
           end
         end
