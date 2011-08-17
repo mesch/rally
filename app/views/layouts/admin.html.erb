@@ -7,7 +7,21 @@
 	<!-- ><link rel="shortcut icon" href="/favicon.ico" /> -->
 	<%= raw stylesheet_link_tag 'index.css', :media => "screen", :charset => "utf-8" %>	
 	<script type="text/javascript">var WEB_ROOT = '';</script>
+	<%= raw javascript_include_tag "mootools-core-1.3.2-full-nocompat.js" %>	
+	<%= raw javascript_include_tag "mootools-more-1.3.2-full-nocompat.js" %>
+	<%= raw javascript_include_tag "rails.js" %>
+	<%= raw javascript_include_tag "global.js" %>
+	<%= raw javascript_include_tag "modal.js" %>
+	<%= raw javascript_include_tag "overlay.js" %>	
+	<%= raw javascript_include_tag "application.js" %>	
 	<%= raw javascript_include_tag "index.js" %>
+	
+	<%= raw javascript_include_tag "datepicker/Locale.en-US.DatePicker.js" %>
+	<%= raw javascript_include_tag "datepicker/Picker.js" %>
+	<%= raw javascript_include_tag "datepicker/Picker.Attach.js" %>
+	<%= raw javascript_include_tag "datepicker/Picker.Date.js" %>
+	<%= raw stylesheet_link_tag "datepicker/datepicker.css", :media => "screen" %>
+	
 	<%= render :partial => 'layouts/block/google_analytics' %>
 </head>
 <body class="newbie">

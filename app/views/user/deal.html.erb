@@ -18,6 +18,7 @@
 <% end %>
 
 <div id="deal-default">
+	<%= render :partial => 'layouts/block/deal_share' %>
 	<div id="content">
 		<div id="deal-intro" class="cf">
         <h1><%= link_to "Today's Deal:", 
@@ -210,3 +211,7 @@
 </div>
 </div> <!-- bd end -->
 </div> <!-- bdw end -->
+
+<script type="text/javascript">
+	var deal = <%= raw @deal.facebook_share.to_json %>;
+</script>

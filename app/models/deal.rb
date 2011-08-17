@@ -27,6 +27,17 @@ class Deal < ActiveRecord::Base
              :conditions => ['title like ?', "%#{search}%"],
              :order => 'created_at desc'
   end
+  
+  # format for sharing in facebook
+  def facebook_share
+    { 
+      :message => "message ...",
+	    :name  => self.merchant.name,
+	    :caption => self.title,        
+	    :picture => self.deal_images.size > 0 ? self.deal_images[0].image.url : '',
+	    :attribution => OPTIONS[:facebook_app_url]
+	  }
+  end
 
   def discount
     if self.deal_value == 0

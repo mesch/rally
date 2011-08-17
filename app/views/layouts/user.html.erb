@@ -7,10 +7,17 @@
 	<!-- <link rel="shortcut icon" href="/favicon.ico" /> -->
 	<%= raw stylesheet_link_tag 'index.css', :media => "screen", :charset => "utf-8" %>	
 	<script type="text/javascript">var WEB_ROOT = '';</script>
+	<%= raw javascript_include_tag "mootools-core-1.3.2-full-nocompat.js" %>	
+	<%= raw javascript_include_tag "mootools-more-1.3.2-full-nocompat.js" %>
+	<%= raw javascript_include_tag "rails.js" %>
+	<%= raw javascript_include_tag "global.js" %>
+	<%= raw javascript_include_tag "modal.js" %>
+	<%= raw javascript_include_tag "overlay.js" %>	
+	<%= raw javascript_include_tag "application.js" %>	
 	<%= raw javascript_include_tag "index.js" %>
 	<%= render :partial => 'layouts/block/google_analytics' %>
 </head>
-<body class="newbie">
+<body id="<%= controller.controller_name %>_<%= controller.action_name %>">
 <div id="fb-root"></div>
 <div id="pagemasker"></div><div id="dialog"></div>
 <div id="doc">
@@ -67,6 +74,11 @@
 	<%= yield %>
 	
 	<%= render :partial => 'layouts/block/footer' %>
+	
+	<%= raw javascript_include_tag "https://connect.facebook.net/en_US/all.js" %>
+	<script type="text/javascript">
+		FB.init({appId: <%= OPTIONS[:facebook_app_id] %>, status: true, cookie: true, xfbml: true});
+	</script>
 	
 	<% if @current_user and @current_user.facebook_id %>
 		<script type="text/javascript">

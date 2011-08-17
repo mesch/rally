@@ -148,7 +148,6 @@ Feature: Manage Admin Account
 		And I should see "Download"
 		And I should see "Delete"
 		When I follow "Delete"
-		And show me the page
 		Then I should see "Reports"
 		And I should see "Your report was deleted."
 		And I should not see "Download"
