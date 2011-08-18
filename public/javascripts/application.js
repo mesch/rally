@@ -30,17 +30,11 @@ var add_share_events = function() {
 			var share_link = this;
 			
 			FB.ui({
-				method: 'stream.publish',
-		     	message: deal.message,
-				attachment: {
-		       		name: deal.name,
-		       		caption: deal.caption,
-					media : [{ 
-					        type : "image", 
-					        src : deal.picture,
-							href : deal.attribution
-					}]
-		     	},
+				method: 'feed',
+		       	name: deal.name,
+		       	caption: deal.caption,
+				description: 'yoyoyo',
+				picture: deal.picture,
 		     	action_links: [{ 
 					text: 'Check it out!', href : deal.attribution 
 				}],

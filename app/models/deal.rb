@@ -30,13 +30,15 @@ class Deal < ActiveRecord::Base
   
   # format for sharing in facebook
   def facebook_share
-    { 
-      :message => "message ...",
+    response = { 
 	    :name  => self.merchant.name,
-	    :caption => self.title,        
-	    :picture => self.deal_images.size > 0 ? self.deal_images[0].image.url : '',
+	    :caption => self.title,
+	    :picture => "http://aht.seriouseats.com/images/20110110-bobs-burgers-flyer.jpg",     
+	    :picture2 => self.deal_images.size > 0 ? self.deal_images[0].image.url : '',
 	    :attribution => OPTIONS[:facebook_app_url]
 	  }
+	  p response
+	  return response
   end
 
   def discount
