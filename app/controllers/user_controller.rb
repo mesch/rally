@@ -1,6 +1,7 @@
 class UserController < ApplicationController
-  before_filter :require_user, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, :deals, :deal, :splash, :home]
-  before_filter :check_for_user, :only => [:home, :deals, :deal]
+  before_filter :require_user, :except => [:signup, :forgot_password, :activate, :reactivate, :login, :logout, :connect, 
+                                            :deals, :deal, :splash, :home, :create_share, :update_share]
+  before_filter :check_for_user, :only => [:home, :deals, :deal, :create_share, :update_share]
   before_filter :check_for_visitor
   after_filter :log_user_action
   
@@ -60,6 +61,8 @@ class UserController < ApplicationController
     if @merchant_subdomain and @merchant_subdomain.merchant
       @others.delete_if {|other| other.merchant_id != @merchant_subdomain.merchant.id}
     end
+    
+    @deal_url = generate_deal_url(@deal)
       
     render "user/#{self.action_name}"
   end
@@ -92,12 +95,25 @@ class UserController < ApplicationController
     render "user/#{self.action_name}", :layout => false
   end
 
-  def subscribe
-    render "user/#{self.action_name}"
+  # Shares
+  def create_share
+    user_id = @current_user ? @current_user.id : nil
+    share = Share.new(:deal_id => params[:deal_id], :user_id => user_id)
+    if share.save
+      return render :json => { :result => "success", :message => "Share created", :share_id => share.id, 
+        :update_share_url => url_for(:controller => self.controller_name, :action => 'update_share', :id => share.id) }
+    else
+      return render :json => { :result => "error", :message => "Unable to create share" }
+    end
   end
-
-  def invite
-    render "user/#{self.action_name}"
+  
+  def update_share
+    share = Share.find_by_id(params[:id])
+    if share and share.update_attributes(:post_id => params[:post_id], :posted => true)
+      return render :json => { :result => "success", :message => "Share updated" }
+    else
+      return render :json => { :result => "error", :message => "Unable to update share" }
+    end
   end
 
   def home
@@ -303,6 +319,13 @@ class UserController < ApplicationController
       end
     end
     render "user/#{self.action_name}"   
+  end
+  
+  private
+  
+  def generate_deal_url(deal)
+    deal_url = url_for(:controller => self.controller_name, :action => 'deal', :id => deal.id)
+    return deal_url
   end
   
 end

@@ -41,12 +41,19 @@ Rally::Application.configure do
   
   OPTIONS[:paperclip_storage_options] = {
     :path => ":rails_root/public/system/#{Rails.env}/:class/:attachment/:id/:style.:extension",
-    :url => "/system/#{Rails.env}/:class/:attachment/:id/:style.:extension"
+    :url => "http://www.rcom.com/system/#{Rails.env}/:class/:attachment/:id/:style.:extension"
   }
   
   OPTIONS[:paperclip_report_storage_options] = OPTIONS[:paperclip_storage_options].merge(
     { :path => ":rails_root/public/system/#{Rails.env}/:class/:attachment/:id/:basename.:extension",
       :url => "/system/#{Rails.env}/:class/:attachment/:id/:basename.:extension" }
   )
+  
+  # Facebook logins - using test accounts
+  OPTIONS[:facebook_app_id] = "221523644534233"
+  OPTIONS[:facebook_api_key] = "d27f5c585be57aa5e8bc0f034ab9b329"
+  OPTIONS[:facebook_secret_key] = "fbea89d411fa448c97028147d3141ce4"
+  
+  OPTIONS[:facebook_app_url] = "http://apps.facebook.com/rc_deals_dev/"
   
 end

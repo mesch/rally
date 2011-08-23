@@ -123,6 +123,12 @@ class FacebookControllerTest < ActionController::TestCase
     assert session[:user_id]
   end
   
+  def test_home_deal_id
+    get :home, :deal_id => @burger_deal.id
+    assert_response :redirect
+    assert_redirected_to :action => 'deal', :id => @burger_deal.id
+  end
+  
   def test_home_subdomain
     old_host = @request.host
     self.login
@@ -142,6 +148,10 @@ class FacebookControllerTest < ActionController::TestCase
     get :home, :sd => 'bob'
     assert_response :redirect
     assert_redirected_to :action => :home, :host => old_host.gsub(/^www/,'bob')
+    # valid subdomain with deal id - host changes and passes along deal_id
+    get :home, :sd => 'bob', :deal_id => @burger_deal
+    assert_response :redirect
+    assert_redirected_to :action => :home, :deal_id => @burger_deal.id, :host => old_host.gsub(/^www/,'bob')    
   end
   
   def test_home_subdomain_no_login
@@ -177,6 +187,7 @@ class FacebookControllerTest < ActionController::TestCase
     assert_nil ua.user
     assert_nil ua.merchant
     assert_nil ua.deal
+    assert_nil ua.share
     assert_equal ua.controller, 'facebook'
     assert_equal ua.action, 'login'
     assert_equal ua.method, 'GET'
@@ -194,6 +205,7 @@ class FacebookControllerTest < ActionController::TestCase
     assert_equal ua.user, @test_user
     assert_nil ua.merchant
     assert_nil ua.deal
+    assert_nil ua.share
     assert_equal ua.controller, 'facebook'
     assert_equal ua.action, 'deals'
     assert_equal ua.method, 'GET'
@@ -211,6 +223,7 @@ class FacebookControllerTest < ActionController::TestCase
     assert_nil ua.user
     assert_nil ua.merchant
     assert_nil ua.deal
+    assert_nil ua.share
     assert_equal ua.controller, 'facebook'
     assert_equal ua.action, 'deals'
     assert_equal ua.method, 'GET'
@@ -268,7 +281,15 @@ class FacebookControllerTest < ActionController::TestCase
     get :deal, :id => @burger_deal.id
     ua = UserAction.find(:first)
     assert ua
-    assert_equal ua.deal, @burger_deal   
+    assert_equal ua.deal, @burger_deal
+    assert_nil ua.share
+    # go to a deal page with share_id
+    UserAction.delete_all
+    get :deal, :id => @burger_deal.id, :share_id => @burger_share.id
+    ua = UserAction.find(:first)
+    assert ua
+    assert_equal ua.deal, @burger_deal
+    assert_equal ua.share, @burger_share
   end
 
   def test_subdomain_general

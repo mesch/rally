@@ -18,7 +18,9 @@
 <% end %>
 
 <div id="deal-default">
-	<%= render :partial => 'layouts/block/deal_share' %>
+	<% if @current_user %>
+		<%= render :partial => 'layouts/block/deal_share' %>
+	<% end %>
 	<div id="content">
 		<div id="deal-intro" class="cf">
         <h1><%= link_to "Today's Deal:", 
@@ -213,5 +215,6 @@
 </div> <!-- bdw end -->
 
 <script type="text/javascript">
-	var deal = <%= raw @deal.facebook_share.to_json %>;
+	var deal = <%= raw @deal.facebook_share(@deal_url).to_json %>;
+	var create_share_url = '<%= url_for(:controller => controller.controller_name, :action => 'create_share') %>'	
 </script>

@@ -33,7 +33,7 @@ Rally::Application.configure do
 
   OPTIONS[:paperclip_storage_options] = {
     :path => ":rails_root/public/system/#{Rails.env}/:class/:attachment/:id/:style.:extension",
-    :url => "/system/#{Rails.env}/:class/:attachment/:id/:style.:extension"
+    :url => "http://www.rcom.com/system/#{Rails.env}/:class/:attachment/:id/:style.:extension"
   }
 
   OPTIONS[:paperclip_report_storage_options] = OPTIONS[:paperclip_storage_options].merge(

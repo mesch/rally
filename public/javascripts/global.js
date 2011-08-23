@@ -11,7 +11,7 @@ window.addEvent('domready', function() {
 	if(body && body.id) {
 		
 		var name = "onload_" + body.id;
-		
+
 		if(window[name] && typeOf(window[name]) == "function") window[name]();	
 	}	
 });

@@ -10,7 +10,7 @@
 	<%= raw javascript_include_tag "index.js" %>
 	<%= render :partial => 'layouts/block/google_analytics' %>
 </head>
-<body class="newbie">
+<body id="<%= controller.controller_name %>_<%= controller.action_name %>">
 <div id="pagemasker"></div><div id="dialog"></div>
 <div id="doc">
 	<div id="hdl">

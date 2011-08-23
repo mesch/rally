@@ -12,7 +12,8 @@ class UserActionTest < ActiveSupport::TestCase
     assert_nil ua.visitor
     assert_nil ua.user
     assert_nil ua.merchant
-    assert_nil ua.deal   
+    assert_nil ua.deal
+    assert_nil ua.share 
   end
   
   def test_create_full
@@ -20,8 +21,9 @@ class UserActionTest < ActiveSupport::TestCase
     u = @test_user
     m = @bob
     d = @burger_deal
+    s = @burger_share
     ua = UserAction.new(:controller => 'user', :action => 'home', :method => 'get',
-      :visitor_id => v.id, :user_id => u.id, :merchant_id => m.id, :deal_id => d.id)
+      :visitor_id => v.id, :user_id => u.id, :merchant_id => m.id, :deal_id => d.id, :share_id => s.id)
     assert ua.save
     assert_equal ua.controller, 'user'
     assert_equal ua.action, 'home'
@@ -30,6 +32,7 @@ class UserActionTest < ActiveSupport::TestCase
     assert_equal ua.user, u
     assert_equal ua.merchant, m
     assert_equal ua.deal, d
+    assert_equal ua.share, s
   end  
   
   def test_create_multiple

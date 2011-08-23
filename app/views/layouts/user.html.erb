@@ -75,7 +75,7 @@
 	
 	<%= render :partial => 'layouts/block/footer' %>
 	
-	<%= raw javascript_include_tag "https://connect.facebook.net/en_US/all.js" %>
+	<%= raw javascript_include_tag request.protocol + "connect.facebook.net/en_US/all.js" %>
 	<script type="text/javascript">
 		FB.init({appId: <%= OPTIONS[:facebook_app_id] %>, status: true, cookie: true, xfbml: true});
 	</script>

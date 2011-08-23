@@ -10,7 +10,8 @@ class FacebookController < UserController
     if params[:sd]
       merchant_subdomain = MerchantSubdomain.find_by_subdomain(params[:sd])
       if merchant_subdomain and merchant_subdomain.merchant_id and request.subdomain != merchant_subdomain.subdomain
-        redirect_to_subdomain(merchant_subdomain.subdomain)
+        params.delete(:sd)
+        redirect_to_subdomain(merchant_subdomain.subdomain, params)
       end
     end
   end
@@ -23,6 +24,15 @@ class FacebookController < UserController
     redirect_to :controller => self.controller_name, :action => 'login'
   end
   
+  def home
+    # go directly to deal page - if deal_id is passed in
+    if params[:deal_id]
+      redirect_to :controller => self.controller_name, :action => 'deal', :id => params[:deal_id]
+    else
+      super
+    end
+  end
+    
   def splash
     @app_url = OPTIONS[:facebook_app_url]
     
@@ -51,6 +61,17 @@ class FacebookController < UserController
     end
     
     render :layout => false
+  end
+  
+  private
+  
+  def generate_deal_url(deal)
+    # deal_url needs to be external url for facebook app
+    deal_url = OPTIONS[:facebook_app_url] + "?deal_id=#{deal.id}"
+    if merchant_subdomain = MerchantSubdomain.find_by_subdomain(request.subdomain)
+      deal_url += "&sd=#{merchant_subdomain.subdomain}"
+    end
+    return deal_url
   end
   
 end

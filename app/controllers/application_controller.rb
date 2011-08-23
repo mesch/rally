@@ -183,6 +183,7 @@ class ApplicationController < ActionController::Base
       visitor_id = cookies['visitor_id']
       user_id = @current_user ? @current_user.id : nil
       merchant_id = @merchant_subdomain ? @merchant_subdomain.merchant_id : nil
+      share_id = params[:share_id] ? params[:share_id] : nil
       if @deal
         deal_id = @deal.id
       elsif @order and @order.deal
@@ -192,7 +193,7 @@ class ApplicationController < ActionController::Base
       end
     
       ua = UserAction.delay(:priority=>10).log(:controller => self.controller_name, :action => self.action_name, :method => request.method,
-        :visitor_id => visitor_id, :user_id => user_id, :merchant_id => merchant_id, :deal_id => deal_id)
+        :visitor_id => visitor_id, :user_id => user_id, :merchant_id => merchant_id, :deal_id => deal_id, :share_id => share_id)
     end
   end
   

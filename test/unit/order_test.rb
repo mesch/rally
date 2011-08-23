@@ -56,7 +56,7 @@ class OrderTest < ActiveSupport::TestCase
     assert o.save       
   end
   
-  def test_order_image_missing_fields
+  def test_order_missing_fields
     o = Order.new(:user_id => nil, :deal_id => 1, :quantity => 3, :amount => '60.00')
     assert !o.save
     o = Order.new(:user_id => 1000, :deal_id => nil, :quantity => 3, :amount => '60.00')

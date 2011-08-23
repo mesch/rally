@@ -20,6 +20,7 @@ class Deal < ActiveRecord::Base
   has_one :deal_video
   has_many :deal_codes
   has_many :coupons
+  has_many :shares
 
   # Paginate methods
   def self.search(search="", page=1, per_page=10)
@@ -29,18 +30,18 @@ class Deal < ActiveRecord::Base
   end
   
   # format for sharing in facebook
-  def facebook_share
+  def facebook_share(deal_url)
     response = { 
-	    :name  => self.merchant.name,
-	    :caption => self.title,
-	    :picture => "http://aht.seriouseats.com/images/20110110-bobs-burgers-flyer.jpg",     
-	    :picture2 => self.deal_images.size > 0 ? self.deal_images[0].image.url : '',
-	    :attribution => OPTIONS[:facebook_app_url]
+      :id => self.id,
+	    :name  => self.title,
+	    :caption => self.merchant.name,
+	    :description => self.description, 
+	    :picture => self.deal_images.size > 0 ? self.deal_images[0].image.url : '',
+	    :url => deal_url
 	  }
-	  p response
 	  return response
   end
-
+  
   def discount
     if self.deal_value == 0
       return 0
@@ -250,7 +251,11 @@ class Deal < ActiveRecord::Base
   end
   
   def coupons_in_date_range(start_time, end_time)
-    Coupon.count(:conditions => ["deal_id = ? AND created_at >= ? AND created_at <= ?", self.id, start_time, end_time])
+    return Coupon.count(:conditions => ["deal_id = ? AND created_at >= ? AND created_at <= ?", self.id, start_time, end_time])
+  end
+  
+  def shares_in_date_range(start_time, end_time)
+    return Share.count(:conditions => ["deal_id = ? AND posted = ? AND created_at >= ? AND created_at <= ?", self.id, true, start_time, end_time])
   end
   
 end

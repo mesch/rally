@@ -226,6 +226,10 @@ dd#bd{position:relative;z-index:1;width:702px;margin:0 auto;padding:30px 0 65px;
 #deal-share .deal-share-links h4{float:left;font-weight:normal;}
 #deal-share .deal-share-links ul{zoom:1;}
 #deal-share .deal-share-links li{float:left;margin-top:2px;margin-left:3px;}
+#deal-share .deal-share-links-receipt{float:left;width:453px;height:23px;}
+#deal-share .deal-share-links-receipt h4{float:left;font-weight:normal;padding-right:10px;}
+#deal-share .deal-share-links-receipt ul{zoom:1;}
+#deal-share .deal-share-links-receipt li{float:left;margin-top:2px;margin-left:3px;}
 #deal-share a{float:left;dwidth:30px;height:16px;line-height:16px;*line-height:18px;padding-left:20px;background:url(i/icons-share.gif) no-repeat 0 0;margin-right:10px;color:#000;font-size:12px;font-family:Helvetica,arial,sans-serif;outline:0;}
 #deal-share a:hover{color:#0981be;}
 #deal-share a img{margin-right:2px;vertical-align:-2px;}

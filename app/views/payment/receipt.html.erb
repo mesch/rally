@@ -8,12 +8,26 @@
             <div class="sect">
 
 			<% if flash[:error] %>
-			Your transaction was approved. However, there was a problem creating your coupons. Please contact Customer Support.<br><br>
-			The confirmation code for your order is <%= @confirmation_code %>.
+				<div>
+					Your transaction was approved. However, there was a problem creating your coupons. Please contact Customer Support.<br><br>
+					The confirmation code for your order is <%= @confirmation_code %>.
+				</div>
 			<% else %>
-			Thank you for your purchase! Your confirmation code is <%= @confirmation_code %>.<br><br>
-			Go to the <%= link_to "Coupons Page", url_for(:controller => @next_controller, :action => "coupons") %> to
-			review the status of your coupons.
+				<div>
+					Thank you for your purchase! Your confirmation code is <%= @confirmation_code %>.<br><br>
+					Go to the <%= link_to "Coupons Page", url_for(:controller => @next_controller, :action => "coupons") %> to review the status of your coupons.<br><br>
+				</div>
+
+				<div id="deal-share">
+					<div class="deal-share-links-receipt">
+						<h4>Deal not tipped? Share with your friends!</h4>
+						<ul class="cf">
+							<li><%= link_to "facebook", "#", :class => "facebook" %></li>
+						</ul>
+					</div>
+				</div>
+				<div class="clear"></div>
+				
 			<% end %>
 			</div>
 		</div>
@@ -22,3 +36,8 @@
 </div>
 </div> <!-- bd end -->
 </div> <!-- bdw end -->
+
+<script type="text/javascript">
+	var deal = <%= raw @order.deal.facebook_share(@deal_url).to_json %>;
+	var create_share_url = '<%= url_for(:controller => @next_controller, :action => 'create_share') %>'	
+</script>

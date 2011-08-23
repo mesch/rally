@@ -550,6 +550,7 @@ class UserControllerTest < ActionController::TestCase
     assert_nil ua.user
     assert_nil ua.merchant
     assert_nil ua.deal
+    assert_nil ua.share
     assert_equal ua.controller,  'user'
     assert_equal ua.action, 'login'
     assert_equal ua.method, 'GET'
@@ -566,6 +567,7 @@ class UserControllerTest < ActionController::TestCase
     assert ua.visitor, Visitor.find(:first)
     assert_equal ua.user, @test_user
     assert_nil ua.merchant
+    assert_nil ua.deal
     assert_nil ua.deal
     assert_equal ua.controller, 'user'
     assert_equal ua.action, 'deals'
@@ -584,6 +586,7 @@ class UserControllerTest < ActionController::TestCase
     assert_nil ua.user
     assert_nil ua.merchant
     assert_nil ua.deal
+    assert_nil ua.share
     assert_equal ua.controller, 'user'
     assert_equal ua.action, 'deals'
     assert_equal ua.method, 'GET'
@@ -641,7 +644,15 @@ class UserControllerTest < ActionController::TestCase
     get :deal, :id => @burger_deal.id
     ua = UserAction.find(:first)
     assert ua
-    assert_equal ua.deal, @burger_deal   
+    assert_equal ua.deal, @burger_deal
+    assert_nil ua.share
+    # go to a deal page with share_id
+    UserAction.delete_all
+    get :deal, :id => @burger_deal.id, :share_id => @burger_share.id
+    ua = UserAction.find(:first)
+    assert ua
+    assert_equal ua.deal, @burger_deal
+    assert_equal ua.share, @burger_share   
   end
   
   def test_subdomain_general
@@ -664,6 +675,66 @@ class UserControllerTest < ActionController::TestCase
     get :login
     assert_response :redirect
     assert_redirected_to :action => :login, :host => old_host
+  end
+  
+  def test_create_share
+    Share.delete_all
+    # not logged in - error
+    post :create_share, :deal_id => @burger_deal.id
+    assert_response :success
+    json_response = ActiveSupport::JSON.decode @response.body
+    assert_equal "error", json_response['result']
+    assert_nil Share.find(:first)
+    # login
+    self.login 
+    # no deal_id - error
+    post :create_share
+    assert_response :success
+    json_response = ActiveSupport::JSON.decode @response.body
+    assert_equal "error", json_response['result']
+    assert_nil Share.find(:first)    
+    # ok
+    post :create_share, :deal_id => @burger_deal.id
+    assert_response :success
+    json_response = ActiveSupport::JSON.decode @response.body
+    assert_equal "success", json_response['result']
+    share = Share.find(:first)
+    assert share
+    assert_equal share.deal_id, @burger_deal.id
+    assert_equal share.user_id, @test_user.id
+    assert_nil share.post_id
+    assert !share.posted
+  end
+  
+  def test_update_share
+    self.login
+    post :create_share, :deal_id => @burger_deal.id
+    assert_response :success
+    json_response = ActiveSupport::JSON.decode @response.body
+    assert_equal "success", json_response['result']
+    share = Share.find(:first)
+    # no post_id - will pass but no post_id will be saved
+    post :update_share, :id => share.id
+    assert_response :success
+    json_response = ActiveSupport::JSON.decode @response.body
+    assert_equal "success", json_response['result']
+    share = Share.find(:first)
+    assert share
+    assert_equal share.deal_id, @burger_deal.id
+    assert_equal share.user_id, @test_user.id
+    assert_nil share.post_id
+    assert share.posted
+    # ok
+    post :update_share, :id => share.id, :post_id => 1234
+    assert_response :success
+    json_response = ActiveSupport::JSON.decode @response.body
+    assert_equal "success", json_response['result']
+    share = Share.find(:first)
+    assert share
+    assert_equal share.deal_id, @burger_deal.id
+    assert_equal share.user_id, @test_user.id
+    assert_equal share.post_id, 1234
+    assert share.posted
   end
   
 end

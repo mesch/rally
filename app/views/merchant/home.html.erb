@@ -25,8 +25,9 @@ window.addEvent('domready', function(){
 					</div>
 					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">					
 					<tr>
-						<th width="300">Deal</th>
+						<th width="200">Deal</th>
 						<th width="80">Views</th>
+						<th width="80">Shares</th>
 						<th width="80">Orders</th>
 						<th width="80">Coupons</th>
 						<th width="80">Sales</th>
@@ -35,6 +36,7 @@ window.addEvent('domready', function(){
 					<tr class="alt">
 						<td><%= deal.title %></td>
 						<td><%= deal.views_in_date_range(@start_date, @end_date) %></td>
+						<td><%= deal.shares_in_date_range(@start_date, @end_date) %></td>						
 						<td><%= deal.orders_in_date_range(@start_date, @end_date) %></td>
 						<td><%= deal.coupons_in_date_range(@start_date, @end_date) %></td>
 						<td><%= deal.coupons_in_date_range(@start_date, @end_date) * deal.deal_price.to_f %></td>

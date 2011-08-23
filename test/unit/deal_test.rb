@@ -550,7 +550,7 @@ class DealTest < ActiveSupport::TestCase
     assert c.save
     assert_equal c.state, 'Pending'
     assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
-    # Pending coupon - still counts
+    # Paid coupon - still counts
     o.update_attributes(:state => Order::PAID)
     c = Coupon.find_by_id(c.id)
     assert_equal c.state, 'Active'
@@ -568,6 +568,32 @@ class DealTest < ActiveSupport::TestCase
     c = Coupon.new(:user_id => 1000, :deal_id => d.id, :order_id => o.id)
     assert c.save
     assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2
+  end
+  
+  def test_shares_in_date_range
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    # Share (not posted) - doesn't count
+    s = Share.new(:user_id => 1000, :deal_id => d.id)
+    assert s.save
+    assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 0
+    # Post - counts
+    s.update_attributes(:post_id => 1234, :posted => true)
+    assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1    
+    # Share for another deal - no change
+    s = Share.new(:user_id => 1000, :deal_id => d.id + 1, :post_id => 1234, :posted => true)
+    assert s.save
+    
+    assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day + 1.days), 1
+    assert_equal d.shares_in_date_range(Time.zone.today - 1.days, Time.zone.today.end_of_day), 1
+    assert_equal d.shares_in_date_range(Time.zone.today - 1.days, Time.zone.today.end_of_day - 1.days), 0
+    assert_equal d.shares_in_date_range(Time.zone.today + 1.days, Time.zone.today.end_of_day + 1.days), 0
+    
+    # Add another posted share
+    s = Share.new(:user_id => 1000, :deal_id => d.id, :post_id => 1234, :posted => true)
+    assert s.save
+    assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2      
   end
   
 end

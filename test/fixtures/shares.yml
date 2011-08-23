@@ -1,0 +1,9 @@
+burger_non_share:
+    deal: burger_deal
+    user: test_user
+    
+burger_share:
+    deal: burger_deal
+    user: test_user
+    post_id: 12345678
+    posted: true    

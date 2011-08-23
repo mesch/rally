@@ -24,25 +24,54 @@ var facebook_login = function() {
 
 var add_share_events = function() {	
 	$$(".facebook").each(function(item) {
-	
-		item.addEvent("click", function() {
+		item.addEvent("click", function(e) {
 			
-			var share_link = this;
+			new Event(e).stop();
 			
-			FB.ui({
-				method: 'feed',
-		       	name: deal.name,
-		       	caption: deal.caption,
-				description: 'yoyoyo',
-				picture: deal.picture,
-		     	action_links: [{ 
-					text: 'Check it out!', href : deal.attribution 
-				}],
-				user_message_prompt: 'Share this Deal!'
-		   	});
+			new Request({
+				method: 'post',
+				url : create_share_url,
+				data : {'deal_id' : deal.id},
+				onSuccess : function(response_text, response_xml) {
+					//console.log(response_text)
+					var d = JSON.decode(response_text);
+					//console.log(d);
+					if(d && d.result == "success" && d.update_share_url) {
+						facebook_share(d.update_share_url);
+					}
+				}
+			}).send();
 		});
 	});
 };
+
+var facebook_share = function(update_share_url) {
+	FB.ui({
+		method: 'feed',
+       	name: deal.name,
+       	caption: deal.caption,
+		description: deal.description,
+		picture: deal.picture,
+		link: deal.url,
+     	actions: [{ name: 'Check it out!', link: deal.url }]
+		},
+		function (response) {
+			if (response && response.post_id) {
+				complete_share(update_share_url, response.post_id);
+			}
+		}
+	);			
+}
+
+var complete_share = function(update_share_url, post_id) {
+	new Request({
+		method: 'post',
+		url : update_share_url,
+		data : {'post_id' : post_id},
+		onSuccess : function(response_text, response_xml) {
+			alert('Thank you for sharing!') }
+	}).send();
+}
 
 var onload_user_login = function() {
 	facebook_login();
@@ -58,4 +87,12 @@ var onload_user_deal = function() {
 
 var onload_facebook_deal = function() {
 	add_share_events();
+};
+
+var onload_payment_receipt = function() {
+	add_share_events();	
+};
+
+var onload_facebook_payment_receipt = function() {
+	add_share_events();	
 };

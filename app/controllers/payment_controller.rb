@@ -166,14 +166,14 @@ class PaymentController < ApplicationController
     gateway = params[:gateway]
     # only handling authorize.net transactions now
     if gateway == OPTIONS[:gateways][:authorize_net]
-      order = Order.find_by_id(params[:x_invoice_num])
+      @order = Order.find_by_id(params[:x_invoice_num])
       transaction_type = params[:x_type]
       amount = params[:x_amount]
       @confirmation_code = params[:x_auth_code]
       transaction_id = params[:x_trans_id]
       
       # process payment
-      unless order.process_authorization(:gateway => gateway, :transaction_type => transaction_type, 
+      unless @order and @order.deal and @order.process_authorization(:gateway => gateway, :transaction_type => transaction_type, 
         :amount => amount, :confirmation_code => @confirmation_code, :transaction_id => transaction_id)
         flash.now[:error] = "There was a problem creating your coupons."
       end
@@ -182,7 +182,15 @@ class PaymentController < ApplicationController
       return
     end
     @next_controller = next_controller
+    @deal_url = generate_deal_url(@order.deal)
     render "payment/#{self.action_name}"
+  end
+  
+  private
+  
+  def generate_deal_url(deal)
+    deal_url = url_for(:controller => next_controller, :action => 'deal', :id => deal.id)
+    return deal_url
   end
 
 end
