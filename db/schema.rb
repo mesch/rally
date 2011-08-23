@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110823030708) do
+ActiveRecord::Schema.define(:version => 20110823163327) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -198,8 +198,8 @@ ActiveRecord::Schema.define(:version => 20110823030708) do
   create_table "shares", :force => true do |t|
     t.integer  "user_id"
     t.integer  "deal_id"
-    t.boolean  "posted",                  :default => false
-    t.integer  "post_id",    :limit => 8
+    t.boolean  "posted",     :default => false
+    t.string   "post_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
