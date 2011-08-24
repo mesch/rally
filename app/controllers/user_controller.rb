@@ -137,7 +137,7 @@ class UserController < ApplicationController
     unless user
       user = User.find_by_email(fb["email"])
       # update facebook_id
-      unless user.update_attributes(:facebook_id => fb["id"])
+      unless user and user.update_attributes(:facebook_id => fb["id"])
         logger.error "UserController.connect: Can't update facebook_id for User #{user}"
       end
     end

@@ -155,6 +155,8 @@ GEM
       ruby-debug-base (~> 0.10.3.0)
     ruby-debug-base (0.10.3)
       linecache (>= 0.3)
+    ruby-debug-ide (0.4.16)
+      rake (>= 0.8.1)
     ruby-graphviz (0.9.21)
     rubyzip (0.9.4)
     rush (0.6.7)
@@ -205,6 +207,8 @@ DEPENDENCIES
   rspec
   rspec-rails
   ruby-debug
+  ruby-debug-base
+  ruby-debug-ide
   sqlite3-ruby
   will_paginate (~> 3.0.pre2)
   xml-simple
