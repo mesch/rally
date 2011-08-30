@@ -31,7 +31,7 @@
                     </div>					
 					<div class="field">
 						<div class="note">
-						<%= check_box_tag :tos, 1, false %>
+						<%= check_box_tag :terms, 1, @user.terms %>
 						I agree to the <%= link_to 'Terms and Conditions', terms_url, :target=>"_blank" %>.</div>
 					</div>
 					<div id="recaptcha_container" class="field">

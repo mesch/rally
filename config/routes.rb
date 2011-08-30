@@ -183,21 +183,5 @@ Rally::Application.routes.draw do
       end
     end
   end
-  
-  # Admin
-  namespace :admin do
-    match '/', :to => "admin#index", :as => :home
-    resources :clients do
-      post 'multi_update', :on => :collection
-      post 'generate_api_key', :on => :member
-    end
-  end
-
-  # Public Site
-  match '/privacy', :to => "application#privacy"
-  match '/tos', :to => "application#tos"
-  
-
-
 =end
 end

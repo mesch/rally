@@ -35,8 +35,8 @@ group :development, :test do
 	gem 'database_cleaner'
 	gem 'cucumber-rails'
 	gem 'ffi', '>=1.0.9'
-	gem 'ruby-debug-base'
-	gem 'ruby-debug-ide'
+	#gem 'ruby-debug-base'
+	#gem 'ruby-debug-ide'
 end
 
 group :development do

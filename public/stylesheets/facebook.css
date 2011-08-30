@@ -247,6 +247,10 @@ dd#bd{position:relative;z-index:1;width:702px;margin:0 auto;padding:30px 0 65px;
 #deal-intro .side{float:left;width:440px;margin-right:0;}
 #deal-intro .side .deal-buy-cover-img img{width:440px;}
 #deal-intro .side .digest{margin-top:28px;margin-left:10px;padding-left:70px;padding-right:35px;background:url(i/bg-deal-voice-quote.gif) no-repeat 0 0;color:#666;}
+#deal-intro .side .digest ul{margin:10px 0 10px;padding-left:15px;}
+#deal-intro .side .digest ul li{list-style-position:outside;list-style-type:disc;margin-bottom:5px;}
+#deal-intro .side .digest ol{margin:10px 0 10px;padding-left:18px;*padding-left:23px;}
+#deal-intro .side .digest ol li{list-style-position:outside;list-style-type:decimal;margin-bottom:5px;}
 #deal-intro h1{padding:0 50px 20px;font-size:30px;line-height:1.2;font-family:arial,sans-serif;}
 #deal-intro h1 span{font-family:arial,sans-serif;}
 #deal-intro .deal-buy{position:relative;}
@@ -328,10 +332,10 @@ dd#bd{position:relative;z-index:1;width:702px;margin:0 auto;padding:30px 0 65px;
 #deal-stuff .deal-detail-intro h2{margin:0;font-size:16px;}
 #deal-stuff .deal-detail-intro ul{margin-top:5px;}
 #deal-stuff .deal-detail-intro li{list-style-position:inside;list-style-type:disc;line-height:1.6;}
-#deal-stuff .main ul.list{margin:10px 0 15px;padding-left:15px;}
-#deal-stuff .main ul.list li{list-style-position:outside;list-style-type:disc;margin-bottom:5px;}
-#deal-stuff .main ol.list{margin:10px 0 15px;padding-left:18px;*padding-left:23px;}
-#deal-stuff .main ol.list li{list-style-position:outside;list-style-type:decimal;margin-bottom:5px;}
+#deal-stuff .main ul{margin:10px 0 10px;padding-left:15px;}
+#deal-stuff .main ul li{list-style-position:outside;list-style-type:disc;margin-bottom:5px;}
+#deal-stuff .main ol{margin:10px 0 10px;padding-left:18px;*padding-left:23px;}
+#deal-stuff .main ol li{list-style-position:outside;list-style-type:decimal;margin-bottom:5px;}
 #deal-stuff .main dt{font-weight:bold;margin:10px 0 2px;}
 #deal-stuff .review ul li{background:url(i/quote.gif) no-repeat 0 2px;margin-bottom:10px;padding:0 0 0 20px;}
 #deal-stuff .review ul span{display:block;text-align:right;}

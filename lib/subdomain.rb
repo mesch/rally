@@ -10,8 +10,8 @@ class APISubdomain < Subdomain
   end
 end
 
-def new_host_subdomain(request, new_subdomain)
-  new_host = request.host_with_port.gsub(/^#{request.subdomain}(\.)?/, '')
+def new_host_subdomain(host, old_subdomain, new_subdomain)
+  new_host = host.gsub(/^#{old_subdomain}(\.)?/, '')
   unless new_subdomain.empty?
     new_host = [new_subdomain, new_host].join('.')
   end
@@ -19,5 +19,7 @@ def new_host_subdomain(request, new_subdomain)
 end
 
 def base_host(request)
-  return new_host_subdomain(request, '')
+  return new_host_subdomain(request.host_with_port, request.subdomain, '')
 end
+
+  

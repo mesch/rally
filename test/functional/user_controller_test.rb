@@ -733,7 +733,7 @@ class UserControllerTest < ActionController::TestCase
     assert share
     assert_equal share.deal_id, @burger_deal.id
     assert_equal share.user_id, @test_user.id
-    assert_equal share.post_id, 1234
+    assert_equal share.post_id, "1234"
     assert share.posted
   end
   

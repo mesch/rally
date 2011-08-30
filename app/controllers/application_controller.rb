@@ -160,7 +160,7 @@ class ApplicationController < ActionController::Base
     # create a new visitor
     v = Visitor.new
     if v.save
-      cookies['visitor_id'] = v.id
+      cookies['visitor_id'] = { :value => v.id, :expires => 180.days.from_now }
       return v.id
     end
     

@@ -28,7 +28,7 @@ Rally::Application.configure do
   config.serve_static_assets = true
 
   # Set the default action mailer host..
-  OPTIONS[:site_url] = "localhost:3000"
+  OPTIONS[:site_url] = "www.rcom.com"
   config.action_mailer.default_url_options = { :host => OPTIONS[:site_url] }
 
   OPTIONS[:paperclip_storage_options] = {

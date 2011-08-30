@@ -109,7 +109,14 @@ class Order < ActiveRecord::Base
         # update order
         self.update_attributes!(:state => Order::PAID, :paid_at => Time.zone.now)
       end
-      return true
+      # send confirmation email
+      user = User.find_by_id(self.user_id)
+      if user and user.send_confirmation(self.deal_id)
+        return true
+      else
+        logger.error "Order.capture: Confirmation email failed to send: #{self.inspect}"
+        return false
+      end
     rescue PaymentError => pe
       p "Order.capture: Failed for Order #{self.inspect} #{pe}"
       logger.error "Order.capture: Failed for Order #{self.inspect} #{pe}"

@@ -174,9 +174,9 @@ class UserController < ApplicationController
     end
     if request.post?
       @user = User.new(:email => params[:email], :first_name => params[:first_name], :last_name => params[:last_name],
-        :password => params[:password], :password_confirmation => params[:password_confirmation])
+        :password => params[:password], :password_confirmation => params[:password_confirmation], :terms => params[:terms])
       # Check TOS
-      unless params[:tos]     
+      unless params[:terms]     
         flash.now[:error] = "You must agree to the Terms of Service."
         render "user/#{self.action_name}"
         return
@@ -189,15 +189,22 @@ class UserController < ApplicationController
           return
         end
       end
-      if @user.save and @user.send_activation()
-        flash[:notice] = "Signup successful. An activation code has been sent."
-        redirect_to :controller => self.controller_name, :action =>'login'
-        return
-      else
-        logger.error "User.signup: Couldn't create User #{@user}"
-        flash.now[:error] = "Signup unsuccessful."
+      
+      begin
+        User.transaction do
+          @user.save!
+          @user.send_activation(request.host_with_port)
+        end
+      rescue ActiveRecord::RecordInvalid => invalid
+        logger.error "User.signup: Couldn't update User #{@user.inspect}: #{invalid}"
+        flash.now[:error] = "#{pp_errors(@user.errors)}"
         render "user/#{self.action_name}"
+        return        
       end
+      
+      flash[:notice] = "Signup successful. An activation code has been sent."
+      redirect_to :controller => self.controller_name, :action =>'login'
+      return
     end
   end
 
@@ -235,7 +242,7 @@ class UserController < ApplicationController
   def forgot_password
     if request.post?
       u = User.find_by_email(params[:email])
-      if u and u.send_new_password
+      if u and u.send_new_password(request.host_with_port)
         flash[:notice]  = "A new password has been sent."
         redirect_to :controller => self.controller_name, :action =>'login'
         return
@@ -273,7 +280,7 @@ class UserController < ApplicationController
   def change_email
     @user = User.find_by_id(@current_user.id)
     if request.post?
-      if @user.update_email(params[:email])
+      if @user.update_email(request.host_with_port, params[:email])
         flash[:notice]  = "Your email has been updated."
         redirect_to :controller => self.controller_name, :action => 'logout'
         return
@@ -310,15 +317,16 @@ class UserController < ApplicationController
   def reactivate
     if request.post?
       u = User.find(:first, :conditions => {:email => params[:email]})
-      if u and u.send_activation
+      if u and u.send_activation(request.host_with_port)
         flash[:notice]  = "An activation code has been sent by email."
         redirect_to :controller => self.controller_name, :action =>'login'
         return
       else
-        flash.now[:error]  = "Could not find your account. Please enter a valid email."
+        flash.now[:error] = "Could not find your account. Please enter a valid email."
+        render "user/#{self.action_name}"
+        return
       end
     end
-    render "user/#{self.action_name}"   
   end
   
   private

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110823163327) do
+ActiveRecord::Schema.define(:version => 20110828025309) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -232,6 +232,7 @@ ActiveRecord::Schema.define(:version => 20110823163327) do
     t.datetime "updated_at"
     t.integer  "balance_in_cents",              :default => 0
     t.integer  "facebook_id",      :limit => 8
+    t.boolean  "terms",                         :default => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

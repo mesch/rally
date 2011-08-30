@@ -108,6 +108,7 @@ class UserTest < ActiveSupport::TestCase
     assert u.active
     assert_equal u.time_zone, "Pacific Time (US & Canada)"
     assert_nil u.facebook_id
+    assert !u.terms
     assert u.save
     assert_equal 10, u.salt.length
     assert_equal u, User.authenticate(u.email, u.password)
@@ -120,7 +121,6 @@ class UserTest < ActiveSupport::TestCase
     assert u.save
     assert_equal u, User.authenticate(u.email, u.password)
   end
-
   
   def test_create_complete
     #check that we can create with all fields
@@ -142,31 +142,15 @@ class UserTest < ActiveSupport::TestCase
         :first_name, :last_name, :mobile_number])
   end
   
-
   def test_send_new_password
     #check user authenticates
     assert_equal  @test_user, User.authenticate(@test_user.email, "test")    
     #send new password
-    sent = @test_user.send_new_password
-    assert_not_nil sent
+    sent = @test_user.send_new_password("www.rcom.com")
+    assert sent
     #old password no longer works
     assert_nil User.authenticate(@test_user.email, "test")
-
-### TODO - test this using delayed job?
-=begin
-    #email sent...
-    assert_equal "Your password is ...", sent.subject
-    #... to bob
-    assert_equal @test_user.email, sent.to[0]
-    assert_match Regexp.new("Your email is test_user@rallycommerce.com."), sent.body.raw_source
-    #can authenticate with the new password
-    new_pass = $1 if Regexp.new("Your new password is (\\w+).") =~ sent.body.raw_source
-    assert_not_nil new_pass
-    assert_equal  @test_user, User.authenticate(test_user@.email, new_pass)
-=end
-
   end
-
 
   def test_rand_str
     new_pass = User.random_string(10)
@@ -219,12 +203,12 @@ class UserTest < ActiveSupport::TestCase
   def test_update_email
     u = User.find_by_id(@test_user.id)
     # bad format
-    assert !u.update_email("bad_format")
+    assert !u.update_email("www.rcom.com", "bad_format")
     u = User.find_by_id(@test_user.id)
     assert u.activated
     assert equal?(u, @test_user, [:email, :hashed_password, :salt, :active, :activation_code, :activate])
     # success
-    assert u.update_email("test@abc.com")
+    assert u.update_email("www.rcom.com", "test@abc.com")
     assert_equal u.email, "test@abc.com"
     assert !u.activated
     assert equal?(u, @test_user, [:hashed_password, :salt, :active])

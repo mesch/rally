@@ -28,7 +28,7 @@ class MerchantController < ApplicationController
       @deals = @current_merchant.drafts
     end
     if @current_merchant.merchant_subdomain
-      @deal_store_url = new_host_subdomain(request, @current_merchant.merchant_subdomain.subdomain)
+      @deal_store_url = new_host_subdomain(request.host_with_port, request.subdomain, @current_merchant.merchant_subdomain.subdomain)
     end
   end
 
@@ -273,7 +273,7 @@ class MerchantController < ApplicationController
   def account
     @merchant = Merchant.find_by_id(@current_merchant.id)
     if @merchant.merchant_subdomain
-      @deal_store_url = new_host_subdomain(request, @merchant.merchant_subdomain.subdomain)
+      @deal_store_url = new_host_subdomain(request.host_with_port, request.subdomain, @merchant.merchant_subdomain.subdomain)
     end
     @base_host = base_host(request)
     

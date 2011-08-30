@@ -1,0 +1,8 @@
+Congratulations! "<%@deal.title%>" has tipped.<br><br>
+
+Login to redeem your coupons.<br><br>
+
+<%= link_to "Login", url_for(:host => @host, :controller => "user", :action => "login", :only_path => false)%><br><br>
+
+Regards,<br>
+<%= OPTIONS[:site_name] %>

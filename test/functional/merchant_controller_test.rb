@@ -611,9 +611,9 @@ class MerchantControllerTest < ActionController::TestCase
   
   def test_create_deal_field_lengths
     self.login
-    # title - 50 chars
+    # title - 100 chars
     string = ""
-    length = 51
+    length = 101
     length.times{ string << "a"}
     post :create_deal, :title => string, :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',

@@ -1,12 +1,13 @@
 require "digest"
+require "subdomain"
 
 class User < ActiveRecord::Base
   validates_length_of :first_name, :maximum => 50
   validates_length_of :last_name, :maximum => 50
   validates_length_of :email, :maximum => 50
-  validates_uniqueness_of :email
+  validates_uniqueness_of :email, :message => "That email has already been taken. Login if you already have an account"
   validates_presence_of :email, :salt
-  validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "Invalid email."
+  validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "Invalid email"
 
   # info fields
   validates_length_of :first_name, :maximum => 50
@@ -79,38 +80,52 @@ class User < ActiveRecord::Base
   end
 
   # Mailer methods
-  def send_new_password
+  def send_new_password(host)
     new_pass = User.generate_password
     self.password = self.password_confirmation = new_pass
     if self.save
       # Send the user email through a delayed job
-      UserMailer.delay.send_forgot_password(self.email, self.email, new_pass)
+      UserMailer.delay.send_forgot_password(host, self.email, self.email, new_pass)
       return true
     end
     return false
   end
   
-  def send_activation
+  def send_activation(host)
     if self.update_attributes(:activation_code => User.generate_activation_code)
       # Send the user email through a delayed job
-      UserMailer.delay.send_activation(self.email, self.email, self.id, self.activation_code)
+      UserMailer.delay.send_activation(host, self.email, self.email, self.id, self.activation_code)
       return true
     end
     return false
   end
 
-  def send_email_change(old_email)
+  def send_email_change(host, old_email)
     # Send the user email through a delayed job
-    UserMailer.delay.send_changed_email(old_email, old_email, self.email)
+    UserMailer.delay.send_changed_email(host, old_email, old_email, self.email)
     return true
   end
 
-  def update_email(new_email)
+  def update_email(host, new_email)
     old_email = self.email
     if self.update_attributes(:email => new_email, :activated => false)
-      if self.send_activation and self.send_email_change(old_email)
+      if self.send_activation(host) and self.send_email_change(host, old_email)
         return true
       end
+    end
+    return false
+  end
+  
+  def send_confirmation(deal_id)
+    deal = Deal.find_by_id(deal_id)
+    if deal
+      merchant = Merchant.find_by_id(deal.merchant_id)
+      host = OPTIONS[:site_url]
+      if merchant.merchant_subdomain
+        host = new_host_subdomain(host, 'www', merchant.merchant_subdomain.subdomain)
+      end
+      UserMailer.delay.send_confirmation(host, self.email, deal)
+      return true
     end
     return false
   end

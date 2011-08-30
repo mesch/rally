@@ -13,7 +13,7 @@ class Admin::MerchantsController < AdminController
   def edit
     @merchant = Merchant.find_by_id(params[:id])
     if @merchant.merchant_subdomain
-      @deal_store_url = new_host_subdomain(request, @merchant.merchant_subdomain.subdomain)
+      @deal_store_url = new_host_subdomain(request.host_with_port, request.subdomain, @merchant.merchant_subdomain.subdomain)
     end
     @base_host = base_host(request)
   end
@@ -58,7 +58,7 @@ class Admin::MerchantsController < AdminController
     unless @merchant
       @merchant = Merchant.new()
       if @merchant.merchant_subdomain
-        @deal_store_url = new_host_subdomain(request, @merchant.merchant_subdomain.subdomain)
+        @deal_store_url = new_host_subdomain(request.host_with_port, request.subdomain, @merchant.merchant_subdomain.subdomain)
       end
       @base_host = base_host(request)
     end
@@ -86,7 +86,7 @@ class Admin::MerchantsController < AdminController
         end
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      logger.error "AdminMerchants.create: Couldn't create Merchant #{@merchant} #{invalid}"
+      logger.error "AdminMerchants.create: Couldn't create Merchant #{@merchant.inspect} #{invalid}"
       flash.now[:error] = "#{pp_errors(invalid.record.errors)}"
       render(:action => :new)
       return  

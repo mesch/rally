@@ -105,9 +105,9 @@ class DealTest < ActiveSupport::TestCase
   end
   
   def test_field_lengths
-    # title - 50 chars
+    # title - 100 chars
     string = ""
-    length = 51
+    length = 101
     length.times{ string << "a"}
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
