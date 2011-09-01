@@ -18,8 +18,8 @@ def new_host_subdomain(host, old_subdomain, new_subdomain)
   return new_host
 end
 
-def base_host(request)
-  return new_host_subdomain(request.host_with_port, request.subdomain, '')
+def base_host(host, subdomain)
+  return new_host_subdomain(host, subdomain, '')
 end
 
   

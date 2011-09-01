@@ -57,3 +57,4 @@ Rally::Application.configure do
   #OPTIONS[:facebook_application_access_token] = "119734331414282|WB31YAEnMppGm9auGUm2aXGEr9c"
 end
 
+Rally::Application.config.session_store :cookie_store, :key => '_rally_session', :domain => '.rcom.com'

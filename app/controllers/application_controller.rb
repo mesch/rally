@@ -160,7 +160,8 @@ class ApplicationController < ActionController::Base
     # create a new visitor
     v = Visitor.new
     if v.save
-      cookies['visitor_id'] = { :value => v.id, :expires => 180.days.from_now }
+      base_host = base_host(OPTIONS[:site_url], 'www')
+      cookies['visitor_id'] = { :value => v.id, :domain => ".#{base_host}", :expires => 180.days.from_now }
       return v.id
     end
     

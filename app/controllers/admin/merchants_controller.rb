@@ -15,7 +15,7 @@ class Admin::MerchantsController < AdminController
     if @merchant.merchant_subdomain
       @deal_store_url = new_host_subdomain(request.host_with_port, request.subdomain, @merchant.merchant_subdomain.subdomain)
     end
-    @base_host = base_host(request)
+    @base_host = base_host(request.host_with_port, request.subdomain)
   end
   
   def update
@@ -60,7 +60,7 @@ class Admin::MerchantsController < AdminController
       if @merchant.merchant_subdomain
         @deal_store_url = new_host_subdomain(request.host_with_port, request.subdomain, @merchant.merchant_subdomain.subdomain)
       end
-      @base_host = base_host(request)
+      @base_host = base_host(request.host_with_port, request.subdomain)
     end
   end
 
