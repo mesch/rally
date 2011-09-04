@@ -1,3 +1,5 @@
+require "fastercsv"
+
 class MerchantReport < ActiveRecord::Base
   # States
   GENERATING = 'GENERATING'
@@ -59,16 +61,11 @@ class MerchantReport < ActiveRecord::Base
     return column_names
   end
 
-  def generate_header(generated_at)
-    # Add generated time stamp
-    header = "Generated At: #{generated_at.strftime(OPTIONS[:time_format])}\n"
-    # Add filter info
+  def generate_header()
     case self.report_type
     when COUPON_REPORT
-      header += "Filters: Merchant ID (#{self.merchant_id}), Deal ID (#{self.deal_id})\n"
+      header = "Filters: Merchant ID (#{self.merchant_id}), Deal ID (#{self.deal_id})"
     end
-    # Add column names
-    header += self.column_names.join("\t") + "\n"
     return header
   end
 
@@ -99,7 +96,7 @@ class MerchantReport < ActiveRecord::Base
     case self.report_type
     when COUPON_REPORT
         authorized_at = data.authorized_at ? Time.zone.parse(data.authorized_at).strftime(OPTIONS[:time_format]) : ""
-        row = [data.code, data.email, data.first_name, data.last_name, authorized_at].join("\t") + "\n"
+        row = [data.code, data.email, data.first_name, data.last_name, authorized_at]
     end
     return row
   end
@@ -108,31 +105,34 @@ class MerchantReport < ActiveRecord::Base
     generated_at = Time.zone.now
     file_name = self.generate_file_name(generated_at)
     begin
-      report = File.new(OPTIONS[:temp_file_directory] + file_name, 'w+')
-      # Write Header
-      header = self.generate_header(generated_at)
-      report.puts(header)
-      
-      # Write Data
       results = self.generate_results(:all => all)
-      for result in results
-        row = self.generate_row(result)
-        report.puts(row)
+
+      csv_file_path = File.join(OPTIONS[:temp_file_directory], file_name)
+      FasterCSV.open(csv_file_path, "w") do |csv|
+        # write generic header
+        csv << ["Generated At: #{generated_at.strftime(OPTIONS[:time_format])}"]
+        # write report-specific header
+        csv << [self.generate_header]
+        # add column names
+        csv << self.column_names
+        # add data
+        for result in results
+          csv << self.generate_row(result)
+        end
       end
 
       # Save file using paperclip
-      self.report = report
-
-      report.close
+      local = File.open(csv_file_path)
+      self.report = local
+      local.close
 
       # Delete local file
-      File.delete(OPTIONS[:temp_file_directory] + file_name)
+      File.delete(csv_file_path)
  
       # Update state
       self.update_attributes!(:state => GENERATED, :generated_at => generated_at)
       return true
     rescue => e
-      p e
       logger.error "MerchantReport.generate_report Failed: Merchant Report #{self.inspect} #{e}"
     end
     return false

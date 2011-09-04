@@ -91,7 +91,7 @@ class MerchantReportTest < ActiveSupport::TestCase
     # Coupon Report
     r = MerchantReport.new(:merchant_id => 10, :report_type => MerchantReport::COUPON_REPORT, :state => MerchantReport::GENERATING, :deal_id => 1)
     assert r.save
-    assert_equal r.generate_header(generated_at), "Generated At: #{generated_at.strftime(OPTIONS[:time_format])}\nFilters: Merchant ID (10), Deal ID (1)\n#{r.column_names.join("\t")}\n"
+    assert_equal r.generate_header, "Filters: Merchant ID (10), Deal ID (1)"
   end
 
   # also testing generate_row
@@ -115,7 +115,7 @@ class MerchantReportTest < ActiveSupport::TestCase
     assert_equal results.size, 0
     results = r.generate_results(:all => true)
     assert_equal results.size, 1
-    assert_equal r.generate_row(results[0]), "abc123\t\t\t\t\n"     
+    assert_equal r.generate_row(results[0]), ["abc123", nil, nil, nil, ""]     
     # reserve (and authorize) it
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.reserve_quantity(1)
@@ -124,20 +124,20 @@ class MerchantReportTest < ActiveSupport::TestCase
     authorized_at = o.authorized_at.strftime(OPTIONS[:time_format])
     results = r.generate_results
     assert_equal results.size, 1
-    assert_equal r.generate_row(results[0]), "abc123\t#{u.email}\t#{u.first_name}\t#{u.last_name}\t#{authorized_at}\n"
+    assert_equal r.generate_row(results[0]), ["abc123", u.email, u.first_name, u.last_name, authorized_at]
     results = r.generate_results(:all => true)
     assert_equal results.size, 1
-    assert_equal r.generate_row(results[0]), "abc123\t#{u.email}\t#{u.first_name}\t#{u.last_name}\t#{authorized_at}\n"
+    assert_equal r.generate_row(results[0]), ["abc123", u.email, u.first_name, u.last_name, authorized_at]
     # add another unreserved code
     dc = DealCode.new(:deal_id => d.id, :code => 'abc124')
     assert dc.save    
     results = r.generate_results
     assert_equal results.size, 1
-    assert_equal r.generate_row(results[0]), "abc123\t#{u.email}\t#{u.first_name}\t#{u.last_name}\t#{authorized_at}\n"
+    assert_equal r.generate_row(results[0]), ["abc123", u.email, u.first_name, u.last_name, authorized_at]
     results = r.generate_results(:all => true)
     assert_equal results.size, 2
-    assert_equal r.generate_row(results[0]), "abc123\t#{u.email}\t#{u.first_name}\t#{u.last_name}\t#{authorized_at}\n"
-    assert_equal r.generate_row(results[1]), "abc124\t\t\t\t\n"
+    assert_equal r.generate_row(results[0]), ["abc123", u.email, u.first_name, u.last_name, authorized_at]
+    assert_equal r.generate_row(results[1]), ["abc124", nil, nil, nil, ""] 
     # reserve (and authorize) it
     u2 = @test_user
     o = Order.new(:user_id => u2.id, :deal_id => d.id)
@@ -147,12 +147,11 @@ class MerchantReportTest < ActiveSupport::TestCase
     authorized_at2 = o.authorized_at.strftime(OPTIONS[:time_format])
     results = r.generate_results
     assert_equal results.size, 2
-    assert_equal r.generate_row(results[0]), "abc123\t#{u.email}\t#{u.first_name}\t#{u.last_name}\t#{authorized_at}\n"
-    assert_equal r.generate_row(results[1]), "abc124\t#{u2.email}\t#{u2.first_name}\t#{u2.last_name}\t#{authorized_at2}\n"  
-    results = r.generate_results(:all => true)
+    assert_equal r.generate_row(results[0]), ["abc123", u.email, u.first_name, u.last_name, authorized_at]
+    assert_equal r.generate_row(results[1]), ["abc124", u2.email, u2.first_name, u2.last_name, authorized_at2]
     assert_equal results.size, 2
-    assert_equal r.generate_row(results[0]), "abc123\t#{u.email}\t#{u.first_name}\t#{u.last_name}\t#{authorized_at}\n"
-    assert_equal r.generate_row(results[1]), "abc124\t#{u2.email}\t#{u2.first_name}\t#{u2.last_name}\t#{authorized_at2}\n"          
+    assert_equal r.generate_row(results[0]), ["abc123", u.email, u.first_name, u.last_name, authorized_at ]
+    assert_equal r.generate_row(results[1]), ["abc124", u2.email, u2.first_name, u2.last_name, authorized_at2]        
   end
   
   # also test destroy

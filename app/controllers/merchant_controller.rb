@@ -233,40 +233,38 @@ class MerchantController < ApplicationController
   
   # Home
   def home
-    use_default = false
     if request.post?
+      # verify date format and conditions
       if verify_date(params[:start_date]) && verify_date(params[:end_date])
         start_date = Time.zone.parse(params[:start_date]).to_date
         end_date = Time.zone.parse(params[:end_date]).to_date
 
         if start_date > end_date
-          use_default = true
-          flash.now[:warning] = "Start Day cannot be after End Day."
+          flash[:error] = "Start Day cannot be after End Day."
+          redirect_to :controller => self.controller_name, :action => :home
+          return
         end
-        if end_date - start_date + 1 > 365
-          use_default = true
-          flash.now[:warning] = "Date range cannot be greater than 1 year."
+        if end_date - start_date > 365
+          flash[:error] = "Date range cannot be greater than 1 year."
+          redirect_to :controller => self.controller_name, :action => :home
+          return
         end
+        # set new dates
+        session[:start_date] = start_date
+        session[:end_date] = end_date
       else
-        use_default = true
-        flash.now[:error] = "Dates must be of the form: MM/DD/YY"
+        flash[:error] = "Dates must be of the form: MM/DD/YY"
+        redirect_to :controller => self.controller_name, :action => :home
+        return
       end
-    else # request.get
-      use_default = true
-    end
 
-    if use_default
-      # default to last 7 days
-      start_date = 0.days.ago.to_date - 6.days
-      end_date = 0.days.ago.to_date
     end
     
-    @num_days = end_date - start_date + 1
- 
-    @deals = @current_merchant.deals_in_date_range(start_date, end_date)
-  
-    @start_date = start_date
-    @end_date = end_date.end_of_day
+    # use default dates, if not set
+    @start_date = session[:start_date] ? session[:start_date] : Time.zone.today - 6.days
+    @end_date = session[:end_date] ? session[:end_date] : Time.zone.today
+    
+    @deals = @current_merchant.deals_in_date_range(@start_date.beginning_of_day, @end_date.end_of_day)
   end
   
   # Account methods

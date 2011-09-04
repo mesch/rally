@@ -1,9 +1,9 @@
 burger_deal:
     merchant_id: 1
     title: Burger Deal!
-    start_date: "2011-05-01T00:00:00"
-    end_date: "2011-09-01T00:00:00"
-    expiration_date: "2012-01-01T00:00:00"
+    start_date: "2011-09-01T00:00:00"
+    end_date: "2011-12-31T00:00:00"
+    expiration_date: "2012-12-31T00:00:00"
     deal_price_in_cents: 1000
     deal_value_in_cents: 2000
     description: "$20 worth of burgers for $10."
@@ -16,9 +16,9 @@ burger_deal:
 draft_deal:
     merchant: existingbob
     title: Draft Deal
-    start_date: "2011-05-01T00:00:00"
-    end_date: "2011-09-01T00:00:00"
-    expiration_date: "2011-01-01T00:00:00"
+    start_date: "2011-09-01T00:00:00"
+    end_date: "2011-12-31T00:00:00"
+    expiration_date: "2012-12-31T00:00:00"
     deal_price_in_cents: 3000
     deal_value_in_cents: 5000
     description: "Some blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"
@@ -27,9 +27,9 @@ draft_deal:
 current_deal:
     merchant: existingbob
     title: Current Deal
-    start_date: "2011-05-01T00:00:00"
-    end_date: "2011-09-01T00:00:00"
-    expiration_date: "2012-01-01T00:00:00"
+    start_date: "2011-09-01T00:00:00"
+    end_date: "2011-12-31T00:00:00"
+    expiration_date: "2012-12-31T00:00:00"
     deal_price_in_cents: 3000
     deal_value_in_cents: 5000
     description: "Some blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah"

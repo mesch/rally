@@ -23,6 +23,10 @@ module NavigationHelpers
       deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
       merchant_edit_deal_path(deal.id)
     # user
+    when /the user signup page/
+      signup_path
+    when /the user account page/
+      account_path
     when /the list of deals/
       deals_path
     when /the deal page for "([^"]*)"/

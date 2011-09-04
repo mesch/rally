@@ -4,6 +4,10 @@ class UserTest < ActiveSupport::TestCase
   self.use_instantiated_fixtures  = true
   fixtures :users
 
+  def setup
+    ActionMailer::Base.deliveries.clear
+  end
+
   def equal? (u1, u2, columns=[])
     for column in columns
       if u1[column] != u2[column]
@@ -142,14 +146,42 @@ class UserTest < ActiveSupport::TestCase
         :first_name, :last_name, :mobile_number])
   end
   
+  def test_send_activation
+    activation_code = @inactivated_user.activation_code
+    assert @inactivated_user.send_activation("www.rcom.com")
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    assert_not_equal activation_code, @inactivated_user.activation_code
+  end
+  
   def test_send_new_password
     #check user authenticates
     assert_equal  @test_user, User.authenticate(@test_user.email, "test")    
     #send new password
-    sent = @test_user.send_new_password("www.rcom.com")
-    assert sent
+    assert @test_user.send_new_password("www.rcom.com")
+    assert_equal ActionMailer::Base.deliveries.size, 1
     #old password no longer works
     assert_nil User.authenticate(@test_user.email, "test")
+  end
+  
+  def test_send_email_change
+    assert @test_user.send_email_change("www.rcom.com", "old_email@rallycommerce.com")
+    assert_equal ActionMailer::Base.deliveries.size, 1
+  end
+  
+  def test_update_email
+    old_email = @test_user.email
+    assert @test_user.update_email("www.rcom.com", "new_email@rallycommerce.com")
+    assert_not_equal old_email, @test_user.email
+    assert_equal ActionMailer::Base.deliveries.size, 2    
+  end
+  
+  def test_send_confirmation
+    # send one with a merchant domain
+    @test_user.send_confirmation(@burger_deal)
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    # send another without a merchant domain
+    @test_user.send_confirmation(@current_deal)
+    assert_equal ActionMailer::Base.deliveries.size, 2
   end
 
   def test_rand_str

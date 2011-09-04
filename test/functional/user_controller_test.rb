@@ -38,33 +38,55 @@ class UserControllerTest < ActionController::TestCase
   end
 
   def test_signup
-    #unfortunately can't test passing captcha - this will fail for now
-    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "newpassword"  
-    assert_response :success
-    assert flash[:error]
-    assert_template "user/signup"
+    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "newpassword", :terms => "1"
+    assert_response :redirect
+    assert_redirected_to :action => 'login'
+    assert flash[:notice]
     assert_nil session[:user_id]
   end
 
   def test_bad_signup
-    #check we can't signup without all required fields
-    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "wrong"
+    # Note - can't test captcha
+    # Missing terms
+    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "newpassword", :terms => nil
+    assert_response :success
+    assert_template "user/signup"
+    assert flash[:error] 
+    # Empty email
+    post :signup, :email => "", :password => "newpassword", :password_confirmation => "newpassword", :terms => "1"
+    assert_response :success
+    assert flash[:error]
+    assert_template "user/signup"    
+    # Invalid email
+    post :signup, :email => "1234", :password => "newpassword", :password_confirmation => "newpassword", :terms => "1"
+    assert_response :success
+    assert_template "user/signup"
+    assert flash[:error]
+    # Existing email
+    post :signup, :email => @test_user.email, :password => "newpassword", :password_confirmation => "newpassword", :terms => "1"
     assert_response :success
     assert flash[:error]
     assert_template "user/signup"
-    assert_nil session[:user_id]
-
-    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "newpassword"
+    # Empty password
+    post :signup, :email => "newbob@mcbob.com", :password => "", :password_confirmation => "", :terms => "1"
     assert_response :success
-    assert flash[:error]
     assert_template "user/signup"
-    assert_nil session[:user_id]
-
-    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "wrong"
+    assert flash[:error]    
+    # Invalid password
+    post :signup, :email => "newbob@mcbob.com", :password => "a", :password_confirmation => "a", :terms => "1"
     assert_response :success
-    assert flash[:error]
     assert_template "user/signup"
-    assert_nil session[:user_id]
+    assert flash[:error]
+    # Empty password confirmation
+    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "", :terms => "1"
+    assert_response :success
+    assert_template "user/signup"
+    assert flash[:error]
+    # Password confirmation doesn't match
+    post :signup, :email => "newbob@mcbob.com", :password => "newpassword", :password_confirmation => "wrong", :terms => "1"
+    assert_response :success
+    assert_template "user/signup"
+    assert flash[:error]
   end
 
   def test_invalid_login
@@ -125,7 +147,7 @@ class UserControllerTest < ActionController::TestCase
     post :forgot_password, :email => @test_user.email 
     assert_response :redirect
     assert flash[:notice]
-    assert_redirected_to :action=>'login'    
+    assert_redirected_to :action=>'login'
   end
 
   def test_login_required

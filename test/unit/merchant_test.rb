@@ -4,6 +4,10 @@ class MerchantTest < ActiveSupport::TestCase
   self.use_instantiated_fixtures  = true
   fixtures :merchants
 
+  def setup
+    ActionMailer::Base.deliveries.clear
+  end
+
   def equal? (m1, m2, columns=[])
     for column in columns
       if m1[column] != m2[column]
@@ -197,30 +201,34 @@ class MerchantTest < ActiveSupport::TestCase
     assert_equal m.website, "https://www.abcd.com"
   end
 
-
+  def test_send_activation
+    activation_code = @inactivated.activation_code
+    assert @inactivated.send_activation
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    assert_not_equal activation_code, @inactivated.activation_code
+  end
+  
   def test_send_new_password
     #check user authenticates
-    assert_equal  @bob, Merchant.authenticate("bob", "test")    
+    assert_equal  @bob, Merchant.authenticate(@bob.username, "test")    
     #send new password
-    sent = @bob.send_new_password
-    assert_not_nil sent
-    #old password no longer workd
-    assert_nil Merchant.authenticate("bob", "test")
-    
-### TODO - test this using delayed job?
-=begin
-    #email sent...
-    assert_equal "Your password is ...", sent.subject
-    #... to bob
-    assert_equal @bob.email, sent.to[0]
-    assert_match Regexp.new("Your username is bob."), sent.body.raw_source
-    #can authenticate with the new password
-    new_pass = $1 if Regexp.new("Your new password is (\\w+).") =~ sent.body.raw_source
-    assert_not_nil new_pass
-    assert_equal  @bob, Merchant.authenticate("bob", new_pass)
-=end
+    assert @bob.send_new_password
+    assert_equal ActionMailer::Base.deliveries.size, 1
+    #old password no longer works
+    assert_nil Merchant.authenticate(@bob.username, "test")
   end
-
+  
+  def test_send_email_change
+    assert @bob.send_email_change("old_email@rallycommerce.com")
+    assert_equal ActionMailer::Base.deliveries.size, 1
+  end
+  
+  def test_update_email
+    old_email = @bob.email
+    assert @bob.update_email("new_email@rallycommerce.com")
+    assert_not_equal old_email, @bob.email
+    assert_equal ActionMailer::Base.deliveries.size, 2    
+  end
 
   def test_rand_str
     new_pass = Merchant.random_string(10)

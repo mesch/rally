@@ -878,4 +878,50 @@ class MerchantControllerTest < ActionController::TestCase
     assert_redirected_to :action => :login, :host => old_host
   end
 
+  def test_home
+    # dates are not set in session
+    start_date = session[:start_date]
+    end_date = session[:end_date]
+    assert_nil start_date
+    assert_nil end_date
+    self.login
+    # direct navigation
+    get :home
+    assert_response :success
+    assert_template "merchant/home"
+    start_date = session[:start_date]
+    end_date = session[:end_date]
+    assert_nil start_date
+    assert_nil end_date
+    # invalid date format
+    post :home, :start_date => '1234', :end_date => '1234'
+    assert_response :redirect
+    assert_redirected_to :action => :home
+    assert flash[:error]
+    assert_equal start_date, session[:start_date]    
+    assert_equal end_date, session[:end_date]
+    # start_date > end_date - invalid
+    post :home, :start_date => '01/02/2012', :end_date => '01/01/2012'
+    assert_response :redirect
+    assert_redirected_to :action => :home
+    assert flash[:error]
+    assert_equal start_date, session[:start_date]    
+    assert_equal end_date, session[:end_date]
+    assert_equal end_date, session[:end_date]
+    # end_date - start_date > 1 year - invalid
+    post :home, :start_date => '01/01/2011', :end_date => '01/02/2012'
+    assert_response :redirect
+    assert_redirected_to :action => :home
+    assert flash[:error]
+    assert_equal start_date, session[:start_date]    
+    assert_equal end_date, session[:end_date]      
+    # valid date range
+    post :home, :start_date => '01/01/2011', :end_date => '01/01/2011'
+    assert_response :success
+    assert_template "merchant/home"
+    assert flash[:error]
+    assert_not_equal start_date, session[:start_date]    
+    assert_not_equal end_date, session[:end_date]    
+  end
+
 end

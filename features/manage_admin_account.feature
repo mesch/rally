@@ -47,6 +47,7 @@ Feature: Manage Admin Account
 		And I fill in "merchant_subdomain" with "newbob"
 		And I upload a logo
 		And I press "Create Merchant"
+		And show me the page
 		Then I should see "Merchants"
 		And I should see "newbob"
 		When I go to the admin edit merchant page for "newbob"
@@ -84,6 +85,7 @@ Feature: Manage Admin Account
 		When I fill in "merchant_subdomain" with "newbob"
 		And I upload a logo
 		And I press "Update Merchant"
+		And show me the page
 		Then I should see "Merchants"
 		And I should see "Account updated."
 		When I go to the admin edit merchant page for "emptybob"

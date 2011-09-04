@@ -58,4 +58,4 @@ Rally::Application.configure do
   
 end
 
-Rally::Application.config.session_store :cookie_store, :key => '_rally_session', :domain => '.rcom.com'
+Rally::Application.config.session_store :cookie_store, :key => '_rally_session'

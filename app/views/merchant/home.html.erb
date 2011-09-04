@@ -35,11 +35,11 @@ window.addEvent('domready', function(){
 					<% for deal in @deals %>
 					<tr class="alt">
 						<td><%= deal.title %></td>
-						<td><%= deal.views_in_date_range(@start_date, @end_date) %></td>
-						<td><%= deal.shares_in_date_range(@start_date, @end_date) %></td>						
-						<td><%= deal.orders_in_date_range(@start_date, @end_date) %></td>
-						<td><%= deal.coupons_in_date_range(@start_date, @end_date) %></td>
-						<td><%= deal.coupons_in_date_range(@start_date, @end_date) * deal.deal_price.to_f %></td>
+						<td><%= deal.views_in_date_range(@start_date.beginning_of_day, @end_date.end_of_day) %></td>
+						<td><%= deal.shares_in_date_range(@start_date.beginning_of_day, @end_date.end_of_day) %></td>						
+						<td><%= deal.orders_in_date_range(@start_date.beginning_of_day, @end_date.end_of_day) %></td>
+						<td><%= deal.coupons_in_date_range(@start_date.beginning_of_day, @end_date.end_of_day) %></td>
+						<td><%= deal.coupons_in_date_range(@start_date.beginning_of_day, @end_date.end_of_day) * deal.deal_price.to_f %></td>
 					</tr>
 					<% end %>
                     </table>
