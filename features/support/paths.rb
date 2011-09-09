@@ -27,6 +27,8 @@ module NavigationHelpers
       signup_path
     when /the user account page/
       account_path
+    when /the user login page/
+      login_path
     when /the list of deals/
       deals_path
     when /the deal page for "([^"]*)"/

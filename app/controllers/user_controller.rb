@@ -5,7 +5,7 @@ class UserController < ApplicationController
   before_filter :check_for_visitor
   after_filter :log_user_action
   
-  ssl_required :login, :signup, :account, :change_password, :change_email
+  ssl_required :login, :signup, :account, :change_password, :change_email if Rails.env.production?
   ssl_allowed :home
   
   # Use the user layout
@@ -123,6 +123,7 @@ class UserController < ApplicationController
 
   # Account methods
   def connect
+    logger.debug "Yo ... called connect!"
     # Get the user from the facebook api
     fb = get_fb_user
 

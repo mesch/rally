@@ -31,4 +31,27 @@ module Facebook
     return results
   end
   
+  # Test User methods
+  def create_fb_test_user(connected=true)
+    ug = Koala::Facebook::TestUsers.new(:app_id => OPTIONS[:facebook_app_id], :secret => OPTIONS[:facebook_secret_key])
+    if connected
+      user = ug.create(true, "email")
+    else
+      user = ug.create(false)
+    end
+    return user
+  end
+  
+  def delete_fb_test_user(user)
+    ug = Koala::Facebook::TestUsers.new(:app_id => OPTIONS[:facebook_app_id], :secret => OPTIONS[:facebook_secret_key])
+    ug.delete(user)    
+    return true
+  end 
+  
+  def delete_fb_test_users()
+    ug = Koala::Facebook::TestUsers.new(:app_id => OPTIONS[:facebook_app_id], :secret => OPTIONS[:facebook_secret_key])
+    ug.delete_all    
+    return true
+  end
+  
 end

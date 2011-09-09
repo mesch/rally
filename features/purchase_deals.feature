@@ -3,9 +3,10 @@ Feature: Purchase Deals
 	As a user
 	I want to buy deals
 	
-	@deploy
+	@javascript @deploy
 	Scenario: Full Purchase 
-		Given a merchant has published a deal titled "Cool New Deal"
+		Given I am using the remote test environment
+		And a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
@@ -19,9 +20,10 @@ Feature: Purchase Deals
 		And I should see "Cool New Deal"
 		And I should see "Pending"
 	
-	@deploy
+	@javascript @deploy
 	Scenario: Full Purchase (invalid credit card)
-		Given a merchant has published a deal titled "Cool New Deal"
+		Given I am using the remote test environment
+		And a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
@@ -32,9 +34,10 @@ Feature: Purchase Deals
 		Then I should see "Purchase"
 		And I should see "There was a problem approving your transaction. Please try again."
 
-	@deploy
+	@javascript @deploy
 	Scenario: Full Purchase (invalid expiration date)
-		Given a merchant has published a deal titled "Cool New Deal"
+		Given I am using the remote test environment
+		And a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
@@ -45,9 +48,10 @@ Feature: Purchase Deals
 		Then I should see "Purchase"
 		And I should see "There was a problem approving your transaction. Please try again."
 	
-	@deploy
+	@javascript @deploy
 	Scenario: Full Purchase (with background process)
-		Given a merchant has published a deal titled "Cool New Deal"
+		Given I am using the remote test environment
+		And a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"
 		When I press "Confirm Order"
@@ -62,9 +66,10 @@ Feature: Purchase Deals
 		And I should see "Cool New Deal"
 		And I should see "Active"
 
-	@deploy
+	@javascript @deploy
 	Scenario: Full Purchase (not-tipped with background process)
-		Given a merchant has published a deal titled "Cool New Deal"
+		Given I am using the remote test environment
+		And a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the min of deal "Cool New Deal" to 2
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And I am on the order page for "Cool New Deal"

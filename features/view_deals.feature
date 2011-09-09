@@ -26,7 +26,7 @@ Feature: View Deals
 		When I go to the list of deals
 		Then I should not see "Cool New Deal"
 
-	Scenario: Deal page - (authorized vs created)
+	Scenario: Deal page - (authorized vs created orders)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And the deal "Cool New Deal" has 1 authorized order of 1 quantity
 		And the deal "Cool New Deal" has 1 created order of 1 quantity

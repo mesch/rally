@@ -184,9 +184,10 @@ Then /^I should see the limit is (\d)$/ do |limit|
 end
 
 Then /^I should see the generic logo$/ do
-    page.should have_xpath("//img[@alt=\"Logo_header\"]")
+  page.should have_xpath("//img[@alt=\"Logo_header\"]")
 end
 
 Then /^I should see the merchant logo$/ do
-    page.should have_xpath("//img[@alt=\"Header\"]")
+  page.should have_xpath("//img[@alt=\"Header\"]")
 end
+

@@ -1,5 +1,21 @@
+require "facebook"
+require "selenium/webdriver"
+
+include Facebook
+
 Capybara.ignore_hidden_elements = false
 Capybara.default_host = 'www.rcom.com'
+Capybara.app_host = 'http://www.rcom.com'
+
+Capybara.register_driver :selenium do |app|
+  #driver = Selenium::WebDriver.for :chrome, {:switches => %w[--ignore-certificate-errors --disable-popup-blocking --disable-translate]}
+  Capybara::Selenium::Driver.new(app, 
+    :browser => :chrome, 
+    :switches => %w[--ignore-certificate-errors --disable-popup-blocking --disable-translate])
+end
+
+
+#driver = Selenium::WebDriver.for :chrome, :switches => ["--disable-popup-blocking"]
 
 # load fixtures - before each scenario
 Before do
@@ -17,6 +33,13 @@ Before do
 end
 After do
   Capybara.default_host = "www.#{@base_host}"
+end
+
+# clear FB test user, if populated
+After do
+  if @fb_user
+    delete_fb_test_user(@fb_user)
+  end
 end
 
 # Helper methods

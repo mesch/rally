@@ -42,6 +42,6 @@
 </div> <!-- bd end -->
 </div> <!-- bdw end -->
 <script type="text/javascript">
-	var facebook_login_button = '<%= link_to image_tag("facebook_login_button.png"), url_for(:controller => controller.controller_name, :action => 'connect') %>';
+	var facebook_login_button = '<%= link_to image_tag("facebook_login_button.png", :id => "facebook-login-button"), url_for(:controller => controller.controller_name, :action => 'connect') %>';
 	var connect_url = '<%= url_for(:controller => controller.controller_name, :action => 'connect') %>';
 </script>

@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+gem 'nokogiri'
+
 gem 'rails', '3.0.0'
 gem 'mysql'
 gem 'sqlite3-ruby', :require => 'sqlite3'
@@ -20,7 +22,6 @@ gem 'right_aws'
 
 gem 'hirefire'
 
-gem 'nokogiri'
 gem 'authorize-net', "1.5.2", :path => 'vendor/gems/authorize-net-1.5.2'
 
 # Bundle gems for the local environment. Make sure to
@@ -37,6 +38,7 @@ group :development, :test do
 	gem 'ffi', '>=1.0.9'
 	#gem 'ruby-debug-base'
 	#gem 'ruby-debug-ide'
+	gem 'selenium-webdriver', '~> 2.5.0'
 end
 
 group :development do

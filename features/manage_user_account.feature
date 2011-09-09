@@ -21,3 +21,8 @@ Feature: Manage User Account
 		And I press "Update Account"
 		Then I should see "Your account has been updated."
 		And the "first_name" field should contain "Testerly"
+
+	
+
+	
+	

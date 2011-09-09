@@ -16,7 +16,7 @@ var facebook_login = function() {
 			document.getElementById('fb-login-button').innerHTML = facebook_login_button;
 		} 
 		else { 
-			document.getElementById('fb-login-button').innerHTML = '<fb:login-button perms="email">Login</fb:login-button>';
+			document.getElementById('fb-login-button').innerHTML = '<fb:login-button id="facebook-login-button" perms="email">Login</fb:login-button>';
 			FB.XFBML.parse(document.getElementById('fb-login-button'));
 		}
 	});
