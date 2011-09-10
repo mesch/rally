@@ -62,5 +62,3 @@ Rally::Application.configure do
   OPTIONS[:facebook_app_url] = "http://apps.facebook.com/rc_deals/"
   
 end
-
-Rally::Application.config.session_store :cookie_store, :key => '_rally_session', :domain => '.rallycommerce.net'

@@ -95,18 +95,13 @@ class ApplicationController < ActionController::Base
     return false
   end
     
-  # Checks the sessin for a user
+  # Checks the session for a user
   def get_user()  
     # Short circuit user with a session user if they exist
     if session[:user_id]
       return User.find_by_id(session[:user_id])
     end
-    
-    # Else see if there is a facebook connection...
-    #fb_user = get_fb_user
-    #if fb_user
-    #  return User.find_by_facebook_id(fb_user["id"])
-    #end
+
     return nil 
   end
   

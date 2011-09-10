@@ -4,8 +4,8 @@ Feature: Manage Deals
 	I want to create and manage deals
 	
 	Scenario: Deal List (No deals)
-		Given I am logged in as merchant "emptybob" with password "test"		
-		When I go to the merchant list of deals
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I go to the merchant list of deals
 		Then I should see "You do not have any drafts"
 		When I follow "Current Deals"
 		Then I should see "You do not have any current deals"

@@ -1,10 +1,6 @@
 # Merchant Givens
-Given /^I am logged in as merchant "(.+?)" with password "(.+?)"/ do |username, password|
-  visit merchant_login_url
-  fill_in "Username", :with => username
-  fill_in "Password", :with => password
-  click_button "Log In"
-  # switch merchant
+Given /^I am logged in as merchant "([^"]*)" with password "([^"]*)"/ do |username, password|
+  page.driver.post merchant_login_path, :username => username, :password => password
   @current_merchant = Merchant.find_by_username(username)
 end
 
@@ -97,17 +93,14 @@ end
 
 # User Givens
 Given /^I am logged in as user "(.+?)" with password "(.+?)"/ do |email, password|
-  visit login_url
-  fill_in "Email", :with => email
-  fill_in "Password", :with => password
-  click_button "Log In"
+  page.driver.post login_path, :email => email, :password => password
   # switch user
   @current_user = User.find_by_email(email)
 end
 
 # Admin Givens
 Given /^I am logged in as admin$/ do
-  page.driver.basic_authorize(OPTIONS[:admin_user_name], OPTIONS[:admin_password])
+  page.driver.browser.basic_authorize(OPTIONS[:admin_user_name], OPTIONS[:admin_password])
 end
 
 # When
@@ -117,6 +110,7 @@ end
 
 When /^I switch to the "([^"]*)" subdomain$/ do |subdomain|
   Capybara.default_host = "#{subdomain}.#{@base_host}"
+  Capybara.app_host = "http://#{subdomain}.#{@base_host}"
 end
 
 When /^I upload a valid image for Image 1$/ do 
