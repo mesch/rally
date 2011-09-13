@@ -82,6 +82,7 @@ class Deal < ActiveRecord::Base
         end
         # make sure max is large enough
         max = [self.deal_codes.size, self.max].min
+        max = max == 0 ? self.deal_codes.size : max
         self.update_attributes!(:published => true, :max => max)      
       end
       return true

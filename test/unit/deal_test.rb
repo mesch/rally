@@ -254,18 +254,18 @@ class DealTest < ActiveSupport::TestCase
     assert_equal d.max, 0
     assert !d.published
     assert !d.publish
-    # add one image - passes
+    # add one image - passes w/ max set to 1
     di = DealImage.new(:deal_id => d.id, :counter => 1,
       :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
     assert di.save
     assert_equal d.deal_images.size, 1
     assert d.publish
     assert d.published
-    assert_equal d.max, 0
+    assert_equal d.max, 1
     # publish again? no changes?
     assert d.publish
     assert d.published
-    assert_equal d.max, 0
+    assert_equal d.max, 1
   end
     
   def test_publish_max
