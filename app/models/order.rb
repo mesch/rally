@@ -31,7 +31,6 @@ class Order < ActiveRecord::Base
     begin
       Deal.transaction do
         deal = Deal.find(self.deal.id, :lock => true)
-        
         if deal.max == 0 or deal.coupon_count + quantity - self.quantity <= deal.max
           self.update_attributes!(:quantity => quantity, :amount => quantity*deal.deal_price.to_f, :updated_at => Time.zone.now)
           return true
@@ -76,17 +75,11 @@ class Order < ActiveRecord::Base
   # create coupons - after successful authorization
   def create_coupons!()
     deal = Deal.find(self.deal.id)
-    if deal.deal_codes.size == 0
-      for i in (1..self.quantity)
-        Coupon.create!(:user_id => self.user.id, :deal_id => deal.id, :order_id => self.id)
-      end        
-    else
-      for i in (1..self.quantity)
-        dc = DealCode.find(:first, :conditions => ["deal_id = ? AND reserved = ?", deal.id, false], :lock => true)
-        if dc
-          Coupon.create!(:user_id => self.user.id, :deal_id => deal.id, :order_id => self.id, :deal_code_id => dc.id)
-          dc.update_attributes!(:reserved => true)
-        end
+    for i in (1..self.quantity)
+      dc = DealCode.find(:first, :conditions => ["deal_id = ? AND reserved = ?", deal.id, false], :lock => true)
+      if dc
+        Coupon.create!(:user_id => self.user.id, :deal_id => deal.id, :order_id => self.id, :deal_code_id => dc.id)
+        dc.update_attributes!(:reserved => true)
       end
     end
   end

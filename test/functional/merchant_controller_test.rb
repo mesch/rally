@@ -733,11 +733,26 @@ class MerchantControllerTest < ActionController::TestCase
     deal = deals[0]
     assert !deal.published
     assert_equal deal.max, 0
+    # publish without deal codes - fail
+    get :publish_deal, :id => deal.id
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    # publish without images - fail
+    dc = DealCode.new(:deal_id => deal.id, :code => 'asdf123')
+    assert dc.save
+    get :publish_deal, :id => deal.id
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'    
     # publish
+    di = DealImage.new(:deal_id => deal.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
     get :publish_deal, :id => deal.id
     assert flash[:notice]
     assert_response :redirect
-    assert_redirected_to :action=>'deals', :selector=>'current'
+    assert_redirected_to :action=>'deals', :selector=>'current'    
     # verify in DB
     deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
     assert_equal deals.size, 1
@@ -819,6 +834,11 @@ class MerchantControllerTest < ActionController::TestCase
     assert flash[:notice]
     assert_response :redirect
     assert_redirected_to :action=>'deals', :selector=>'drafts'
+    dc = DealCode.new(:deal_id => deal.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => deal.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
     get :publish_deal, :id => deal.id
     assert flash[:notice]
     assert_response :redirect

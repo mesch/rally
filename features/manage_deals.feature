@@ -115,8 +115,17 @@ Feature: Manage Deals
 		Then I should not see "Cool New Deal"
 		
 	Scenario: Publish Deal
-		Given I am logged in as merchant "emptybob" with password "test"
-		And I have created a deal titled "Cool New Deal"
+		Given I am logged in as merchant "emptybob" with password "test"	
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a valid image for Image 1
+		And I upload a file of 10 coupons codes
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
 		When I go to the merchant list of deals
 		And I follow "Publish"
 		Then I should see "Your deal was published successfully."
@@ -133,6 +142,40 @@ Feature: Manage Deals
 		Then I should not see "Cool New Deal"
 		When I follow "Failed Deals"
 		Then I should not see "Cool New Deal"
+		
+	Scenario: Publish Deal (no deal codes)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a valid image for Image 1
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
+		When I go to the merchant list of deals
+		And I follow "Publish"
+		Then I should see "You must upload coupon codes before you can publish."
+		And I should see "Drafts"
+		And I should see "Cool New Deal"
+		
+	Scenario: Publish Deal (no deal images)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a file of 10 coupons codes
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
+		When I go to the merchant list of deals
+		And I follow "Publish"
+		Then I should see "You must upload at least one image before you can publish."
+		And I should see "Drafts"
+		And I should see "Cool New Deal"
 
 	Scenario: Deal List (Published)
 		Given I am logged in as merchant "emptybob" with password "test"

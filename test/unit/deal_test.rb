@@ -239,16 +239,36 @@ class DealTest < ActiveSupport::TestCase
   end
   
   def test_publish
-    # publish with no deal codes - max doesn't change
+    # publish with no deal codes - fails
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
-      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :max => 2)
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    assert_equal d.max, 0
     assert !d.published
+    assert !d.publish
+    # publish with no images - fails
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    d = Deal.find_by_id(d.id)
+    assert_equal d.deal_codes.size, 1
+    assert_equal d.max, 0
+    assert !d.published
+    assert !d.publish
+    # add one image - passes
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    assert_equal d.deal_images.size, 1
     assert d.publish
-    assert_equal d.max, 2
+    assert d.published
+    assert_equal d.max, 0
     # publish again? no changes?
     assert d.publish
-    assert_equal d.max, 2
+    assert d.published
+    assert_equal d.max, 0
+  end
+    
+  def test_publish_max
     # publish with 1 deal code - max changes to 1
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :max => 2)
@@ -256,12 +276,16 @@ class DealTest < ActiveSupport::TestCase
     assert !d.published
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert d.publish
     assert_equal d.max, 1
     # publish again? no changes?
     assert d.publish
     assert_equal d.max, 1
-    # publish with 3 deal codes - max changes to 3
+    # publish with 3 deal codes - max stays at 2
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00', :max => 2)
     assert d.save
@@ -272,8 +296,12 @@ class DealTest < ActiveSupport::TestCase
     assert dc.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf125')
     assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert d.publish
-    assert_equal d.max, 3
+    assert_equal d.max, 2
   end
   
   def test_delete
@@ -546,7 +574,7 @@ class DealTest < ActiveSupport::TestCase
       :state => Order::AUTHORIZED, :authorized_at => Time.zone.now)
     assert o.save
     # Pending coupon
-    c = Coupon.new(:user_id => 1000, :deal_id => d.id, :order_id => o.id)
+    c = Coupon.new(:user_id => 1000, :deal_id => d.id, :order_id => o.id, :deal_code_id => 100)
     assert c.save
     assert_equal c.state, 'Pending'
     assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1
@@ -556,7 +584,7 @@ class DealTest < ActiveSupport::TestCase
     assert_equal c.state, 'Active'
     assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1    
     # Coupon for another deal - no change
-    c = Coupon.new(:user_id => 1000, :deal_id => d.id + 1, :order_id => 1)
+    c = Coupon.new(:user_id => 1000, :deal_id => d.id + 1, :order_id => 1, :deal_code_id => 101)
     assert c.save    
 
     assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day + 1.days), 1
@@ -565,7 +593,7 @@ class DealTest < ActiveSupport::TestCase
     assert_equal d.coupons_in_date_range(Time.zone.today + 1.days, Time.zone.today.end_of_day + 1.days), 0
     
     # add another
-    c = Coupon.new(:user_id => 1000, :deal_id => d.id, :order_id => o.id)
+    c = Coupon.new(:user_id => 1000, :deal_id => d.id, :order_id => o.id, :deal_code_id => 102)
     assert c.save
     assert_equal d.coupons_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2
   end

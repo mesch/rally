@@ -58,13 +58,8 @@ body{ background:#fff;}
 <div id="name">Expiration Date</div>
 <div id="relname">Valid till: <%= @coupon.deal.expiration_date %></div>
 
-<% if @coupon.deal_code %>
-	<div id="name">Redemption Code</div>
-	<div id="relname"><%= @coupon.deal_code.code %></div>
-<% else %>
-	<div id="name">Coupon Id</div>
-	<div id="relname">Valid till: <%= @coupon.deal.expiration_date %></div>
-<% end %>
+<div id="name">Redemption Code</div>
+<div id="relname"><%= @coupon.deal_code.code %></div>
 
 </div>
 <!--right -->
@@ -78,11 +73,7 @@ body{ background:#fff;}
 <ul>
 	<li>1. This coupon is only valid at <%= @coupon.deal.merchant.name %>.</li>
 	<li>2. Shop at <%= @coupon.deal.merchant.website %>.</li>
-	<% if @coupon.deal_code %>
-		<li>3. On checkout enter your Redemption Code.</li>
-	<% else %>
-		<li>3. On checkout enter the Coupon ID.</li>
-	<% end %>
+	<li>3. On checkout enter your Redemption Code.</li>
 </ul>
 </div>
 

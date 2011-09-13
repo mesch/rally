@@ -21,6 +21,8 @@ class Deal < ActiveRecord::Base
   has_many :deal_codes
   has_many :coupons
   has_many :shares
+  
+  class PublishError < RuntimeError; end
 
   # Paginate methods
   def self.search(search="", page=1, per_page=10)
@@ -70,11 +72,21 @@ class Deal < ActiveRecord::Base
   def publish
     begin
       Deal.transaction do
-        # If there are deal_codes - set max to the count
-        max = self.deal_codes.size != 0 ? self.deal_codes.size : self.max
+        # check for deal codes
+        if self.deal_codes.size == 0
+          raise PublishError, "No deal codes"
+        end
+        # check for images
+        if self.deal_images.size == 0
+          raise PublishError, "No images"
+        end
+        # make sure max is large enough
+        max = [self.deal_codes.size, self.max].min
         self.update_attributes!(:published => true, :max => max)      
       end
       return true
+    rescue PublishError => pe
+      logger.info "Deal.publish: criteria not met #{pe.message}"
     rescue ActiveRecord::RecordInvalid => invalid
       logger.error "Deal.publish: Failed for Deal #{self.inspect} #{invalid}"
     end
@@ -214,8 +226,8 @@ class Deal < ActiveRecord::Base
     considered = 0
     successes = 0
     failures = 0
-    # select all deals - tipped, not expired
-    deals = Deal.find(:all, :conditions => ["expiration_date >= ?", Time.zone.today])
+    # select all deals - tipped, within 1 week of end_date
+    deals = Deal.find(:all, :conditions => ["end_date >= ? AND end_date <= ?", Time.zone.today, Time.zone.today - 7.days])
     for deal in deals
       #p "Checking Deal #{deal.inspect}"
       if deal.is_tipped

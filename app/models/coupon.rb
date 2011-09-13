@@ -1,7 +1,5 @@
 class Coupon < ActiveRecord::Base
-  validates_presence_of :user_id, :deal_id, :order_id
-
-  # todo: a way to make :deal_code_id unique, even though field is nullable?
+  validates_presence_of :user_id, :deal_id, :order_id, :deal_code_id
   
   attr_protected :id
   

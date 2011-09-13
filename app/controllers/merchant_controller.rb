@@ -182,6 +182,18 @@ class MerchantController < ApplicationController
       return
     end
     
+    if deal.deal_codes.size == 0
+      flash[:error] = "You must upload coupon codes before you can publish."
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
+      return
+    end
+    
+    if deal.deal_images.size == 0
+      flash[:error] = "You must upload at least one image before you can publish."
+      redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
+      return
+    end    
+    
     if deal.publish
       flash[:notice] = "Your deal was published successfully."
       redirect_to :controller => self.controller_name, :action => :deals, :selector => 'current'

@@ -366,6 +366,12 @@ class UserControllerTest < ActionController::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert d.publish
     get :deals
     assert_response :redirect
@@ -374,6 +380,12 @@ class UserControllerTest < ActionController::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert d.publish
     get :deals
     assert_response :success
@@ -386,11 +398,23 @@ class UserControllerTest < ActionController::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)    
     assert d.publish
     m = @bob
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert d.publish
     # no subdomain - multiple deals - stay on deals
     get :deals
@@ -410,12 +434,18 @@ class UserControllerTest < ActionController::TestCase
     deal = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert deal.save
+    dc = DealCode.new(:deal_id => deal.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => deal.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    deal = Deal.find_by_id(deal.id)
     assert deal.publish
     # Create Order
     order = Order.new(:user_id => @test_user.id, :deal_id => deal.id, :state => Order::AUTHORIZED)
     assert order.save
     # Create Coupon
-    coupon = Coupon.new(:user_id => @test_user.id, :deal_id => deal.id, :order_id => order.id)
+    coupon = Coupon.new(:user_id => @test_user.id, :deal_id => deal.id, :order_id => order.id, :deal_code_id => dc.id)
     assert coupon.save
     assert_equal coupon.state, 'Pending'
     # pending - can't view

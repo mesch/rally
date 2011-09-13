@@ -26,24 +26,6 @@ Feature: View Coupons
 		And I should see "Cool New Deal"
 		And I should see "Pending"
 
-	Scenario: Coupon List (Active, Without Deal Code)
-		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
-		And the deal "Cool New Deal" has 1 paid coupon
-		When I go to the list of coupons
-		Then I should see "Coupons"
-		And I should see "Cool New Deal"
-		And I should see "Active"
-		
-	Scenario: Coupon List (Pending, Without Deal Code)
-		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
-		And the deal "Cool New Deal" has 1 authorized coupon
-		When I go to the list of coupons
-		Then I should see "Coupons"
-		And I should see "Cool New Deal"
-		And I should see "Pending"
-
 	Scenario: Coupon List (Not Tipped)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has changed the min of deal "Cool New Deal" to 2
@@ -79,23 +61,6 @@ Feature: View Coupons
 		Given a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
-		And I am on the list of coupons
-		Then I should not see "Print"
-
-	Scenario: Coupon Page (Active, Without Deal Code)
-		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
-		And the deal "Cool New Deal" has 1 paid coupon
-		And I am on the list of coupons
-		When I follow "Print"
-		Then I should see "Coupon"
-		And I should see "Cool New Deal"
-		And I should not see "Redemption Code"
-		
-	Scenario: Coupon Page (Pending, Without Deal Code)
-		Given a merchant has published a deal titled "Cool New Deal"
-		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
-		And the deal "Cool New Deal" has 1 authorized coupon
 		And I am on the list of coupons
 		Then I should not see "Print"
 

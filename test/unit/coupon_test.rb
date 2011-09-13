@@ -38,20 +38,21 @@ class CouponTest < ActiveSupport::TestCase
     assert !c.save
     c = Coupon.new(:user_id => 1000, :deal_id => 1, :order_id => nil, :deal_code_id => 100)
     assert !c.save    
-    # ok without deal_code_id
     c = Coupon.new(:user_id => 1000, :deal_id => 1, :order_id => 3, :deal_code_id => nil)
-    assert c.save
+    assert !c.save
   end
 
   def test_state
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :min => 2)
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
     # add an authorized order
     o = Order.new(:user_id => 1, :deal_id => d.id, :quantity => 1, :amount => '20', :state => Order::AUTHORIZED)
     assert o.save
     # with a coupon
-    c = Coupon.new(:user_id => 1, :deal_id => d.id, :order_id => o.id)
+    c = Coupon.new(:user_id => 1, :deal_id => d.id, :order_id => o.id, :deal_code_id => dc.id)
     assert c.save
     assert !d.is_expired
     assert !d.is_tipped

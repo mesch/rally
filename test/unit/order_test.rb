@@ -120,28 +120,7 @@ class OrderTest < ActiveSupport::TestCase
     # create user
     u = User.new(:email => "test@abc.com", :salt => "1000", :activation_code => "1234")
     u.password = u.password_confirmation = "bobs_secure_password"
-    assert u.save
-    # create deal
-    d = Deal.new(:merchant_id => 1000, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
-    assert d.save
-    # create order with single quantity
-    o = Order.new(:user_id => u.id, :deal_id => d.id)
-    assert o.save
-    assert o.reserve_quantity(1)
-    assert o.create_coupons!
-    coupons = Coupon.find(:all, :conditions => ["user_id = ? AND deal_id = ? AND order_id = ?", u.id, d.id, o.id])
-    assert_equal coupons.size, 1
-    assert_equal coupons[0].deal_code, nil
-    # create order with multiple quantity
-    o = Order.new(:user_id => u.id, :deal_id => d.id)
-    assert o.save
-    assert o.reserve_quantity(2)
-    assert o.create_coupons!
-    coupons = Coupon.find(:all, :conditions => ["user_id = ? AND deal_id = ? AND order_id = ?", u.id, d.id, o.id])
-    assert_equal coupons.size, 2
-    assert_equal coupons[0].deal_code, nil
-    assert_equal coupons[1].deal_code, nil       
+    assert u.save    
     # create new deal
     d = Deal.new(:merchant_id => 1001, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
@@ -188,6 +167,9 @@ class OrderTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => 1000, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
     assert d.save
+    # add a deal code
+    dc = DealCode.new(:deal_id => d.id, :code => 'a')
+    assert dc.save
     # create order with single quantity
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save
@@ -250,6 +232,13 @@ class OrderTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => 1000, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
     assert d.save
+    # add deal codes
+    dc = DealCode.new(:deal_id => d.id, :code => 'a')
+    assert dc.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'b')
+    assert dc.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'c')
+    assert dc.save
     # create order with multiple quantity
     o = Order.new(:user_id => u.id, :deal_id => d.id)
     assert o.save

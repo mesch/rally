@@ -332,6 +332,12 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert_equal m.drafts().size, 1
     d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today)
     assert_equal m.drafts().size, 1    
@@ -364,6 +370,12 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert_equal m.current_deals().size, 0
     # publish
     d.publish
@@ -380,6 +392,12 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert_equal m.current_deals().size, 1
     # publish
     assert d.publish
@@ -394,6 +412,12 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert_equal m.good_deals().size, 0
     # publish
     d.publish
@@ -412,6 +436,12 @@ class MerchantTest < ActiveSupport::TestCase
     assert d.save
     assert_equal m.good_deals().size, 1
     # publish
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     d.publish
     assert_equal m.good_deals().size, 1
     d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
@@ -426,6 +456,12 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert_equal m.failed_deals().size, 0
     # publish
     d.publish
@@ -445,6 +481,12 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
       :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
     assert_equal m.failed_deals().size, 1
     # publish
     d.publish
