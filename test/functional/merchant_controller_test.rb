@@ -758,7 +758,7 @@ class MerchantControllerTest < ActionController::TestCase
     assert_equal deals.size, 1
     deal = deals[0]
     assert deal.published
-    assert_equal deal.max, 0    
+    assert_equal deal.max, 1   
   end
   
   def test_delete_deal
