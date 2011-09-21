@@ -1,0 +1,17 @@
+$global-width: 960px;
+
+$header-color: #333333;
+$background-color: #CCCCCC;
+$bar-color: #CC0000;
+$button-color: #FF0000;
+$link-color: #FF0000;
+$input-color: #666666;
+
+$deal_price_url:"i/bg-deal-price.png";
+
+/* IMPORTS */
+@import "global";
+@import "application";
+@import "partials/_sysmsg";
+@import "partials/_deal";
+@import "partials/_border_radius";

@@ -5,7 +5,11 @@
 	<title><%= OPTIONS[:site_name] %></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<!-- <link rel="shortcut icon" href="/favicon.ico" /> -->
-	<%= raw stylesheet_link_tag 'facebook.css', :media => "screen", :charset => "utf-8" %>	
+	<% if @current_merchant and @current_merchant.merchant_subdomain and @current_merchant.merchant_subdomain.get_css('facebook') %>
+		<%= raw stylesheet_link_tag @current_merchant.merchant_subdomain.get_css('facebook') %>
+	<% else %>
+		<%= raw stylesheet_link_tag 'facebook' %>
+	<% end %>
 	<script type="text/javascript">var WEB_ROOT = '';</script>
 	<%= raw javascript_include_tag "index.js" %>
 	<%= render :partial => 'layouts/block/google_analytics' %>

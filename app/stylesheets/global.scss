@@ -1,0 +1,152 @@
+@import "compass";
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{
+	margin:0;
+	padding:0;
+}
+table {
+	border-collapse:collapse;
+	border-spacing:0;
+}
+fieldset,img {
+	border:0;
+}
+address,caption,cite,code,dfn,em,var {
+	font-style:normal;
+	font-weight:normal;
+}
+li {
+	list-style:none;
+}
+caption,th {
+	text-align:left;
+}
+h1,h2,h3,h4,h5,h6 {
+	font-size:100%;
+}
+q:before,q:after {
+	content:'';
+}
+abbr { 
+	border:0;
+	font-variant:normal;
+}
+sup {
+	vertical-align:text-top;
+}
+sub {
+	vertical-align:text-bottom;
+}
+input,textarea,select {
+	font-family:inherit;
+	font-size:inherit;
+	font-weight:inherit;
+}
+input,textarea,select {
+	*font-size:100%;
+}
+legend {
+	color:#000;
+}
+.cf:after {
+	content:'';
+	display:block;
+	clear:both;
+	height:0;
+	overflow:hidden;
+	visibility:hidden;
+}
+body {
+	font:normal 14px/1.5 Tahoma,Helvetica,arial,sans-serif;
+}
+a { 
+	color:$link-color;
+	text-decoration:none;
+}
+a:hover {
+	text-decoration:underline;
+}
+span.money {
+	font-family:Helvetica,arial,sans-serif;
+}
+span.required {
+	color:red;
+}
+.f-input, input.date, input.number {
+	font-size:14px;padding:3px 4px;
+	border-color:$input-color;
+	border-style:solid;
+	border-width:1px;
+}
+.h-input, input.date, input.number {
+	font-size:12px;
+	padding:2px 3px;
+	border-color:$input-color;
+	border-style:solid;border-width:1px;
+}
+.f-text { 
+	font-size:14px;
+	padding:3px 4px;
+	border-color:$input-color;
+	border-style:solid;
+	border-width:1px;
+}
+.f-textarea {
+	font-size:14px;
+	padding:3px 4px;
+	border-color:#7c7c7c #c3c3c3 #ddd;
+	border-style:solid;
+	border-width:1px;
+}
+.f-select {
+	font-size:14px;
+	padding:3px 0 3px 4px;
+	border-color:$input-color;
+	border-style:solid;
+	border-width:1px;
+}
+input.formbutton {
+	padding:4px 1em;
+	*padding:5px 1.5em 0;
+	border:2px solid;
+	border-color:lighten($button-color, 10%) darken($button-color, 20%) darken($button-color, 10%) lighten($button-color, 20%);
+	background:$button-color;
+	color:#fff;
+	letter-spacing:.1em;
+	cursor:pointer;
+	*width:auto;
+	_width:0;
+	*overflow:visible;
+}
+input.disabled {
+	border:1px solid #ccc;
+	background:#eee;
+	color:#999;
+	cursor:default;
+}
+button.formbutton {
+	height:23px;
+	padding:0 1.5em;
+	border:1px solid;
+	border-color:lighten($button-color, 10%) lighten($button-color, 20%) darken($button-color, 10%) darken($button-color, 20%);	
+	background:$button-color;
+	color:#fff;
+	letter-spacing:.3em;
+	cursor:pointer;
+	line-height:23px;
+}
+dd.formbutton:focus {
+	border-color:#000;
+}
+.right {
+	float:right;
+}
+.left {
+	float:left;
+}
+.center {
+	text-align:center;
+}
+.date_field {
+	width:60px;
+}

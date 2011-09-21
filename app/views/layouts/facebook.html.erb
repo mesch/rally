@@ -5,7 +5,11 @@
 	<title><%= OPTIONS[:site_name] %></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<!-- <link rel="shortcut icon" href="/favicon.ico" /> -->
-	<%= raw stylesheet_link_tag 'facebook.css', :media => "screen", :charset => "utf-8" %>	
+	<% if @merchant_subdomain and @merchant_subdomain.get_css('facebook') %>
+		<%= raw stylesheet_link_tag @merchant_subdomain.get_css('facebook') %>
+	<% else %>
+		<%= raw stylesheet_link_tag 'facebook' %>
+	<% end %>
 	<script type="text/javascript">var WEB_ROOT = '';</script>
 	<%= raw javascript_include_tag "mootools-core-1.3.2-full-nocompat.js" %>	
 	<%= raw javascript_include_tag "mootools-more-1.3.2-full-nocompat.js" %>
@@ -54,7 +58,7 @@
 			<div class="logins">
 				<ul id="account">
 					<li class="login"><%= link_to "Log In", 
-						url_for(:controller => controller.controller_name, :action => 'logout') %></li>
+						url_for(:controller => controller.controller_name, :action => 'login') %></li>
 					</ul>
 				<div class="line "></div>
 			</div>
