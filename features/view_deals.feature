@@ -212,3 +212,4 @@ Feature: View Deals
 		When I go to the order page for "Cool New Deal"
 		Then I should see "Order"
 		And I should see "Limit 2"
+	

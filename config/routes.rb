@@ -23,6 +23,9 @@ Rally::Application.routes.draw do
       match '/deal/:id' => :deal, :as => :deal
       match :coupons
       match '/coupon/:id' => :coupon, :as => :coupon
+      match :share
+      match :facebook_share
+      match :confirm_permissions
     end
     scope :via => :post do
       match :home
@@ -33,8 +36,8 @@ Rally::Application.routes.draw do
       match :change_email
       match :change_password
       match :forgot_password
-      match '/share' => :create_share, :as => :create_share
-      match '/share/:id' => :update_share, :as => :update_share
+      #match '/share' => :create_share, :as => :create_share
+      #match '/share/:id' => :update_share, :as => :update_share
     end
   end
   
@@ -60,14 +63,17 @@ Rally::Application.routes.draw do
       match '/deal/:id' => :deal, :as => :deal
       match :coupons
       match '/coupon/:id' => :coupon, :as => :coupon
+      match :share
+      match :facebook_share
+      match :confirm_permissions
     end
     scope :via => :post do
       match '/' => :home
       match :home
       match :splash
       match :login
-      match '/share' => :create_share, :as => :create_share
-      match '/share/:id' => :update_share, :as => :update_share
+      #match '/share' => :create_share, :as => :create_share
+      #match '/share/:id' => :update_share, :as => :update_share
     end
   end
   

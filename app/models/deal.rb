@@ -21,6 +21,7 @@ class Deal < ActiveRecord::Base
   has_many :deal_codes
   has_many :coupons
   has_many :shares
+  has_one :deal_incentive
   
   class PublishError < RuntimeError; end
 
@@ -80,10 +81,23 @@ class Deal < ActiveRecord::Base
         if self.deal_images.size == 0
           raise PublishError, "No images"
         end
+        # handle deal incentive (if exists)
+        if deal_incentive = self.deal_incentive
+          if deal_incentive.deal_incentive_codes.size == 0
+            raise PublishError, "No deal incentive codes."
+          end
+          if deal_incentive.incentive_value < self.deal_value
+            raise PublishError, "Incentive value is less than deal value."
+          end
+          # make sure incentive max is large enough
+          max = [deal_incentive.deal_incentive_codes.size, deal_incentive.max].min
+          max = max == 0 ? deal_incentive.deal_incentive_codes.size : max
+          deal_incentive.update_attributes!(:max => max)
+        end
         # make sure max is large enough
         max = [self.deal_codes.size, self.max].min
         max = max == 0 ? self.deal_codes.size : max
-        self.update_attributes!(:published => true, :max => max)      
+        self.update_attributes!(:published => true, :max => max)
       end
       return true
     rescue PublishError => pe

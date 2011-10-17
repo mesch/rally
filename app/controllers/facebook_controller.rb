@@ -38,12 +38,12 @@ class FacebookController < UserController
     
     if params[:signed_request]
       signed_request = parse_signed_request(params[:signed_request])
-      p signed_request
+      #p signed_request
       if signed_request and signed_request["page"] and signed_request["page"]["id"]
         facebook_page_id = signed_request["page"]["id"]
         if merchant = Merchant.find_by_facebook_page_id(facebook_page_id)
           @merchant_subdomain = MerchantSubdomain.find_by_merchant_id(merchant.id)
-          p @merchant_subdomain
+          #p @merchant_subdomain
           if @merchant_subdomain
             @app_url += "?sd=#{@merchant_subdomain.subdomain}"
             

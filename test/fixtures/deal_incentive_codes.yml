@@ -1,0 +1,9 @@
+burger_incentive_code1:
+    deal_incentive: burger_deal_incentive
+    code: '1234'
+    reserved: false
+
+burger_incentive_code2:
+    deal_incentive: burger_deal_incentive
+    code: '1235'
+    reserved: false

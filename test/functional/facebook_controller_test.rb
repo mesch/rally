@@ -45,7 +45,7 @@ class FacebookControllerTest < ActionController::TestCase
     assert_response :success
     assert_template "user/deals"
     assert_template "layouts/facebook"
-    get :deal, :id => Deal.find(:first).id
+    get :deal, :id => @burger_deal.id
     assert_response :success
     assert_template "user/deal"
     assert_template "layouts/facebook"
@@ -93,7 +93,7 @@ class FacebookControllerTest < ActionController::TestCase
     assert_response :success
     assert_template "user/deals"
     assert_nil session[:user_id]
-    get :deal, :id => Deal.find(:first).id
+    get :deal, :id => @burger_deal.id
     assert_response :success
     assert_template "user/deal"
     assert_nil session[:user_id]
@@ -113,7 +113,7 @@ class FacebookControllerTest < ActionController::TestCase
     assert_response :success
     assert_template "user/deals"
     assert session[:user_id]
-    get :deal, :id => Deal.find(:first).id
+    get :deal, :id => @burger_deal.id
     assert_response :success
     assert_template "user/deal"
     assert session[:user_id]
@@ -311,6 +311,33 @@ class FacebookControllerTest < ActionController::TestCase
     get :login
     assert_response :redirect
     assert_redirected_to :action => :login, :host => old_host
+  end
+  
+  def test_share
+    get :share, :deal_id => @burger_deal.id
+    assert_response :redirect
+    assert_redirected_to :action => :login
+    self.login
+    get :share, :deal_id => @burger_deal.id
+    assert_response :success
+    assert_template "user/share"
+    get :share, :deal_id => 0
+    assert_response :redirect
+    assert_redirected_to :action => :home
+  end
+  
+  def test_facebook_share
+    get :facebook_share, :deal_id => @burger_deal.id
+    assert_response :redirect
+    assert_redirected_to :action => :login
+    self.login
+    # won't have fb requirements
+    get :facebook_share, :deal_id => @burger_deal.id
+    assert_response :redirect
+    assert_redirected_to :action => :confirm_permissions, :deal_id => @burger_deal.id
+    get :facebook_share, :deal_id => 0
+    assert_response :redirect
+    assert_redirected_to :action => :home    
   end
   
 end

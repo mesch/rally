@@ -4,6 +4,7 @@
 	<meta http-equiv=content-type content="text/html; charset=UTF-8">
 	<title><%= OPTIONS[:site_name] %></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<%= render :partial => 'layouts/partials/meta_tags' %>
 	<!-- <link rel="shortcut icon" href="/favicon.ico" /> -->
 	<% if @merchant_subdomain and @merchant_subdomain.get_css('facebook') %>
 		<%= raw stylesheet_link_tag @merchant_subdomain.get_css('facebook') %>
@@ -19,7 +20,7 @@
 	<%= raw javascript_include_tag "overlay.js" %>	
 	<%= raw javascript_include_tag "application.js" %>	
 	<%= raw javascript_include_tag "index.js" %>
-	<%= render :partial => 'layouts/block/google_analytics' %>
+	<%= render :partial => 'layouts/partials/google_analytics' %>
 </head>
 <body id="<%= controller.controller_name %>_<%= controller.action_name %>">
 <div id="fb-root"></div>
@@ -82,7 +83,7 @@
 		</script>
 	<% end %>
 
-	<%= render :partial => 'layouts/block/footer' %>
+	<%= render :partial => 'layouts/partials/footer' %>
 	
 	<%= raw javascript_include_tag request.protocol + "connect.facebook.net/en_US/all.js" %>
 	<script type="text/javascript">

@@ -1,0 +1,6 @@
+<div id="sysmsg-tip">
+	<%= link_to "Share this deal", url_for(:controller => @next_controller, :action => 'share', :deal_id => @order.deal.id) %> with 
+	<strong><%= @order.deal.deal_incentive.number_required %></strong> friends and turn your 
+	<strong class="old"><%= @order.deal.deal_value.format(:no_cents) %></strong> into 
+	<strong class="discount"><%= @order.deal.deal_incentive.incentive_value.format(:no_cents) %></strong>!		
+</div>

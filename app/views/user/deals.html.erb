@@ -26,8 +26,9 @@
 								<div class="info">
 									<p class="total"><strong class="count"><%= deal.confirmed_coupon_count %></strong> Buyers&nbsp;
 										<% if deal.max != 0 %>
-											<strong class="count"><%= deal.max - deal.confirmed_coupon_count %></strong> Left!</p>
+											<strong class="count"><%= deal.max - deal.confirmed_coupon_count %></strong> Left!
 										<% end %>
+									</p>
 									<p class="price">
 										Value：<strong class="old"><%= deal.deal_value.format(:no_cents) %></strong><br />
 										Discount: <strong class="discount"><%= deal.discount %>%</strong><br />

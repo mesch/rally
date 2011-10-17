@@ -1,0 +1,27 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div id="biz">
+    <div id="content" class="biz">
+        <div class="box">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head"><h2>Log In</h2></div>
+					<div class="subsect">
+						<div class="wholetip clear"><h3><%= OPTIONS[:site_name] %> + Facebook</h3></div>
+						<div class="act">
+							<div id="fb-login-button"></div>
+						</div>
+						<div class="wholetip"><p>Log in to Facebook to share with your friends.</p></div>
+					</div>
+                </div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+    <div id="sidebar"></div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->
+<script type="text/javascript">
+	var connect_url = '<%= url_for(:controller => controller.controller_name, :action => 'connect', :next_action => 'facebook_share', :deal_id => @deal.id) %>';
+</script>

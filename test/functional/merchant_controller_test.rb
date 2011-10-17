@@ -587,7 +587,7 @@ class MerchantControllerTest < ActionController::TestCase
     assert_template "merchant/_deal_form"
   end
   
-  def test_create_non_numbers
+  def test_create_deal_non_numbers
     self.login
     post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
@@ -635,6 +635,86 @@ class MerchantControllerTest < ActionController::TestCase
     # verify in DB
     deals = Deal.find(:all, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
     assert_equal deals.size, 1
+  end
+  
+  def test_create_deal_incentive_basic
+    self.login
+    #create basic w/o incentive
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => ''
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'    
+    # verify in DB
+    deal = Deal.find(:first, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert !deal.deal_incentive
+    # create basic w/ incentive
+    post :create_deal, :title => 'incentivo', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+      :incentive_value => '25.00', :incentive_required => 5, :incentive_max => 100
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    # verify in DB
+    deal = Deal.find(:first, :conditions => {:merchant_id => @bob.id, :title => 'incentivo'})
+    assert deal.deal_incentive
+    assert_equal deal.deal_incentive.metric_type, DealIncentive::SHARE
+    assert_equal deal.deal_incentive.incentive_value, '25.00'.to_money
+    assert_equal deal.deal_incentive.number_required, 5
+    assert_equal deal.deal_incentive.max, 100
+  end
+  
+  def test_create_deal_incentive_missing_fields
+    self.login
+    # incentive_type missing - ok
+    post :create_deal, :title => 'incentivo', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => nil, 
+      :incentive_value => '25.00', :incentive_required => 5, :incentive_max => 100
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'  
+    post :create_deal, :title => 'incentivo', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+      :incentive_value => nil, :incentive_required => 5, :incentive_max => 100    
+    assert flash[:error]
+    assert_response :success
+    assert_template "merchant/_deal_form"
+    post :create_deal, :title => 'incentivo', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+      :incentive_value => '25.00', :incentive_required => nil, :incentive_max => 100
+    assert flash[:error]
+    assert_response :success
+    assert_template "merchant/_deal_form"
+    post :create_deal, :title => 'incentivo', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+      :incentive_value => '25.00', :incentive_required => 5, :incentive_max => nil
+    assert flash[:error]
+    assert_response :success
+    assert_template "merchant/_deal_form"
+  end
+  
+  def test_create_deal_incentive_non_numbers
+    self.login
+    post :create_deal, :title => 'incentivo', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+      :incentive_value => '25.00', :incentive_required => 'a', :incentive_max => 100
+    assert flash[:error]
+    assert_response :success
+    assert_template "merchant/_deal_form" 
+    post :create_deal, :title => 'incentivo', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+      :incentive_value => '25.00', :incentive_required => 5, :incentive_max => 'a'
+    assert flash[:error]
+    assert_response :success
+    assert_template "merchant/_deal_form"   
   end
 
   def test_update_deal
@@ -707,15 +787,100 @@ class MerchantControllerTest < ActionController::TestCase
     # edit title
     # title - 50 chars
     string = ""
-    length = 51
+    length = 101
     length.times{ string << "a"}
-    post :update_deal, :id => deal.id, :title => string
+    post :update_deal, :id => deal.id, :title => string, :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0
     assert flash[:error]
     assert_response :success
     assert_template "merchant/_deal_form"
     # verify in DB
     deal = Deal.find(deal.id)
     assert_equal deal.title, 'dealio' 
+  end
+  
+  def test_update_deal_no_incentive
+    self.login
+    #create basic w/ no deal incentive
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => ''
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'   
+    deal = Deal.find(:first, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert deal
+    assert !deal.deal_incentive
+    # update w/o incentive
+    post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => ''
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    deal = Deal.find_by_id(deal.id)
+    assert deal
+    assert !deal.deal_incentive
+    # update w/ incentive
+    post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+    :incentive_value => '25.00', :incentive_required => 5, :incentive_max => 100
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    deal = Deal.find_by_id(deal.id)
+    assert deal
+    assert deal.deal_incentive
+    assert_equal deal.deal_incentive.metric_type, DealIncentive::SHARE
+    assert_equal deal.deal_incentive.incentive_value, '25.00'.to_money
+    assert_equal deal.deal_incentive.number_required, 5
+    assert_equal deal.deal_incentive.max, 100    
+  end
+  
+  def test_update_deal_with_incentive
+    self.login
+    #create basic w/ deal incentive
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+      :incentive_value => '25.00', :incentive_required => 5, :incentive_max => 100
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'   
+    deal = Deal.find(:first, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert deal
+    assert deal.deal_incentive
+    assert_equal deal.deal_incentive.metric_type, DealIncentive::SHARE
+    assert_equal deal.deal_incentive.incentive_value, '25.00'.to_money
+    assert_equal deal.deal_incentive.number_required, 5
+    assert_equal deal.deal_incentive.max, 100
+    # update w/o incentive
+    post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => ''
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    deal = Deal.find_by_id(deal.id)
+    assert deal
+    assert !deal.deal_incentive
+    # update w/ incentive
+    post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+    :incentive_value => '30.00', :incentive_required => 10, :incentive_max => 200
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    deal = Deal.find_by_id(deal.id)
+    assert deal
+    assert deal.deal_incentive
+    assert_equal deal.deal_incentive.metric_type, DealIncentive::SHARE
+    assert_equal deal.deal_incentive.incentive_value, '30.00'.to_money
+    assert_equal deal.deal_incentive.number_required, 10
+    assert_equal deal.deal_incentive.max, 200    
   end
   
   def test_publish_deal
@@ -758,7 +923,43 @@ class MerchantControllerTest < ActionController::TestCase
     assert_equal deals.size, 1
     deal = deals[0]
     assert deal.published
-    assert_equal deal.max, 1   
+    assert_equal deal.max, 1
+  end
+  
+  def test_publish_deal_incentive
+    self.login
+    # create with deal incentive
+    post :create_deal, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
+      :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
+      :incentive_value => '30.00', :incentive_required => 10, :incentive_max => 0
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
+    deal = Deal.find(:first, :conditions => {:merchant_id => @bob.id, :title => 'dealio'})
+    assert !deal.published
+    assert_equal deal.deal_incentive.max, 0
+    dc = DealCode.new(:deal_id => deal.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => deal.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    # publish without incentive codes - fail
+    get :publish_deal, :id => deal.id
+    assert flash[:error]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'drafts'
+    dic = DealIncentiveCode.new(:deal_incentive_id => deal.deal_incentive.id, :code => 'asdf123')
+    assert dic.save
+    # publish - ok    
+    get :publish_deal, :id => deal.id
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals', :selector=>'current'    
+    # verify in DB
+    deal = Deal.find_by_id(deal.id)
+    assert deal.published
+    assert_equal deal.deal_incentive.max, 1  
   end
   
   def test_delete_deal

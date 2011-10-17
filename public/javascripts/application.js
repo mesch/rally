@@ -9,8 +9,8 @@ var facebook_login = function() {
 	FB.Event.subscribe('auth.login', function() {
 		window.location = connect_url;
 	});
-	// If they are already logged in - redirect_to :connect
-	// Else - show fb:login-button 
+	// If they are already logged in - redirect_to :connect button
+	// Else - show fb:login-button	
 	FB.getLoginStatus(function(response) {
 		if (response.status == 'connected') {
 			document.getElementById('fb-login-button').innerHTML = facebook_login_button;
@@ -22,6 +22,24 @@ var facebook_login = function() {
 	});
 }
 
+var add_publish_stream = function() {
+	// Hack around FB SSL bug (http://bugs.developers.facebook.net/show_bug.cgi?id=17121)
+	if(document.location.protocol == 'https:' && !!FB && !!FB._domain && !!FB._domain.staticfb) {
+		FB._domain.staticfb = FB._domain.staticfb.replace('http://static.ak.facebook.com/', 'https://s-static.ak.fbcdn.net/');
+	}
+	// Always show fb:login-button	
+	FB.getLoginStatus(function(response) {
+		document.getElementById('fb-login-button').innerHTML = 
+		'<fb:login-button id="facebook-login-button" perms="email,publish_stream" onLogin="goto_url(\'' + connect_url + '\')">Login</fb:login-button>';
+		FB.XFBML.parse(document.getElementById('fb-login-button'));
+	});
+}
+
+var goto_url = function(url) {
+	window.location = url;
+}
+
+/*
 var add_share_events = function() {	
 	$$(".facebook").each(function(item) {
 		item.addEvent("click", function(e) {
@@ -72,6 +90,20 @@ var complete_share = function(update_share_url, post_id) {
 			alert('Thank you for sharing!') }
 	}).send();
 }
+*/
+
+var add_incentive_disabling = function() {
+	document.getElementById('incentive_type').addEvent("change",
+		function(e) {
+			if (e.target.value == "") {
+		    	document.getElementById('incentive').hide();
+			}
+			else {
+				document.getElementById('incentive').show();
+			}
+	    }
+	);
+}
 
 var onload_user_login = function() {
 	facebook_login();
@@ -81,6 +113,7 @@ var onload_facebook_login = function() {
 	facebook_login();
 };
 
+/*
 var onload_user_deal = function() {
 	add_share_events();
 };
@@ -96,3 +129,28 @@ var onload_payment_receipt = function() {
 var onload_facebook_payment_receipt = function() {
 	add_share_events();	
 };
+*/
+
+var onload_merchant_new_deal = function() {
+	add_incentive_disabling();
+}
+
+var onload_merchant_create_deal = function() {
+	add_incentive_disabling();
+}
+
+var onload_merchant_edit_deal = function() {
+	add_incentive_disabling();
+}
+
+var onload_merchant_update_deal = function() {
+	add_incentive_disabling();
+}
+
+var onload_user_confirm_permissions = function() {
+	add_publish_stream();
+}
+
+var onload_facebook_confirm_permissions = function() {
+	add_publish_stream();
+}

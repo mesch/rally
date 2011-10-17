@@ -1,0 +1,23 @@
+<div id="friend_selector">
+	<div id="title">Select Your Friends</div>
+	<div id="find_friends">
+		<span style="font-weight: bold; color: #666;">Find Friends:</span>
+		<input type="text" value="" id="auto_complete"/>
+	</div>
+	<div id="friend_count">
+		Selected (<span id="count">0</span>)
+	</div>
+	<ul id="friends">
+			<% for(var i=0; i < friends.length; i++) { %>
+			<li class="friend">
+				<div class="image">
+					<img src="http://graph.facebook.com/<%= friends[i]['id'] %>/picture"/>
+				</div>
+				<div class="name"><%= friends[i]["name"] %></div>
+				<input type='checkbox' name='facebook_ids[]' class="hidden" value='<%= friends[i]["id"] %>'/>
+			</li>
+			<% } %>
+			<div class="clear"></div>
+		</li>
+	</ul>
+</div>

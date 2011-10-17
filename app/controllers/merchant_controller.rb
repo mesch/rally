@@ -76,7 +76,19 @@ class MerchantController < ApplicationController
             dc = DealCode.new(:deal_id => @deal.id, :code => row[0])
             dc.save!
           end
-        end       
+        end 
+        if (!params[:incentive_type].blank?)
+          di = DealIncentive.new(:deal_id => @deal.id, :metric_type => params[:incentive_type], 
+            :incentive_price => params[:deal_price], :incentive_value => params[:incentive_value], 
+            :number_required => params[:incentive_required], :max => params[:incentive_max])
+          di.save!
+          if (file = params[:incentive_codes_file])
+            FasterCSV.foreach(file.path) do |row|
+              dc = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => row[0])
+              dc.save!
+            end
+          end
+        end     
       end
       flash[:notice] = "Your deal was created successfully."
       redirect_to :controller => self.controller_name, :action => :deals
@@ -90,7 +102,9 @@ class MerchantController < ApplicationController
   end
   
   def edit_deal
-    @deal = Deal.find_by_id(params[:id])
+    unless @deal
+      @deal = Deal.find_by_id(params[:id])
+    end
 
     unless @deal.merchant == @current_merchant
       go_home
@@ -106,6 +120,9 @@ class MerchantController < ApplicationController
     @video = @deal.deal_video ? @deal.deal_video : nil
     
     @num_deal_codes = DealCode.count(:conditions => "deal_id = #{@deal.id}")
+    if @deal.deal_incentive
+      @num_incentive_codes = DealIncentiveCode.count(:conditions => "deal_incentive_id = #{@deal.deal_incentive.id}")
+    end
   end
   
   def update_deal
@@ -158,6 +175,20 @@ class MerchantController < ApplicationController
             dc.save!
           end
         end
+        DealIncentive.delete_all(["deal_id = ?", @deal.id])
+        if (!params[:incentive_type].blank? and !@deal.published)
+          di = DealIncentive.new(:deal_id => @deal.id, :metric_type => params[:incentive_type], 
+            :incentive_price => params[:deal_price], :incentive_value => params[:incentive_value], 
+            :number_required => params[:incentive_required], :max => params[:incentive_max])
+          di.save!
+          if (file = params[:incentive_codes_file])
+            DealIncentiveCode.delete_all(["deal_incentive_id = ?", di.id])
+            FasterCSV.foreach(file.path) do |row|
+              dc = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => row[0])
+              dc.save!
+            end
+          end
+        end
       end
       flash[:notice] = "Your deal was updated successfully."
       if @deal.published 
@@ -192,7 +223,20 @@ class MerchantController < ApplicationController
       flash[:error] = "You must upload at least one image before you can publish."
       redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
       return
-    end    
+    end
+    
+    if deal.deal_incentive
+      if deal.deal_incentive.deal_incentive_codes.size == 0
+        flash[:error] = "You must upload coupon codes for your deal incentive before you can publish."
+        redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
+        return        
+      end
+      if deal.deal_incentive.incentive_value < deal.deal_value
+        flash[:error] = "The incentive value must be greater than or equal to the deal value."
+        redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
+        return
+      end
+    end
     
     if deal.publish
       flash[:notice] = "Your deal was published successfully."

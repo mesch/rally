@@ -89,6 +89,7 @@ Feature: Manage Deals
 		And "image2" should not be disabled
 		And "image3" should not be disabled
 		And "codes_file" should not be disabled
+		And "incentive_type" should not be disabled
 	
 	Scenario: Update Deal (Unpublished)
 		Given I am logged in as merchant "emptybob" with password "test"
@@ -213,6 +214,7 @@ Feature: Manage Deals
 		And "image2" should not be disabled
 		And "image3" should not be disabled
 		And "codes_file" should be disabled
+		And "incentive_type" should be disabled
 	
 	Scenario: Update Deal (Published)
 		Given I am logged in as merchant "emptybob" with password "test"
@@ -282,3 +284,170 @@ Feature: Manage Deals
 		Then I should not see "Cool New Deal"
 		When I follow "Failed Deals"
 		Then I should not see "Cool New Deal"
+	
+	Scenario: Create Deal with Incentive (0 codes)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a valid image for Image 1
+		And I upload a file of 0 coupons codes
+		And I select "Share" from "incentive_type"
+		And I fill in "incentive_value" with "30"
+		And I fill in "incentive_required" with "5"
+		And I fill in "incentive_max" with "100"
+		And I upload a file of 0 incentive codes
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
+		And I should see "Cool New Deal"
+		And I should see "Edit"
+		And I should see "View"
+		And I should see "Publish"
+		And I should see "Delete"
+		And I should not see "Force Tip"
+		
+	Scenario: Create Deal with Incentive (0 codes)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a valid image for Image 1
+		And I upload a file of 0 coupons codes
+		And I select "Share" from "incentive_type"
+		And I fill in "incentive_value" with "30"
+		And I fill in "incentive_required" with "5"
+		And I upload a file of 10 incentive codes
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
+		And I should see "Cool New Deal"
+		And I should see "Edit"
+		And I should see "View"
+		And I should see "Publish"
+		And I should see "Delete"
+		And I should not see "Force Tip"	
+	
+	Scenario: Update Deal (no incentive / no incentive)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have created a deal titled "Cool New Deal"
+		And I am on the edit deal page for "Cool New Deal"
+		When I fill in "title" with "Even Cooler New Deal"
+		And I press "Update Deal"
+		Then I should see "Your deal was updated successfully."
+		And I should see "Even Cooler New Deal"
+		When I go to the edit deal page for "Even Cooler New Deal"
+		Then "" should be selected for "incentive_type"
+	
+	Scenario: Update Deal (no incentive / incentive)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have created a deal titled "Cool New Deal"
+		And I am on the edit deal page for "Cool New Deal"
+		When I fill in "title" with "Even Cooler New Deal"
+		And I select "Share" from "incentive_type"
+		And I fill in "incentive_value" with "30"
+		And I fill in "incentive_required" with "5"
+		And I press "Update Deal"
+		Then I should see "Your deal was updated successfully."
+		And I should see "Even Cooler New Deal"
+		When I go to the edit deal page for "Even Cooler New Deal"
+		Then "SHARE" should be selected for "incentive_type"
+
+	Scenario: Update Deal (incentive / no incentive)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have created a deal titled "Cool New Deal"
+		And I have added a sharing incentive to deal "Cool New Deal"
+		And I am on the edit deal page for "Cool New Deal"
+		When I fill in "title" with "Even Cooler New Deal"
+		And I select "" from "incentive_type"
+		And I press "Update Deal"
+		Then I should see "Your deal was updated successfully."
+		And I should see "Even Cooler New Deal"
+		When I go to the edit deal page for "Even Cooler New Deal"
+		Then "" should be selected for "incentive_type"
+
+	Scenario: Update Deal (incentive / incentive)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have created a deal titled "Cool New Deal"
+		And I have added a sharing incentive to deal "Cool New Deal"
+		And I am on the edit deal page for "Cool New Deal"
+		When I fill in "title" with "Even Cooler New Deal"
+		And I select "Share" from "incentive_type"
+		And I fill in "incentive_value" with "50"
+		And I fill in "incentive_required" with "10"
+		And I press "Update Deal"
+		Then I should see "Your deal was updated successfully."
+		And I should see "Even Cooler New Deal"
+		When I go to the edit deal page for "Even Cooler New Deal"
+		Then "SHARE" should be selected for "incentive_type"
+		And the "incentive_value" field should contain "50"
+		And the "incentive_required" field should contain "10"
+
+	Scenario: Publish Deal with Incentive
+		Given I am logged in as merchant "emptybob" with password "test"	
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a valid image for Image 1
+		And I upload a file of 10 coupons codes
+		And I select "Share" from "incentive_type"
+		And I fill in "incentive_value" with "30"
+		And I fill in "incentive_required" with "5"
+		And I upload a file of 10 incentive codes
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
+		When I go to the merchant list of deals
+		And I follow "Publish"
+		Then I should see "Your deal was published successfully."
+		And I should see "Current Deals"
+		And I should see "Cool New Deal"
+
+	Scenario: Publish Deal with Incentive (no codes)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a valid image for Image 1
+		And I upload a file of 10 coupons codes
+		And I select "Share" from "incentive_type"
+		And I fill in "incentive_value" with "30"
+		And I fill in "incentive_required" with "5"
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
+		When I go to the merchant list of deals
+		And I follow "Publish"
+		Then I should see "You must upload coupon codes for your deal incentive before you can publish."
+		And I should see "Drafts"
+		And I should see "Cool New Deal"
+
+	Scenario: Publish Deal with Incentive (invalid incentive_value)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a valid image for Image 1
+		And I upload a file of 10 coupons codes
+		And I select "Share" from "incentive_type"
+		And I fill in "incentive_value" with "10"
+		And I fill in "incentive_required" with "5"
+		And I upload a file of 10 incentive codes
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
+		When I go to the merchant list of deals
+		And I follow "Publish"
+		Then I should see "The incentive value must be greater than or equal to the deal value."
+		And I should see "Drafts"
+		And I should see "Cool New Deal"

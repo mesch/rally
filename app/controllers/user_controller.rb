@@ -40,6 +40,11 @@ class UserController < ApplicationController
   
   def deal
     @deal = Deal.find_by_id(params[:id])
+    unless @deal
+      go_home
+      return
+    end
+    
     @now = Time.zone.now.to_f.round
     @diff = @deal.time_left
     @time_left = Deal.time_difference_for_display(@diff)
@@ -94,7 +99,8 @@ class UserController < ApplicationController
     
     render "user/#{self.action_name}", :layout => false
   end
-
+  
+=begin
   # Shares
   def create_share
     user_id = @current_user ? @current_user.id : nil
@@ -115,15 +121,21 @@ class UserController < ApplicationController
       return render :json => { :result => "error", :message => "Unable to update share" }
     end
   end
-
-  def home
-    # just go to deals, for now?
-    redirect_to :controller => self.controller_name, :action => 'deals'
+=end
+  
+  # Incentive Methods
+  def share
+    @deal = Deal.find_by_id(params[:deal_id])
+    unless @deal
+      go_home
+      return
+    end
+    
+    render "user/#{self.action_name}"
   end
 
-  # Account methods
+  # FB Methods
   def connect
-    logger.debug "Yo ... called connect!"
     # Get the user from the facebook api
     fb = get_fb_user
 
@@ -153,7 +165,54 @@ class UserController < ApplicationController
       end       
     end
     set_user(user)
-    redirect_to :controller => self.controller_name, :action => 'home'
+    if params[:next_action]
+      redirect_to :controller => self.controller_name, :action => params[:next_action], :deal_id => params[:deal_id]
+    else
+      redirect_to :controller => self.controller_name, :action => 'home'
+    end
+  end
+  
+  def confirm_permissions
+    @deal = Deal.find_by_id(params[:deal_id])
+    unless @deal
+      go_home
+      return
+    end
+    
+    # check for permissions
+    fb_permissions = get_fb_user_permissions
+    if fb_permissions and fb_permissions['publish_stream']
+      redirect_to :controller => self.controller_name, :action => 'facebook_share', :deal_id => @deal.id
+      return
+    end
+    
+    flash.now[:notice] = "You need to log in to Facebook with the proper permissions to share with your friends."
+    
+    @next_action = 'facebook_share'
+    render "user/#{self.action_name}"
+  end
+  
+  def facebook_share
+    @deal = Deal.find_by_id(params[:deal_id])
+    unless @deal
+      go_home
+      return
+    end
+    
+    # check for permissions - again
+    fb_permissions = get_fb_user_permissions
+    unless fb_permissions and fb_permissions['publish_stream']
+      redirect_to :controller => self.controller_name, :action => 'confirm_permissions', :deal_id => @deal.id
+      return
+    end
+    
+    render "user/#{self.action_name}"
+  end
+  
+  # Account methods
+  def home
+    # just go to deals, for now?
+    redirect_to :controller => self.controller_name, :action => 'deals'
   end
   
   def account

@@ -231,6 +231,22 @@
 #recent-deals .detail{margin-top:8px;color:#666;font-size:12px;}
 #recent-deals .deal-subscribe{margin-top:0;}
 
+#deal-incentive .title{float:left;;width:240px;padding:80px 60px;font-size:18px;}
+#deal-incentive .info{float:left;}
+#deal-incentive .info .time{margin-top:15px;font-size:12px;font-weight:bold;color:#000;}
+#deal-incentive .info h4{margin-top:5px;height:20px;padding-right:10px;font-weight:normal;}
+#deal-incentive .info h4 a{color:#666;}
+#deal-incentive .info .pic{position:relative;z-index:1;width:200px;height:125px;margin:8px 0 20px;_display:inline;}
+#deal-incentive .info .pic .soldout{position:absolute;z-index:1;right:0;bottom:0;_bottom:0px;width:182px;height:77px;background:url(i/bg-deals-default-soldout.png) no-repeat 0 0;_background:transparent;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/static/css/i/bg-deals-default-soldout.png');}
+#deal-incentive .info .pic .soldoutlink{display:block;position:absolute;z-index:2;right:0;bottom:0;width:182px;height:77px;outline:0;text-indent:-999em;}
+#deal-incentive .info .pic .isopen{position:absolute;z-index:1;right:-13px;bottom:-7px;width:65px;height:66px;background:url(i/bg-deals-default-isopen.png) no-repeat 0 0;_background:transparent;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/static/css/i/bg-deals-default-isopen.png');}
+#deal-incentive .info .pic .isopenlink{display:block;position:absolute;z-index:2;right:-13px;bottom:-7px;width:65px;height:66px;outline:0;text-indent:-999em;}
+#deal-incentive .info .pic img{display:block;}
+#deal-incentive .share{font-size:18px;}
+#deal-incentive .share li{padding:10px 0px 10px 10px;height:40px;}
+#deal-incentive .share img{float:left;height:40px;width:40px;}
+#deal-incentive .share a{float:left;padding-left:10px;position:relative;top:5px;}
+
 /* image rotate */
 #team_images {width:440px;margin-bottom:0px;height:280px; overflow:hidden;}
 #team_images ul{list-style:none;}

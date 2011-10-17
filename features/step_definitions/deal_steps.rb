@@ -15,9 +15,12 @@ Given /^(?:I have|a merchant has) created (?:a deal|deals) titled (.+)$/ do |tit
   expiration_date = Time.zone.today + 1.months
   titles.split(', ').each do |title|
     title = title.sub(/^"(.*)"$/,'\1')
-    Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
+    deal = Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
       :start_date => start_date, :end_date => end_date, :expiration_date => expiration_date, 
       :deal_price => '10.00', :deal_value => '20.00')
+    di = DealImage.new(:deal_id => deal.id, :counter => 1)
+    di.image = File.new(File.join(::Rails.root.to_s, 'features', 'upload-files', 'valid_image.jpg'))
+    di.save!
   end
 end
 
@@ -28,9 +31,12 @@ Given /^(?:I have|a merchant has) published (?:a deal|deals) titled (.+)$/ do |t
   expiration_date = Time.zone.today + 1.months
   titles.split(', ').each do |title|
     title = title.sub(/^"(.*)"$/,'\1')
-    Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
+    deal = Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
       :start_date => start_date, :end_date => end_date, :expiration_date => expiration_date, 
       :deal_price => '10.00', :deal_value => '20.00', :published => true)
+    di = DealImage.new(:deal_id => deal.id, :counter => 1)
+    di.image = File.new(File.join(::Rails.root.to_s, 'features', 'upload-files', 'valid_image.jpg'))
+    di.save!
   end
 end
 
@@ -47,9 +53,21 @@ Given /^(?:I have|a merchant has) changed the (start|end|expiration) date of dea
   end  
 end
 
-Given /^(?:I have|a merchant has) changed the (min|max|limit) of deal "([^"]*)" to (.+)$/ do |field, title, value|
+Given /^(?:I have|a merchant has) changed the (min|max|limit|deal_price|deal_value) of deal "([^"]*)" to (.+)$/ do |field, title, value|
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
   deal.update_attributes!(field => value)
+end
+
+Given /^(?:I have|a merchant has) added a sharing incentive to deal "([^"]*)"$/ do |title|
+  deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
+  di = DealIncentive.create!(:deal_id => deal.id, :metric_type => DealIncentive::SHARE, 
+    :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 5, :max => 100)
+end
+
+Given /^(?:I have|a merchant has) changed the (incentive_value|incentive_price|number_required|max) of the sharing incentive for deal "([^"]*)" to (.+)$/ do |field, title, value|
+  deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
+  di = DealIncentive.find_by_deal_id(deal.id)
+  di.update_attributes!(field => value)
 end
 
 Given /^the deal "([^"]*)" has (\d) (created|authorized|paid) order(?:s)? of (\d) quantity$/ do |title, num_orders, type, quantity|
@@ -133,6 +151,14 @@ When /^I upload a file of 0 coupons codes$/ do
   attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '0codes.csv'))
 end
 
+When /^I upload a file of 10 incentive codes$/ do
+  attach_file('incentive_codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '10codes.csv'))
+end
+
+When /^I upload a file of 0 incentive codes$/ do
+  attach_file('incentive_codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '0codes.csv'))
+end
+
 When /^I upload a logo$/ do
   attach_file('merchant_logo', File.join(::Rails.root.to_s, 'features', 'upload-files', 'logo.png'))
 end
@@ -145,6 +171,10 @@ end
 Then /^"([^\"]*)" should( not)? be disabled$/ do |label, negate|
   attributes = find_field(label).native.attributes.keys
   attributes.send(negate ? :should_not : :should, include('disabled'))
+end
+
+Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field| 
+  find_field(field).value.should =~ /#{value}/ 
 end
 
 Then /^I should( not)? see the Buy(?:!)? button$/ do |negate|
@@ -184,4 +214,13 @@ end
 Then /^I should see the merchant logo$/ do
   page.should have_xpath("//img[@alt=\"Header\"]")
 end
+
+Then /^I should( not)? see the "([^"]*)" facebook meta tag$/ do |negate, name|
+  if negate
+    page.should_not have_xpath("//meta[@property=\"og:#{name}\"]")
+  else
+    page.should have_xpath("//meta[@property=\"og:#{name}\"]")
+  end
+end
+
 

@@ -3,23 +3,18 @@
 
 <% if @order and @order.id %>
 <div id="sysmsg-tip">
-	<div class="sysmsg-tip-top"></div>
-	<div class="sysmsg-tip-content">
-		You have ordered, but not paid yet.
-		<% if controller.controller_name == 'user' %>
-			<%= link_to "Check your order and make a payment", payment_order_url(:deal_id => @deal.id) %>
-		<% else %>
-			<%= link_to "Check your order and make a payment", facebook_payment_order_url(:deal_id => @deal.id) %>
-		<% end %>			
-		<span id="sysmsg-tip-close" class="sysmsg-tip-close">Close</span>
-	</div>
-	<div class="sysmsg-tip-bottom"></div>
+	You have ordered, but not paid yet.
+	<% if controller.controller_name == 'user' %>
+		<%= link_to "Check your order and make a payment.", payment_order_url(:deal_id => @deal.id) %>
+	<% else %>
+		<%= link_to "Check your order and make a payment.", facebook_payment_order_url(:deal_id => @deal.id) %>
+	<% end %>			
 </div>
 <% end %>
 
 <div id="deal-default">
 	<% if @current_user %>
-		<%= render :partial => 'layouts/block/deal_share' %>
+		<%= render :partial => 'layouts/partials/deal_share' %>
 	<% end %>
 	<div id="content">
 		<div id="deal-intro" class="cf">
@@ -206,15 +201,10 @@
 	</div>
 	<div id="sidebar">
 		<% if controller.controller_name == 'user' %>		
-			<%= render :partial => 'layouts/block/side_flv' %>
-			<%= render :partial => 'layouts/block/side_others' %>
+			<%= render :partial => 'layouts/partials/side_flv' %>
+			<%= render :partial => 'layouts/partials/side_others' %>
 		<% end %>
 	</div>
 </div>
 </div> <!-- bd end -->
 </div> <!-- bdw end -->
-
-<script type="text/javascript">
-	var deal = <%= raw @deal.facebook_share(@deal_url).to_json %>;
-	var create_share_url = '<%= url_for(:controller => controller.controller_name, :action => 'create_share') %>'	
-</script>

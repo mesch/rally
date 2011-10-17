@@ -8,8 +8,7 @@ window.addEvent('domready', function() {
 	// Dom ready code that is generically run on every page	
 	var body = document.body;
 
-	if(body && body.id) {
-		
+	if(body && body.id) {		
 		var name = "onload_" + body.id;
 
 		if(window[name] && typeOf(window[name]) == "function") window[name]();	

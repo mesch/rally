@@ -1,0 +1,9 @@
+<% if ["user", "facebook"].include?(controller.controller_name) and controller.action_name == 'deal' and @deal %>
+	<meta content='ShopnRally' property='og:site_name' />
+	<meta content='<%= url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id, :only_path => false) %>' property='og:url' />
+	<meta content=<%= @deal.title %> property='og:title' />
+	<meta content='shopnrally:deal' property='og:type' />
+	<meta content='<%= @deal.deal_images[0].image.url(:display) %>'< property='og:image' />
+	<meta content='<%= @deal.description %>' property='og:description' />
+<% end %>
+

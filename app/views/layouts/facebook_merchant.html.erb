@@ -12,7 +12,7 @@
 	<% end %>
 	<script type="text/javascript">var WEB_ROOT = '';</script>
 	<%= raw javascript_include_tag "index.js" %>
-	<%= render :partial => 'layouts/block/google_analytics' %>
+	<%= render :partial => 'layouts/partials/google_analytics' %>
 </head>
 <body id="<%= controller.controller_name %>_<%= controller.action_name %>">
 <div id="pagemasker"></div><div id="dialog"></div>
@@ -36,7 +36,7 @@
 
 	<%= yield %>
 
-	<%= render :partial => 'layouts/block/footer' %>
+	<%= render :partial => 'layouts/partials/footer' %>
 </div>
 </body>
 </html>

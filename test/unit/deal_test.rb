@@ -304,6 +304,104 @@ class DealTest < ActiveSupport::TestCase
     assert_equal d.max, 2
   end
   
+  def test_publish_incentive
+    # create basic deal
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    # add a deal incentive
+    di = DealIncentive.new(:deal_id => d.id, :metric_type => DealIncentive::SHARE, 
+      :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 5)
+    assert di.save
+    d = Deal.find_by_id(d.id)
+    assert !d.publish
+    assert !d.published
+    di = d.deal_incentive    
+    assert_equal di.max, 0
+    # add incentive code - ok
+    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf123')
+    assert dic.save
+    d = Deal.find_by_id(d.id)
+    assert d.publish
+    assert d.published
+    di = d.deal_incentive
+    assert_equal di.max, 1
+    # reset and lower incentive value - fail
+    d.update_attributes(:published=>false)
+    di.update_attributes(:incentive_value => '15.00')
+    assert !d.publish
+    assert !d.published
+    di = d.deal_incentive
+    assert_equal di.max, 1
+    # raise incentive value back - ok
+    di.update_attributes(:incentive_value => '20.00')
+    assert d.publish
+    assert d.published
+    di = d.deal_incentive
+    assert_equal di.max, 1        
+    # publish again? no changes?
+    assert d.publish
+    assert d.published
+    di = d.deal_incentive
+    assert_equal di.max, 1
+  end
+  
+  def test_publish_incentive_max
+    # create basic deal
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    # Add deal incentive with max = 2
+    di = DealIncentive.new(:deal_id => d.id, :metric_type => DealIncentive::SHARE, 
+      :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 5, :max => 2)
+    assert di.save
+    # Add one deal incentive code
+    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf123')
+    assert dic.save  
+    d = Deal.find_by_id(d.id)
+    assert d.publish
+    di = d.deal_incentive
+    assert_equal di.max, 1
+    # publish again? no changes?
+    assert d.publish
+    di = d.deal_incentive
+    assert_equal di.max, 1
+    # publish with 3 deal incentive codes - max stays at 2
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    # Add deal incentive with max = 2
+    di = DealIncentive.new(:deal_id => d.id, :metric_type => DealIncentive::SHARE, 
+      :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 5, :max => 2)
+    assert di.save
+    # Add 3 deal incentive codes
+    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf123')
+    assert dic.save
+    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf124')
+    assert dic.save
+    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf125')
+    assert dic.save
+    d = Deal.find_by_id(d.id)
+    assert d.publish
+    di = d.deal_incentive
+    assert_equal di.max, 2
+  end
+  
   def test_delete
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')

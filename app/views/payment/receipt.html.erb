@@ -1,9 +1,14 @@
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
+	
+<% if @order.deal and @order.deal.deal_incentive and @order.deal.deal_incentive.metric_type == DealIncentive::SHARE %>
+	<%= render :partial => 'layouts/partials/deal_incentive' %>
+<% end %>
+	
 <div id="content">
-    <div id="deal-buy" class="box">
+    <div class="box">
         <div class="box-top"></div>
-        <div class="box-content">
+        <div class="box-content">			
             <div class="head"><h2>Receipt</h2></div>
             <div class="sect">
 
@@ -16,18 +21,7 @@
 				<div>
 					Thank you for your purchase! Your confirmation code is <%= @confirmation_code %>.<br><br>
 					Go to the <%= link_to "Coupons Page", url_for(:controller => @next_controller, :action => "coupons") %> to review the status of your coupons.<br><br>
-				</div>
-
-				<div id="deal-share">
-					<div class="deal-share-links-receipt">
-						<h4>Deal not tipped? Share with your friends!</h4>
-						<ul class="cf">
-							<li><%= link_to "facebook", "#", :class => "facebook" %></li>
-						</ul>
-					</div>
-				</div>
-				<div class="clear"></div>
-				
+				</div>				
 			<% end %>
 			</div>
 		</div>
@@ -36,8 +30,3 @@
 </div>
 </div> <!-- bd end -->
 </div> <!-- bdw end -->
-
-<script type="text/javascript">
-	var deal = <%= raw @order.deal.facebook_share(@deal_url).to_json %>;
-	var create_share_url = '<%= url_for(:controller => @next_controller, :action => 'create_share') %>'	
-</script>

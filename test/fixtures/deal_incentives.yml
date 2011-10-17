@@ -1,0 +1,7 @@
+burger_deal_incentive:
+    deal: burger_deal
+    metric_type: <%= DealIncentive::SHARE %>
+    incentive_price_in_cents: 1000
+    incentive_value_in_cents: 3000
+    number_required: 5
+    max: 100

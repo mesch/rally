@@ -30,36 +30,24 @@ window.addEvent('domready', function(){
 						<%= text_field_tag :title, @deal.title, :size=>"30", :class=>"f-input", :datatype=>"require", :require=>"true" %>
 					</div>
 					<div class="field">
-					<% if @deal.published %>
 						<%= label_tag 'Value ($)' %>
-						<%= text_field_tag :deal_value, @deal.deal_value, :min => 1, :size=>"10", :class=>"number", :disabled => true %>
+						<%= number_field_tag :deal_value, @deal.deal_value, :min => 1, :size=>"10", :class=>"number", :disabled => @deal.published %>
 						<%= label_tag 'Price ($)' %> 
-						<%= text_field_tag :deal_price, @deal.deal_price, :min => 1, :size=>"10", :class=>"number", :disabled => true %>									
-					<% else %>
-						<%= label_tag 'Value ($)' %>
-						<%= number_field_tag :deal_value, @deal.deal_value, :min => 1, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
-						<%= label_tag 'Price ($)' %> 
-						<%= number_field_tag :deal_price, @deal.deal_price, :min => 1, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>									
-						<span class="inputtip">Value must be greater than Price.</span>
-					<% end %>
+						<%= number_field_tag :deal_price, @deal.deal_price, :min => 1, :size=>"10", :class=>"number", :disabled => @deal.published %>									
+						<% unless @deal.published %>		
+							<span class="inputtip">Value must be greater than Price.</span>
+						<% end %>
 					</div>
 					<div class="field">
-					<% if @deal.published %>
 						<%= label_tag 'Min' %>
-						<%= text_field_tag :min, @deal.min, :size=>"10", :class=>"number", :disabled => true  %>
+						<%= text_field_tag :min, @deal.min, :size=>"10", :class=>"number", :disabled => @deal.published  %>
 						<%= label_tag 'Max' %>
-						<%= text_field_tag :max, @deal.max, :size=>"10", :class=>"number", :disabled => true  %>
+						<%= text_field_tag :max, @deal.max, :size=>"10", :class=>"number", :disabled => @deal.published  %>
 						<%= label_tag 'Limit per Person', 'Limit per Order' %> 
-						<%= text_field_tag :limit, @deal.limit, :size=>"10", :class=>"number", :disabled => true  %>
-					<% else %>
-						<%= label_tag 'Min' %>
-						<%= text_field_tag :min, @deal.min, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
-						<%= label_tag 'Max' %>
-						<%= text_field_tag :max, @deal.max, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
-						<%= label_tag 'Limit per Person', 'Limit per Order' %> 
-						<%= text_field_tag :limit, @deal.limit, :size=>"10", :class=>"number", :datatype=>"require", :require=>"true" %>
-						<span class="hint">Set Max or Limit per Order to 0 for no limit.</span>
-					<% end %>
+						<%= text_field_tag :limit, @deal.limit, :size=>"10", :class=>"number", :disabled => @deal.published  %>
+						<% unless @deal.published %>
+							<span class="hint">Set Max or Limit per Order to 0 for no limit.</span>
+						<% end %>
 					</div>
 					<div class="field">
 						<%= label_tag 'Start Date', 'Start Date' %> 
@@ -69,13 +57,8 @@ window.addEvent('domready', function(){
 						<%= text_field_tag :end_date, @deal.end_date ? @deal.end_date.strftime(OPTIONS[:date_format]) : nil, 
 							:class=>"date", :datatype=>"require", :require=>"true" %>	
 						<%= label_tag 'Expiration Date', 'Expiration Date' %>
-						<% if @deal.published %>
-							<%= text_field_tag :expiration_date, @deal.expiration_date ? @deal.expiration_date.strftime(OPTIONS[:date_format]) : nil, 
-								:class=>"date", :disabled=>true %>			
-						<% else %>
-							<%= text_field_tag :expiration_date, @deal.expiration_date ? @deal.expiration_date.strftime(OPTIONS[:date_format]) : nil, 
-								:class=>"date", :datatype=>"require", :require=>"true" %>							
-						<% end %>
+						<%= text_field_tag :expiration_date, @deal.expiration_date ? @deal.expiration_date.strftime(OPTIONS[:date_format]) : nil, 
+								:class=>"date", :disabled=>@deal.published %>
 						<span class="hint">The deal starts at Start Date 00:00:00, ends at End Date 23:59:59.</span>
 					</div>
 					<div class="field">
@@ -139,16 +122,52 @@ window.addEvent('domready', function(){
 					</div>
 					<div class="field">
 						<%= label_tag 'Upload Codes', 'Upload Codes' %>
-						<% if @deal.published %>
-							<%= file_field_tag :codes_file, :size=>"30", :class=>"f-input", :disabled=>true %>
-						<% else %>
-							<%= file_field_tag :codes_file, :size=>"30", :class=>"f-input" %>
-						<% end %>
+						<%= file_field_tag :codes_file, :size=>"30", :class=>"f-input", :disabled=>@deal.published %>
 						<% if @num_deal_codes %>
 							<span class="hint"><%= @num_deal_codes %> codes saved.</span>
 						<% else %>
 							<span class="hint">One code will be used for each subscribed coupon.</span>							
 						<% end %>
+					</div>
+					<div class="wholetip clear"><h3>4. Sharing Incentive</h3></div>
+					<div class="field">
+						<%= label_tag 'Incentive Type', 'Incentive Type' %>
+						<%= select_tag :incentive_type, 
+							options_for_select(DealIncentive.create_type_options, @deal.deal_incentive ? @deal.deal_incentive.metric_type : nil),
+							:class=>"f-select", :disabled=>@deal.published %>
+					</div>
+					<div id="incentive" style="display:<%= @deal.deal_incentive ? "block" : "none" %>" >
+						<div class="field">
+								<%= label_tag 'Incentive Value ($)', 'Incentive Value ($)' %>
+								<%= number_field_tag :incentive_value, @deal.deal_incentive ? @deal.deal_incentive.incentive_value : nil,
+									:min => 1, :size=>"10", :class=>"number", :disabled=>@deal.published %>
+							<span class="inputtip">Incentive Value must be greater than Deal Value.</span>
+						</div>
+						<div class="field">
+								<%= label_tag 'Number Required', 'Number Required' %>
+								<%= text_field_tag :incentive_required, @deal.deal_incentive ? @deal.deal_incentive.number_required : nil,
+									:min => 1, :size=>"10", :class=>"number", :disabled=>@deal.published %>
+							<span class="inputtip">Number of Shares or Purchases required for a user to be qualified.</span>
+						</div>
+						<div class="field">
+								<%= label_tag 'Max' %>
+								<%= text_field_tag :incentive_max, @deal.deal_incentive ? @deal.deal_incentive.max : 0,
+									:min => 1, :size=>"10", :class=>"number", :disabled=>@deal.published %>
+							<span class="inputtip">Maximum number of incentive coupons distributed. Set to 0 for no limit.</span>
+						</div>
+						<div class="field">
+							<span class="spec">Uploaded files need to be a single-column CSV with 1 unique code in each row. No header row should be included.</span>
+							<span class="spec">Codes should only be composed of alphanumeric characters.</span>
+						</div>
+						<div class="field">
+							<%= label_tag 'Upload Codes', 'Upload Codes' %>
+								<%= file_field_tag :incentive_codes_file, :size=>"30", :class=>"f-input", :disabled=>@deal.published %>
+							<% if @num_incentive_codes %>
+								<span class="hint"><%= @num_incentive_codes %> codes saved.</span>
+							<% else %>
+								<span class="hint">One code will be used for each subscribed coupon.</span>							
+							<% end %>
+						</div>
 					</div>
 					<div class="act">
 						<%= submit_tag :submit, :class=>"formbutton",

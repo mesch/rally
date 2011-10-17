@@ -15,6 +15,23 @@ module Facebook
     return fb_user
   end
   
+  def get_fb_user_permissions
+    oauth = Koala::Facebook::OAuth.new(OPTIONS[:facebook_app_id], OPTIONS[:facebook_secret_key])
+    user_info = oauth.get_user_info_from_cookies(cookies)
+    if user_info && user_info["access_token"] && user_info["uid"]
+      graph = Koala::Facebook::GraphAPI.new(user_info["access_token"])
+      begin
+        fb_user = graph.get_object(user_info["uid"])
+        data = fb_user = graph.get_connections(user_info["uid"], "permissions")
+        permissions = data[0]
+      rescue Koala::Facebook::APIError => fe
+        logger.error "Facebook.get_fb_user_permissions: #{fe}"
+        return nil
+      end
+    end
+    return permissions   
+  end 
+  
   def get_fb_picture(id)
     graph = Koala::Facebook::GraphAPI.new
     return graph.get_picture(id, :type => "large")

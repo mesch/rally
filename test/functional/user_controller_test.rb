@@ -427,6 +427,12 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action=>'deal', :id => d.id
   end
   
+  def test_deal_page_no_deal
+    get :deal, :id => 0
+    assert_response :redirect
+    assert_redirected_to :action=>'home'
+  end
+  
   def test_coupon_page
     self.login
     m = @existingbob
@@ -516,7 +522,7 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
     assert_template "user/deals"
     assert_template "layouts/user"
-    get :deal, :id => Deal.find(:first).id
+    get :deal, :id => @burger_deal.id
     assert_response :success
     assert_template "user/deal"
     assert_template "layouts/user"
@@ -729,6 +735,34 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action => :login, :host => old_host
   end
   
+  def test_share
+    get :share, :deal_id => @burger_deal.id
+    assert_response :redirect
+    assert_redirected_to :action => :login
+    self.login
+    get :share, :deal_id => @burger_deal.id
+    assert_response :success
+    assert_template "user/share"
+    get :share, :deal_id => 0
+    assert_response :redirect
+    assert_redirected_to :action => :home
+  end    
+  
+  def test_facebook_share
+    get :facebook_share, :deal_id => @burger_deal.id
+    assert_response :redirect
+    assert_redirected_to :action => :login
+    self.login
+    # won't have fb requirements
+    get :facebook_share, :deal_id => @burger_deal.id
+    assert_response :redirect
+    assert_redirected_to :action => :confirm_permissions, :deal_id => @burger_deal.id
+    get :facebook_share, :deal_id => 0
+    assert_response :redirect
+    assert_redirected_to :action => :home    
+  end
+  
+=begin  
   def test_create_share
     Share.delete_all
     # not logged in - error
@@ -788,5 +822,6 @@ class UserControllerTest < ActionController::TestCase
     assert_equal share.post_id, "1234"
     assert share.posted
   end
+=end
   
 end
