@@ -54,40 +54,6 @@ Feature: Manage Admin Account
 		When I go to the "newbob" subdomain
 		Then I should see the merchant logo
 		
-	Scenario: Create Merchant Account (not verisign trusted)
-		Given I am logged in as admin
-		And I am on the admin new merchant page
-		When I fill in "merchant_username" with "newbob"
-		And I fill in "merchant_password" with "test"
-		And I fill in "merchant_password_confirmation" with "test"
-		And I fill in "merchant_email" with "test@abc.com"
-		And I fill in "merchant_name" with "Some Company"
-		And I fill in "merchant_subdomain" with "newbob"
-		And I press "Create Merchant"
-		Then I should see "Merchants"
-		And I should see "newbob"
-		When I go to the "newbob" subdomain
-		And show me the page
-		Then I should not see the verisign trusted image
-		
-	Scenario: Create Merchant Account (verisign trusted)
-		Given I am logged in as admin
-		And I am on the admin new merchant page
-		And show me the page
-		When I fill in "merchant_username" with "newbob"
-		And I fill in "merchant_password" with "test"
-		And I fill in "merchant_password_confirmation" with "test"
-		And I fill in "merchant_email" with "test@abc.com"
-		And I fill in "merchant_name" with "Some Company"
-		And I fill in "merchant_subdomain" with "newbob"
-		And I check "merchant_verisign_trusted"
-		And I press "Create Merchant"
-		Then I should see "Merchants"
-		And I should see "newbob"
-		When I go to the "newbob" subdomain
-		And show me the page
-		Then I should see the verisign trusted image		
-
 	Scenario: Edit Merchant Account (change name)
 		Given I am logged in as admin
 		When I go to the admin edit merchant page for "emptybob"
@@ -186,3 +152,40 @@ Feature: Manage Admin Account
 		And I should see "Your report was deleted."
 		And I should not see "Download"
 		And I should not see "Delete"
+
+	Scenario: Create Merchant Account (not verisign trusted)
+		Given I am logged in as admin
+		And I am on the admin new merchant page
+		When I fill in "merchant_username" with "newbob"
+		And I fill in "merchant_password" with "test"
+		And I fill in "merchant_password_confirmation" with "test"
+		And I fill in "merchant_email" with "test@abc.com"
+		And I fill in "merchant_name" with "Some Company"
+		And I fill in "merchant_subdomain" with "newbob"
+		And I press "Create Merchant"
+		Then I should see "Merchants"
+		And I should see "newbob"
+		When I go to the "newbob" subdomain
+		Then I should not see the verisign trusted image
+
+	Scenario: Create Merchant Account (verisign trusted)
+		Given I am logged in as admin
+		And I am on the admin new merchant page
+		When I fill in "merchant_username" with "newbob"
+		And I fill in "merchant_password" with "test"
+		And I fill in "merchant_password_confirmation" with "test"
+		And I fill in "merchant_email" with "test@abc.com"
+		And I fill in "merchant_name" with "Some Company"
+		And I fill in "merchant_subdomain" with "newbob"
+		And I check "merchant_verisign_trusted"
+		And I press "Create Merchant"
+		Then I should see "Merchants"
+		And I should see "newbob"
+		When I go to the "newbob" subdomain
+		Then I should see the verisign trusted image
+		
+	Scenario: Check Verisign Trusted
+		When I go to the deals page
+		Then I should see the verisign trusted image
+	
+	
