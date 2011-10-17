@@ -82,6 +82,8 @@
 		</script>
 	<% end %>
 
+	<%= render :partial => 'layouts/block/verisign_trusted' %>
+	
 	<%= render :partial => 'layouts/block/footer' %>
 	
 	<%= raw javascript_include_tag request.protocol + "connect.facebook.net/en_US/all.js" %>

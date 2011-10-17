@@ -185,3 +185,11 @@ Then /^I should see the merchant logo$/ do
   page.should have_xpath("//img[@alt=\"Header\"]")
 end
 
+Then /^I should( not)? see the verisign trusted image/ do |negate|
+  if negate
+    page.should_not have_xpath("//img[@alt=\"verisign_trusted\"]")
+  else
+    page.should have_xpath("//img[@alt=\"verisign_trusted\"]")
+  end    
+end  
+

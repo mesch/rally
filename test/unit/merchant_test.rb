@@ -123,6 +123,7 @@ class MerchantTest < ActiveSupport::TestCase
     assert_not_nil m.salt
     assert m.active
     assert_equal m.time_zone, "Pacific Time (US & Canada)"
+    assert !m.verisign_trusted
     assert m.save
     assert_equal 10, m.salt.length
     assert !m.terms
@@ -146,7 +147,7 @@ class MerchantTest < ActiveSupport::TestCase
     :time_zone => "Pacific Time (US & Canada)", :website => "http://abc.com", :contact_name => "Bobby Smith",
     :address1 => "Pier 38", :address2 => "Suite 201", :city => "San Francisco", :state => "CA", :zip => "94103", :country => "USA",
     :phone_number => "4155551212", :tax_id => "123456789", :bank => "BofA", :account_name => "Bob Smith",
-    :routing_number => "2345", :account_number => "345a", :paypal_account => "bob@abc.com")
+    :routing_number => "2345", :account_number => "345a", :paypal_account => "bob@abc.com", :verisign_trusted => 1)
     m.password = m.password_confirmation = "bobs_secure_password"
     assert_not_nil m.salt
     assert m.active
@@ -156,14 +157,14 @@ class MerchantTest < ActiveSupport::TestCase
       [:name, :username, :email, :hashed_password, :salt, :logo_file_name, :logo_content_type, :logo_file_size,
         :activation_code, :activate, :time_zone, :website, :contact_name,
         :address1, :address2, :city, :state, :zip, :country, :phone_number, :tax_id, :bank, :account_name,
-        :routing_number, :account_number, :paypal_account])
+        :routing_number, :account_number, :paypal_account, :verisign_trusted])
     #check that changing a local field fails match
     m.contact_name = "Bob Smith"
     assert !equal?(m, Merchant.authenticate(m.username, m.password), 
       [:name, :username, :email, :hashed_password, :salt, :logo_file_name, :logo_content_type, :logo_file_size,
         :activation_code, :activate, :time_zone, :website, :contact_name,
         :address1, :address2, :city, :state, :zip, :country, :phone_number, :tax_id, :bank, :account_name,
-        :routing_number, :account_number, :paypal_account])
+        :routing_number, :account_number, :paypal_account, :verisign_trusted])
   end
   
   

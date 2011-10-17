@@ -1,0 +1,5 @@
+<% if @merchant_subdomain and @merchant_subdomain.verisign_trusted? %>
+	<div id="verisign">
+		<%= image_tag ('verisign_trusted.png'), :alt => 'verisign_trusted' %>
+	</div>
+<% end %>

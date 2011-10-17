@@ -53,6 +53,40 @@ Feature: Manage Admin Account
 		Then I should see "Send Activation Email"
 		When I go to the "newbob" subdomain
 		Then I should see the merchant logo
+		
+	Scenario: Create Merchant Account (not verisign trusted)
+		Given I am logged in as admin
+		And I am on the admin new merchant page
+		When I fill in "merchant_username" with "newbob"
+		And I fill in "merchant_password" with "test"
+		And I fill in "merchant_password_confirmation" with "test"
+		And I fill in "merchant_email" with "test@abc.com"
+		And I fill in "merchant_name" with "Some Company"
+		And I fill in "merchant_subdomain" with "newbob"
+		And I press "Create Merchant"
+		Then I should see "Merchants"
+		And I should see "newbob"
+		When I go to the "newbob" subdomain
+		And show me the page
+		Then I should not see the verisign trusted image
+		
+	Scenario: Create Merchant Account (verisign trusted)
+		Given I am logged in as admin
+		And I am on the admin new merchant page
+		And show me the page
+		When I fill in "merchant_username" with "newbob"
+		And I fill in "merchant_password" with "test"
+		And I fill in "merchant_password_confirmation" with "test"
+		And I fill in "merchant_email" with "test@abc.com"
+		And I fill in "merchant_name" with "Some Company"
+		And I fill in "merchant_subdomain" with "newbob"
+		And I check "merchant_verisign_trusted"
+		And I press "Create Merchant"
+		Then I should see "Merchants"
+		And I should see "newbob"
+		When I go to the "newbob" subdomain
+		And show me the page
+		Then I should see the verisign trusted image		
 
 	Scenario: Edit Merchant Account (change name)
 		Given I am logged in as admin
