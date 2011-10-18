@@ -1,0 +1,20 @@
+$global-width: 740px;
+
+$header-color: #FFFFFF;
+$bar-color: #000000;
+$background-color: #333333;
+$button-color: #AD0000;
+$link-color: #0187C5;
+$input-color: #89B4D6;
+
+$deal_price_url:"https://s3.amazonaws.com/rallycommerce/webstores/18/deal-price.png";
+$deal_buy_url:"https://s3.amazonaws.com/rallycommerce/webstores/18/button-buy.png";
+$deal_expired_url:"https://s3.amazonaws.com/rallycommerce/webstores/18/button-expired.png";
+$deal_soldout_url:"https://s3.amazonaws.com/rallycommerce/webstores/18/button-soldout.png";
+
+/* IMPORTS */
+@import "global";
+@import "application";
+@import "partials/_sysmsg";
+@import "partials/_deal";
+@import "partials/_border_radius";
