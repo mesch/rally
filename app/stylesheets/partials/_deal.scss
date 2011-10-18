@@ -42,14 +42,15 @@
 #deal-intro h1 span{font-family:arial,sans-serif;}
 #deal-intro .deal-buy{position:relative;}
 #deal-intro .deal-today-link{text-decoration:none;}
-#deal-intro .deal-price-tag{position:absolute;z-index:1;left:-72px;width:237px;height:97px;padding-left:50px;background:url($deal_price_url) no-repeat 0 0;_background:transparent;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/static/css/i/bg-deal-price.png');}
+#deal-intro .deal-price-tag{position:absolute;z-index:1;left:-72px;width:237px;height:97px;padding-left:50px;background:url($deal_price_url) no-repeat 0 0;_background:transparent;}
 #deal-intro .deal-price{position:absolute;z-index:2;left:-72px;width:237px;height:97px;line-height:82px;padding-left:50px;}
 #deal-intro .deal-price span{position:absolute;z-index:2;top:0;left:144px;color:#fff;}
-#deal-intro .deal-price span.deal-price-expire,#deal-intro .deal-price span.deal-price-soldout{padding-left:10px;width:140px;background:url(i/bg-deal-close-text.gif) no-repeat 0 16px;color:#666;}
-#deal-intro .deal-price span.deal-price-expire{width:140px;height:84px;background:url(i/bg-deal-expired-text.gif) no-repeat 6px 17px;}
-#deal-intro .deal-price span.deal-price-soldout{width:140px;height:84px;background:url(i/bg-deal-soldout-text.gif) no-repeat 6px 17px;}
+//#deal-intro .deal-price span.deal-price-expire,#deal-intro .deal-price span.deal-price-soldout{padding-left:10px;width:140px;background:url(i/bg-deal-close-text.gif) no-repeat 0 16px;color:#666;}
+#deal-intro .deal-price span.deal-price-expire{width:140px;height:84px;background:url($deal_expired_url) no-repeat 6px 17px;}
+#deal-intro .deal-price span.deal-price-soldout{width:140px;height:84px;background:url($deal_soldout_url) no-repeat 6px 17px;}
 #deal-intro .deal-price strong{float:left;margin-left:5px;font-size:32px;color:#fff;font-weight:normal;}
-#deal-intro .deal-price span a{display:block;width:144px;height:53px;line-height:53px;margin-top:19px;outline:0;}
+#deal-intro .deal-price span img{width:144px;height:67px;background:url($deal_buy_url) no-repeat;}
+#deal-intro .deal-price span a{display:block;width:144px;height:56px;line-height:53px;margin-top:19px;outline:0;}
 #deal-intro .progress-pointer{float:left;padding:3px 0;}
 #deal-intro .progress-pointer span{float:left;width:14px;height:13px;background:url(i/bg-progress-pointer.gif) no-repeat 0 0;}
 #deal-intro .progress-bar{float:left;height:17px;padding:0 2px;width:198px;background:url(i/bg-progress-bottom.gif) no-repeat left top;}
