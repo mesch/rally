@@ -39,6 +39,12 @@ module NavigationHelpers
       payment_order_path(:deal_id => deal.id)    
     when /the list of coupons/
       coupons_path
+    when /the share page for deal "([^"]*)"/
+      deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
+      share_path(:deal_id => deal.id)
+    when /the fb share page for deal "([^"]*)"/
+      deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, $1])
+      fb_share_path(:deal_id => deal.id)
     # admin
     when /the admin home page/
       admin_home_path

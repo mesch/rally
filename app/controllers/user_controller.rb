@@ -182,7 +182,7 @@ class UserController < ApplicationController
     # check for permissions
     fb_permissions = get_fb_user_permissions
     if fb_permissions and fb_permissions['publish_stream']
-      redirect_to :controller => self.controller_name, :action => 'facebook_share', :deal_id => @deal.id
+      redirect_to :controller => self.controller_name, :action => 'fb_share', :deal_id => @deal.id
       return
     end
     
@@ -192,7 +192,7 @@ class UserController < ApplicationController
     render "user/#{self.action_name}"
   end
   
-  def facebook_share
+  def fb_share
     @deal = Deal.find_by_id(params[:deal_id])
     unless @deal
       go_home
@@ -201,6 +201,7 @@ class UserController < ApplicationController
     
     # check for permissions - again
     fb_permissions = get_fb_user_permissions
+    p fb_permissions
     unless fb_permissions and fb_permissions['publish_stream']
       redirect_to :controller => self.controller_name, :action => 'confirm_permissions', :deal_id => @deal.id
       return

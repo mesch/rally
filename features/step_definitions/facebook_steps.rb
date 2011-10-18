@@ -1,9 +1,10 @@
 # Given
-Given /^a new Facebook user is( not)? connected to our app$/ do |negate|
+Given /^a new Facebook user is( not)? connected to our app(?: with permissions "([^"]*)")?$/ do |negate, permissions|
+  permissions = permissions ? permissions : "email"
   if negate
     @fb_user = create_fb_test_user(false)
   else
-    @fb_user = create_fb_test_user(true)
+    @fb_user = create_fb_test_user(true, permissions)
   end
 end
 

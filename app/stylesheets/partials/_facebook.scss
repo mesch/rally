@@ -1,0 +1,114 @@
+/* Facebook related styles */
+$facebook-grey : #C1C1C1;
+$facebook-light-grey : #F2F2F2;
+$facebook-dark-blue : #3b5998;
+$facebook-light-blue : #dfe3ee;
+
+$default-font-size: 12px;
+
+/* friend selector */
+#friend_selector_container {
+	@include min-height(300px);
+}
+
+#friend_selector {
+	width: 550px;
+	border-right: 1px solid $facebook-grey;
+	border-left: 1px solid $facebook-grey;
+	border-bottom: 1px solid $facebook-grey;
+	background-color: $facebook-light-grey;
+	font-size: $default-font-size - 1;
+	
+	#find_friends {
+		padding: 5px;
+		margin-bottom: 10px;
+	}
+
+	#title {
+		color: #fff;
+		background-color: $facebook-dark-blue;
+		font-size: $default-font-size;
+		font-weight: bold;
+		padding: 5px;
+	}
+
+	#friends {
+		margin: 0; 
+		padding: 10px; 
+		list-style-type: none;
+		background-color: #fff;
+		overflow: auto;
+		height: 250px;
+
+		.friend {
+			float: left;
+			width: 150px;
+			border-radius: 5px;
+			padding: 2px;
+			margin: 0 5px 5px 0;
+			overflow: hidden;
+			height: 60px;
+			border: 1px solid #fff;
+			
+			&:hover {
+				background-color: $facebook-light-blue;
+				border: 1px solid $facebook-grey;
+			}
+		}
+
+		.selected {
+			background-color: $facebook-dark-blue;
+			border: 1px solid $facebook-grey;
+			color: #fff;
+			
+			.name {
+				color: #fff;
+			}
+			
+			&:hover {
+				background-color: $facebook-dark-blue;
+				border: 1px solid $facebook-grey;
+			}
+			
+		}
+		
+		.image {
+			float: left;
+		}
+
+		.name {
+			font-size: $default-font-size - 1;
+			color: black;
+			float: left;
+			vertical-align: top;
+			margin-left: 3px;
+			width: 80px;
+		}
+
+		.image {
+			IMG {
+				padding: 2px;
+				border: 1px solid $facebook-grey;
+			}
+		}
+	}
+
+	#friend_count {
+		text-align: right;
+		border-top: 1px solid $facebook-grey;
+		border-bottom: 1px solid $facebook-grey;
+		padding: 5px;
+		font-size: $default-font-size - 1;
+		font-weight: bold;
+		color: #3b5998;
+	}
+
+	#auto_complete {
+		font-size: $default-font-size - 1;
+		padding: 3px;
+		width: 340px;
+		border: 1px solid #8b9dc3;
+		color: #666;
+		margin-left: 5px;
+	}
+}

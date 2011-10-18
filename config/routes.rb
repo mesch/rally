@@ -24,7 +24,7 @@ Rally::Application.routes.draw do
       match :coupons
       match '/coupon/:id' => :coupon, :as => :coupon
       match :share
-      match :facebook_share
+      match :fb_share
       match :confirm_permissions
     end
     scope :via => :post do
@@ -64,7 +64,7 @@ Rally::Application.routes.draw do
       match :coupons
       match '/coupon/:id' => :coupon, :as => :coupon
       match :share
-      match :facebook_share
+      match :fb_share
       match :confirm_permissions
     end
     scope :via => :post do
