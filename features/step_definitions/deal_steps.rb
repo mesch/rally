@@ -148,11 +148,10 @@ Then /^"([^\"]*)" should( not)? be disabled$/ do |label, negate|
 end
 
 Then /^I should( not)? see the Buy(?:!)? button$/ do |negate|
-  #page.should have_xpath("//img[@alt=\'button-deal-buy\']")
   if negate
-    page.should_not have_css("img[alt=Button-deal-buy]")
+    page.should_not have_css("img[alt=Transparent]")
   else
-    page.should have_css("img[alt=Button-deal-buy]")
+    page.should have_css("img[alt=Transparent]")
   end
 end
 
