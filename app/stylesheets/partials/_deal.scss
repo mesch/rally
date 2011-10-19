@@ -8,7 +8,7 @@
 	border-style:solid;
 	border-width:2px;
 	border-color:lighten($bar-color, 10%);
-	background:lighten($background-color, 20%);
+	background:#fff;
 	border-bottom: solid lighten($background-color, 20%);
 }
 #deal-share .deal-share-links{float:left;width:453px;height:23px;padding:7px 0 0 20px;}
@@ -80,11 +80,11 @@
 .deal-subscribe .address{width:100%;}
 .deal-subscribe .address td{vertical-align:top;}
 .deal-subscribe .f-text{width:147px;color:#999;font-size:12px;}
-.deal-discount{width:100%;margin-top:77px;border:1px solid lighten($bar-color, 20%);background:lighten($background-color, 10%);font-weight:bold;} 
+.deal-discount{width:100%;margin-top:77px;border:1px solid lighten($bar-color, 20%);background:$deal-box-color;font-weight:bold;} 
 .deal-discount th,.deal-discount td{padding:0 10px;text-align:center;}
 .deal-discount th{padding-top:20px;font-size:12px;font-weight:normal;}
 .deal-discount td{padding-bottom:10px;font-size:16px;}
-.deal-box{margin-top:12px;border:1px solid lighten($bar-color, 20%);background:lighten($background-color, 20%);padding:8px;}
+.deal-box{margin-top:12px;border:1px solid lighten($bar-color, 20%);background:$deal-box-color;padding:8px;}
 .deal-timeleft{padding-left:20px;padding-right:64px;background-image:url(i/bg-deal-open.gif);background-position:90% 50%;background-repeat:no-repeat;color:#333;}
 .deal-timeleft h3{font-size:14px;font-weight:normal;}
 .deal-timeleft li{font-weight:bold;}
