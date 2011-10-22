@@ -14,7 +14,7 @@ Feature: Manage Deals
 		When I follow "Failed Deals"
 		Then I should see "You do not have any failed deals"
 			
-	Scenario: Deal List (Draft)
+	Scenario: Deal List (Draft - multiple)
 		Given I am logged in as merchant "emptybob" with password "test"
 		And I have created deals titled "Cool New Deal", "Dealio"
 		When I go to the merchant list of deals
@@ -30,7 +30,31 @@ Feature: Manage Deals
 		When I follow "Failed Deals"
 		Then I should not see "Cool New Deal"
 		And I should not see "Dealio"
-	
+		
+	Scenario: Deal List (Draft - single)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have created deals titled "Cool New Deal"
+		When I go to the merchant list of deals
+		Then I should see "Cool New Deal"
+		And I should see "Edit"
+		And I should see "View"
+		And I should see "Publish"
+		And I should see "Delete"
+		And I should not see "Force Tip"
+		
+	Scenario: Deal List (Draft - single ended)
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I have created a deal titled "Cool New Deal"
+		And I have changed the start date of deal "Cool New Deal" to yesterday		
+		And I have changed the end date of deal "Cool New Deal" to yesterday
+		When I go to the merchant list of deals
+		Then I should see "Cool New Deal"
+		And I should see "Edit"
+		And I should see "View"
+		And I should see "Publish"
+		And I should see "Delete"
+		And I should not see "Force Tip"
+		
 	Scenario: Create Deal with 10 codes
 		Given I am logged in as merchant "emptybob" with password "test"
 		And I am on the new deal page
@@ -187,6 +211,8 @@ Feature: Manage Deals
 		And I should see "Edit"
 		And I should see "View"
 		And I should not see "Publish"
+		And I should not see "Delete"
+		And I should not see "Force Tip"		
 		When I follow "Good Deals"
 		Then I should not see "Cool New Deal"
 		When I follow "Failed Deals"

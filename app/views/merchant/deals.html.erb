@@ -70,7 +70,7 @@
 									<% else %>
 										<%= link_to "View", deal_url(deal.id), :target=> "_blank" %>
 									<% end %>
-									<% if !deal.is_ended %>
+									<% if !deal.is_ended or !deal.published %>
 									| <%= link_to "Edit", merchant_edit_deal_url(deal.id) %>
 									<% end %>
 									<% if !deal.published %>
