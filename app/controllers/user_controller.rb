@@ -192,7 +192,7 @@ class UserController < ApplicationController
     render "user/#{self.action_name}"
   end
   
-  def fb_share
+  def fb_share    
     @deal = Deal.find_by_id(params[:deal_id])
     unless @deal
       go_home
@@ -201,12 +201,21 @@ class UserController < ApplicationController
     
     # check for permissions - again
     fb_permissions = get_fb_user_permissions
-    p fb_permissions
     unless fb_permissions and fb_permissions['publish_stream']
       redirect_to :controller => self.controller_name, :action => 'confirm_permissions', :deal_id => @deal.id
       return
     end
     
+    if request.post?
+      flash[:notice] = "Thank you sharing this deal."
+      redirect_to :controller => self.controller_name, :action => 'deal', :id => @deal.id
+      return
+    end
+    
+    @facebook_profile_image = get_fb_picture(@current_user.facebook_id)
+    @facebook_profile_url = get_fb_user["link"]
+    @default_message = "Check out this great deal from #{@deal.merchant.name}!"
+        
     render "user/#{self.action_name}"
   end
   

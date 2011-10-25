@@ -1,3 +1,5 @@
+<%= form_tag(@controller.controller_name == 'user' ? fb_share_url : facebook_fb_share_url) %>
+
 <div id="bdw" class="bdw">
 <div id="bd" class="cf">
 
@@ -6,12 +8,40 @@
     <div class="box">
         <div class="box-top"></div>
         <div class="box-content">
-			<div class="head"><h2>Share on Facebook</h2></div>
-				<div class="subsect">
-					<div id='friend_selector_container'></div>
+			<div class="head">
+				<span>Share this deal on Facebook with 
+					<strong><%= @deal.deal_incentive.number_required %></strong> friends and turn your 
+					<strong class="old"><%= @deal.deal_value.format(:no_cents) %></strong> into 
+					<strong class="discount"><%= @deal.deal_incentive.incentive_value.format(:no_cents) %></strong>!
+				</span>
+			</div>
+			<div class="subsect">
+				<div id='friend_selector_container'></div>
+				<div id="facebook_info">
+					<%= link_to image_tag(@facebook_profile_image), @facebook_profile_url %>
+					<%= text_area_tag(:message, @default_message, :class => 'f-textarea') %>
+				</div>
+				<!-- <div class="clear"></div> -->
+				<div id="deal_info">	
+					<% if @deal.deal_images[0] %>
+						<%= link_to image_tag(@deal.deal_images[0].image.url(:display), :alt => @deal.title), 
+								url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id), 
+								:title => @deal.title  %>									
+					<% end %>
+					<span>
+						<%= link_to @deal.title, url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id) %><br>
+						<%= @deal.merchant.name %><br>
+						<%= @deal.description %><br>
+					</span>
+				</div>
+				<!-- <div class="clear"></div> -->
+
+				<%= hidden_field_tag(:deal_id, @deal.id) %>
+				<div class="act">
+					<%= submit_tag :submit, :class=>"formbutton", :value => 'Share' %>
+					or 	<%= link_to "cancel", deal_url(@deal.id) %>
 				</div>
 			</div>			
-		</div>
 		</div>
 		<div class="box-bottom"></div>
 	</div>
@@ -20,76 +50,3 @@
 
 </div> <!-- bd end -->
 </div> <!-- bdw end -->
-
-
-
-
-<div>
-	<div class="platform_dialog_container">
-		<div class="platform_dialog_header_container">
-			<div class="platform_dialog_icon"></div>
-			<div class="platform_dialog_header">Post to Your Wall</div>
-		</div>
-		<form id="uiserver_form" action="https://www.facebook.com/dialog/feed" method="post" onsubmit="return Event.__inlineSubmit(this,event)">
-			<div id="platform_dialog_content" class="platform_dialog_content platform_dialog_content_padded platform_dialog_content_fixed_bottom_bar platform_dialog_content_padded_fixed_bottom_bar">
-				<div class="pam">
-					<div>
-						<div id="targeted_privacy_data_container"></div>
-						<div class="interaction_form">
-							<div class="interaction_form_body"></div>
-        					<div id="preview_container">
-								<div class="story_preview_nile minifeedwall minifeed">
-									<div id="preview_medium" class="preview selected">
-										<div id="div_story_4e8a2702bcd3a9377833022" class="uiUnifiedStory UIStory UIIntentionalStory aid_100002551356712 aid_218320038188280">
-											<a class="UIIntentionalStory_Pic" href="http://www.facebook.com/profile.php?id=100002551356712&amp;ref=nf" id="" title="Kilgore Trout" target="" onclick="" style="">
-												<img class="uiProfilePhoto uiProfilePhotoLarge img" 		src="https://fbcdn-profile-a.akamaihd.net/static-ak/rsrc.php/v1/yo/r/UlIqmHJn-SK.gif" alt="Kilgore Trout" />
-											</a>
-											<div class="UIIntentionalStory_Header">
-												<h3 class="UIIntentionalStory_Message" data-ft="&#123;&quot;type&quot;:&quot;1&quot;&#125;">
-													<div class="UIFeedFormStory_Prompt">
-														<textarea class="DOMControl_placeholder" title="Say something about this..." placeholder="Say something about this..." name="feedform_user_message" id="feedform_user_message">Say something about this...</textarea>
-													</div>
-												</h3>
-											</div>
-											<div class="UIStoryAttachment" data-ft="&#123;&quot;type&quot;:&quot;10&quot;&#125;"id="">
-												<div class="UIStoryAttachment_Media UIStoryAttachment_MediaSingle" data-ft="&#123;&quot;type&quot;:&quot;40&quot;&#125;">
-													<div class="UIMediaItem">
-														<a class="UIMediaItem_Wrapper" href="http://www.rallycommerce.net/deal/968816417" target="" onmousedown="UntrustedLink.bootstrap($(this), &quot;IAQCguRRY&quot;, event, bagof(null));" rel="nofollow">
-															<img class="img" src="https://www.facebook.com/app_full_proxy.php?app=218320038188280&amp;v=1&amp;size=z&amp;cksum=6207f382cc67005571a4e9869e31f39e&amp;src=https%3A%2F%2Fs3.amazonaws.com%2Frallycommerce-staging%2Fdeal_images%2Fimages%2F14%2Foriginal.jpg" alt="" /></a>
-													</div>
-												</div>
-												<div class="UIStoryAttachment_Info ">
-													<div class="UIStoryAttachment_Title">
-														<a href="http://www.rallycommerce.net/deal/968816417" id="" target="_blank" style="" onmousedown="UntrustedLink.bootstrap($(this), &quot;PAQDWtuio&quot;, event, bagof(null));" rel="nofollow">Burgers, burgers, burgers ...</a>
-													</div>
-													<div class="UIStoryAttachment_Caption">Bob's Burgers</div>
-													<div class="UIStoryAttachment_Copy">Great New Deal!</div>
-												</div>
-											</div>
-											<span class="UIActionLinks UIActionLinks_bottom UIIntentionalStory_Info"data-ft="&#123;&quot;type&quot;:&quot;20&quot;&#125;">
-												<div class="UIImageBlock clearfix">
-													<a class="UIImageBlock_Image UIImageBlock_ICON_Image" href="http://www.facebook.com/apps/application.php?id=218320038188280&amp;ref=nf" id="" title="Deals Demo" target="" onclick="" style="">
-														<img class="img" src="https://s-static.ak.facebook.com/rsrc.php/v1/yT/r/4QVMqOjUhcd.gif" alt="" width="16" height="16" />
-													</a>
-													<div class="UIImageBlock_Content UIImageBlock_ICON_Content">
-														<span class="UIIntentionalStory_InfoText">
-															<span class="UIIntentionalStory_Time"></span>
-															<span class="UIIntentionalStory_BottomAttribution"> via <a href="/apps/application.php?id=218320038188280" target="" data-ft="null">Deals Demo</a>
-															</span>
-														</span>
-													</div>
-												</div>
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<label class="uiButton uiButtonConfirm uiButtonLarge" id="publish" for="u680279_3"><input value="Share" name="publish" onclick="" type="submit" id="u680279_3" /></label>
-							<label class="uiButton uiButtonLarge" id="cancel" for="u680279_4"><input value="Cancel" name="cancel" onclick="" type="submit" id="u680279_4" /></label>
-						</div>
-					</div>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>

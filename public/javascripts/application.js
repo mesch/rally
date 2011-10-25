@@ -51,7 +51,7 @@ var set_friend_selector = function(facebook_id, parent_element) {
 	var url = "/friends";
 
 	FB.api(facebook_id + url, function(response) {
-		console.log(response)
+		//console.log(response)
 		// Sort em
 		var friends = response.data.sort(function(a,b) {
 			a = a["name"].toLowerCase();
@@ -65,13 +65,13 @@ var set_friend_selector = function(facebook_id, parent_element) {
 			}
 		});		
 		
-		console.log(friends)
+		//console.log(friends)
 		var html = get_friend_selector(friends);
-		console.log(html)
+		//console.log(html)
 		// Inject into parent
 		// TODO: make this optional?
-		console.log($(parent_element))
-		console.log(document.getElementById(parent_element))
+		//console.log($(parent_element))
+		//console.log(document.getElementById(parent_element))
 		html.inject(document.getElementById(parent_element));
 		spinner.hide();
 	});
@@ -97,11 +97,11 @@ var get_friend_selector = function(friends, params) {
 				
 	// TODO: This is ghetto. For some reason getElementById or getElement aren't working
 	var dom_items = friend_selector.getChildren(); // Top element
-	console.log(dom_items)
-	var friend_count = dom_items[2].getElement("SPAN"); // Friend count section
+	//console.log(dom_items)
+	var friend_count = dom_items[1].getElement("SPAN"); // Friend count section
 	
 	// Iterate over all friends LI objects and add click actions
-	dom_items[3].getElements('LI').each(function(item) {
+	dom_items[2].getElements('LI').each(function(item) {
 		
 		item.addEvent("click", function(e) {
 		
@@ -115,22 +115,6 @@ var get_friend_selector = function(friends, params) {
 			item.toggleClass("selected");
 		});
 		
-	});
-		
-	// Add auto complete to friend selector box
-	dom_items[1].getElements("INPUT")[0].addEvent('keyup', function(event) {
-		
-		var v = auto_complete.get("value");
-		friends.each(function(item) {
-			console.log(item)
-			var name_container = item.getElement(".name");
-			
-			if(name_container) {
-				var name = name_container.get("html");
-				name.test("^" + v, "i") ? item.removeClass("hidden") : item.addClass("hidden");
-			}
-			
-		});
 	});
 	
 	return friend_selector;

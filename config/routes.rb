@@ -36,6 +36,7 @@ Rally::Application.routes.draw do
       match :change_email
       match :change_password
       match :forgot_password
+      match :fb_share      
       #match '/share' => :create_share, :as => :create_share
       #match '/share/:id' => :update_share, :as => :update_share
     end
@@ -72,6 +73,7 @@ Rally::Application.routes.draw do
       match :home
       match :splash
       match :login
+      match :fb_share
       #match '/share' => :create_share, :as => :create_share
       #match '/share/:id' => :update_share, :as => :update_share
     end
