@@ -142,11 +142,17 @@
 						<%= label_tag 'Paypal Account', 'Paypal Account' %> 
 						<%= f.text_field :paypal_account, :value => @merchant.paypal_account, :class=>"f-input" %>
                     </div>
-					<div class="wholetip clear"><h3>6. Verisign</h3></div>
+					<div class="wholetip clear"><h3>6. Internal</h3></div>
                     <div class="field">
 						<%= label_tag 'Verisign Trusted', 'Verisign Trusted' %> 
 						<%= f.check_box :verisign_trusted, :value => @merchant.verisign_trusted %>
                     </div>
+					<div class="field">
+						<%= label_tag 'Redemption Type', 'Redemption Type' %> 
+						<%= f.select :redemption_type, 
+							options_for_select([["Code", Merchant::COUPON_CODE], ["URL", Merchant::COUPON_URL]], @merchant.redemption_type) %>
+                    </div>
+
 					<div class="act">
 						<%= f.submit :submit, :class =>"formbutton",
 							:value => controller.action_name == 'new' ? "Create Merchant" : "Update Merchant" %>

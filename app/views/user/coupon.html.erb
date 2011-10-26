@@ -58,8 +58,13 @@ body{ background:#fff;}
 <div id="name">Expiration Date</div>
 <div id="relname">Valid till: <%= @coupon.deal.expiration_date %></div>
 
-<div id="name">Redemption Code</div>
-<div id="relname"><%= @coupon.deal_code.code %></div>
+<% if @coupon.deal.merchant.redemption_type == Merchant::COUPON_CODE %>
+	<div id="name">Redemption Code</div>
+	<div id="relname"><%= @coupon.deal_code.code %></div>
+<% else %>
+	<div id="name">Redemption URL</div>
+	<div id="relname"><%= link_to "Redemption Link", @coupon.deal_code.code %></div>
+<% end %>	
 
 </div>
 <!--right -->
@@ -71,9 +76,15 @@ body{ background:#fff;}
 <div id="name">How to use</div>
 <div id="notice">
 <ul>
-	<li>1. This coupon is only valid at <%= @coupon.deal.merchant.name %>.</li>
-	<li>2. Shop at <%= @coupon.deal.merchant.website %>.</li>
-	<li>3. On checkout enter your Redemption Code.</li>
+	<% if @coupon.deal.merchant.redemption_type == Merchant::COUPON_CODE %>
+		<li>1. This coupon is only valid at <%= @coupon.deal.merchant.name %>.</li>
+		<li>2. Shop at <%= link_to @coupon.deal.merchant.website, @coupon.deal.merchant.website %>.</li>
+		<li>3. On checkout enter your Redemption Code.</li>
+	<% else %>
+		<li>1. This coupon is only redeemable at <%= link_to @coupon.deal.merchant.website, @coupon.deal.merchant.website %>.</li>
+		<li>2. Click on the <%= link_to "unique redemption code link", @coupon.deal_code.code %> and you will be taken to shop at <%= link_to @coupon.deal.merchant.website, @coupon.deal.merchant.website %> and your coupon will automatically be applied upon checkout.</li>
+		<li>3. This coupon associated with this unique link can only be used one time.</li>
+	<% end %>
 </ul>
 </div>
 

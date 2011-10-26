@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111017031727) do
+ActiveRecord::Schema.define(:version => 20111026000828) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(:version => 20111017031727) do
 
   create_table "deal_codes", :force => true do |t|
     t.integer  "deal_id"
-    t.string   "code"
+    t.text     "code"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "reserved",   :default => false
@@ -46,25 +46,6 @@ ActiveRecord::Schema.define(:version => 20111017031727) do
   end
 
   add_index "deal_images", ["deal_id", "counter"], :name => "deal_images_by_deal_counter"
-
-  create_table "deal_incentive_codes", :force => true do |t|
-    t.integer  "deal_incentive_id"
-    t.string   "code"
-    t.boolean  "reserved",          :default => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "deal_incentives", :force => true do |t|
-    t.integer  "deal_id"
-    t.integer  "incentive_price_in_cents"
-    t.integer  "incentive_value_in_cents"
-    t.string   "metric_type"
-    t.integer  "number_required"
-    t.integer  "max",                      :default => 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "deal_videos", :force => true do |t|
     t.integer  "deal_id"
@@ -171,6 +152,7 @@ ActiveRecord::Schema.define(:version => 20111017031727) do
     t.integer  "facebook_page_id",  :limit => 8
     t.boolean  "terms",                          :default => false
     t.boolean  "verisign_trusted",               :default => false
+    t.string   "redemption_type",                :default => "COUPON_CODE"
   end
 
   add_index "merchants", ["username"], :name => "index_merchants_on_username"

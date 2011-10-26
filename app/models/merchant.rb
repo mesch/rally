@@ -1,12 +1,16 @@
 require "digest"
 class Merchant < ActiveRecord::Base
-  
+  # coupon types
+  COUPON_CODE = 'COUPON_CODE'
+  COUPON_URL = 'COUPON_URL'
+
   validates_length_of :username, :within => 3..40
   validates_length_of :name, :maximum => 50
   validates_length_of :email, :maximum => 50  
   validates_uniqueness_of :username
   validates_presence_of :name, :username, :email, :salt, :time_zone
   validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "invalid email"
+  validates_inclusion_of :redemption_type, :in => [ COUPON_CODE, COUPON_URL ]
 
   # info fields
   validates_length_of :website, :maximum => 255

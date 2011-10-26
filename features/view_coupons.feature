@@ -57,6 +57,19 @@ Feature: View Coupons
 		And I should see "Redemption Code"
 		And I should see "abc123"
 		
+	Scenario: Coupon Page (Active, With URL Code)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And the merchant has redemption_type "COUPON_URL"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
+		And the deal "Cool New Deal" has 1 paid coupon with a deal code "http://www.test.com"
+		And I am on the list of coupons
+		When I follow "Print"
+		Then I should see "Coupon"
+		And I should see "Cool New Deal"
+		And I should see "Redemption URL"
+		And I should not see "Redemption Code"
+		And I should see "Redemption Link"
+		
 	Scenario: Coupon Page (Pending, With Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"

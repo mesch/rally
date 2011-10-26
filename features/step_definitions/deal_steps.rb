@@ -4,6 +4,10 @@ Given /^I am logged in as merchant "([^"]*)" with password "([^"]*)"/ do |userna
   @current_merchant = Merchant.find_by_username(username)
 end
 
+Given /the merchant has redemption_type "([^"]*)"/ do |redemption_type|
+  @current_merchant.update_attributes!(:redemption_type => redemption_type)
+end
+  
 Given /^there are no deals$/ do
   Deal.delete_all
 end
@@ -125,12 +129,16 @@ When /^I upload a valid image for Image 3$/ do
   attach_file('image3', File.join(::Rails.root.to_s, 'features', 'upload-files', 'valid_image.jpg'))
 end
 
-When /^I upload a file of 10 coupons codes$/ do
+When /^I upload a file of 10 coupon codes$/ do
   attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '10codes.csv'))
 end
 
-When /^I upload a file of 0 coupons codes$/ do
+When /^I upload a file of 0 coupon codes$/ do
   attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '0codes.csv'))
+end
+
+When /^I upload a file of 10 coupon urls$/ do
+  attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '10urlcodes.csv'))
 end
 
 When /^I upload a logo$/ do

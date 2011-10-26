@@ -64,7 +64,7 @@ Feature: Manage Deals
 		And I fill in "description" with "A really cool deal."
 		And I fill in "terms" with "Some really cool terms..."
 		And I upload a valid image for Image 1
-		And I upload a file of 10 coupons codes
+		And I upload a file of 10 coupon codes
 		And I press "Create Deal"
 		Then I should see "Your deal was created successfully."
 		And I should see "Cool New Deal"
@@ -83,7 +83,7 @@ Feature: Manage Deals
 		And I fill in "description" with "A really cool deal."
 		And I fill in "terms" with "Some really cool terms..."
 		And I upload a valid image for Image 1
-		And I upload a file of 0 coupons codes
+		And I upload a file of 0 coupon codes
 		And I press "Create Deal"
 		Then I should see "Your deal was created successfully."
 		And I should see "Cool New Deal"
@@ -92,6 +92,25 @@ Feature: Manage Deals
 		And I should see "Publish"
 		And I should see "Delete"
 		And I should not see "Force Tip"
+		
+	Scenario: Create Deal with 10 url codes
+		Given I am logged in as merchant "emptybob" with password "test"
+		And I am on the new deal page
+		When I fill in "title" with "Cool New Deal"
+		And I fill in "deal_value" with "20"
+		And I fill in "deal_price" with "10"
+		And I fill in "description" with "A really cool deal."
+		And I fill in "terms" with "Some really cool terms..."
+		And I upload a valid image for Image 1
+		And I upload a file of 10 coupon urls
+		And I press "Create Deal"
+		Then I should see "Your deal was created successfully."
+		And I should see "Cool New Deal"
+		And I should see "Edit"
+		And I should see "View"
+		And I should see "Publish"
+		And I should see "Delete"
+		And I should not see "Force Tip"	
 	
 	Scenario: Edit Deal (Unpublished)
 		Given I am logged in as merchant "emptybob" with password "test"
@@ -147,7 +166,7 @@ Feature: Manage Deals
 		And I fill in "description" with "A really cool deal."
 		And I fill in "terms" with "Some really cool terms..."
 		And I upload a valid image for Image 1
-		And I upload a file of 10 coupons codes
+		And I upload a file of 10 coupon codes
 		And I press "Create Deal"
 		Then I should see "Your deal was created successfully."
 		When I go to the merchant list of deals
@@ -192,7 +211,7 @@ Feature: Manage Deals
 		And I fill in "deal_price" with "10"
 		And I fill in "description" with "A really cool deal."
 		And I fill in "terms" with "Some really cool terms..."
-		And I upload a file of 10 coupons codes
+		And I upload a file of 10 coupon codes
 		And I press "Create Deal"
 		Then I should see "Your deal was created successfully."
 		When I go to the merchant list of deals
