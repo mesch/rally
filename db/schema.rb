@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111026000828) do
+ActiveRecord::Schema.define(:version => 20111026000033) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -152,7 +152,6 @@ ActiveRecord::Schema.define(:version => 20111026000828) do
     t.integer  "facebook_page_id",  :limit => 8
     t.boolean  "terms",                          :default => false
     t.boolean  "verisign_trusted",               :default => false
-    t.string   "redemption_type",                :default => "COUPON_CODE"
   end
 
   add_index "merchants", ["username"], :name => "index_merchants_on_username"
