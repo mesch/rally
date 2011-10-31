@@ -6,38 +6,35 @@
     <div class="box">
         <div class="box-top"></div>
         <div class="box-content">
-				<div class="title">
-					Share this deal with <strong class="count"><%= @deal.deal_incentive.number_required %></strong> friends and turn your 
-					<strong class="old"><%= @deal.deal_value.format(:no_cents) %></strong> into 
-					<strong class="discount"><%= @deal.deal_incentive.incentive_value.format(:no_cents) %></strong>!
+			<div class="title">
+				Share this deal with <strong class="count"><%= @deal.deal_incentive.number_required %></strong> friends and turn your 
+				<strong class="old"><%= @deal.deal_value.format(:no_cents) %></strong> into 
+				<strong class="discount"><%= @deal.deal_incentive.incentive_value.format(:no_cents) %></strong>!
+			</div>
+			<div class="info">
+				<p class="time">Ends on <%= @deal.end_date.strftime(OPTIONS[:date_format]) %>!</p>
+				<h4><%= @deal.merchant.name %> - <%= link_to @deal.title, 
+					url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id) %></h4>
+				<div class="pic">
+					<div class="<%= @deal.is_maxed ? 'soldout' : 'isopen' %>"></div>
+					<% if @deal.deal_images[0] %>
+						<%= link_to image_tag(@deal.deal_images[0].image.url(:display), 
+								:width => "200", :height => "125", :alt => @deal.title), 
+								url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id), 
+								:title => @deal.title  %>									
+					<% end %>
 				</div>
-				<div class="info">
-					<p class="time">Ends on <%= @deal.end_date.strftime(OPTIONS[:date_format]) %>!</p>
-					<h4><%= @deal.merchant.name %> - <%= link_to @deal.title, 
-						url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id) %></h4>
-					<div class="pic">
-						<div class="<%= @deal.is_maxed ? 'soldout' : 'isopen' %>"></div>
-						<% if @deal.deal_images[0] %>
-							<%= link_to image_tag(@deal.deal_images[0].image.url(:display), 
-									:width => "200", :height => "125", :alt => @deal.title), 
-									url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id), 
-									:title => @deal.title  %>									
-						<% end %>
-					</div>
-				</div>
-				<div class="clear"></div>
-				<div class="subsect share">
-					<ul>
-						<li>
-							<%= image_tag ('/stylesheets/i/logo_facebook.png') %>
-							<%= link_to "Share on Facebook", 
-								url_for(:controller => controller.controller_name, :action => 'confirm_permissions', :deal_id => @deal.id) %>
-						</li>
-					</ul>
-				</div>
-				<div class="subsect">
-					more stuff!
-				</div>				
+			</div>
+			<div class="clear"></div>
+			<div class="subsect share">
+				<ul>
+					<li>
+						<%= image_tag ('/stylesheets/i/logo_facebook.png') %>
+						<%= link_to "Share on Facebook", 
+							url_for(:controller => controller.controller_name, :action => 'confirm_permissions', :deal_id => @deal.id) %>
+					</li>
+				</ul>
+			</div>			
 		</div>
 		</div>
 		<div class="box-bottom"></div>

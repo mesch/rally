@@ -126,7 +126,7 @@ class UserController < ApplicationController
   # Incentive Methods
   def share
     @deal = Deal.find_by_id(params[:deal_id])
-    unless @deal
+    unless @deal and @deal.deal_incentive
       go_home
       return
     end
@@ -207,6 +207,28 @@ class UserController < ApplicationController
     end
     
     if request.post?
+      facebook_ids = params[:facebook_ids]
+      unless facebook_ids and facebook_ids.size > 0
+        flash[:error] = "You must select at least one friend."
+        redirect_to :controller => self.controller_name, :action => 'fb_share', :deal_id => @deal.id
+        return
+      end
+      
+      for facebook_id in facebook_ids
+        args = {:name => @deal.title,
+          :link => url_for(:controller => self.controller_name, :action => 'deal', :id => @deal.id),
+          :caption => @deal.merchant.name,
+          :description => @deal.description,
+          :picture => @deal.deal_images[0].image.url(:display)
+        }
+        put_wall_post(params[:message], args, facebook_id)
+
+        share = Share.new(:user_id => @current_user.id, :deal_id => @deal.id, :facebook_id => facebook_id)
+        unless share.save
+          logger.error "User.fb_share: Couldn't create share #{share}: #{share.errors}"
+        end
+      end
+      
       flash[:notice] = "Thank you sharing this deal."
       redirect_to :controller => self.controller_name, :action => 'deal', :id => @deal.id
       return

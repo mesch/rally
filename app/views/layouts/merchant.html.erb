@@ -4,7 +4,6 @@
 	<meta http-equiv=content-type content="text/html; charset=UTF-8">
 	<title><%= OPTIONS[:site_name] %></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-	<!-- <link rel="shortcut icon" href="/favicon.ico" /> -->
 	<% if @current_merchant and @current_merchant.merchant_subdomain and @current_merchant.merchant_subdomain.get_css('site') %>
 		<%= raw stylesheet_link_tag @current_merchant.merchant_subdomain.get_css('site') %>
 	<% else %>

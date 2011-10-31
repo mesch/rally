@@ -12,6 +12,7 @@ class DealCodeTest < ActiveSupport::TestCase
     dc = DealCode.new(:deal_id => 1, :code => 'asdf123')
     assert_not_nil dc.deal_id
     assert_not_nil dc.code
+    assert !dc.incentive
     assert dc.save
     # check id is protected
     old_id = dc.id
@@ -19,11 +20,19 @@ class DealCodeTest < ActiveSupport::TestCase
     assert !dc.save
   end
   
+  def test_deal_code_create_incentive
+    dc = DealCode.new(:deal_id => 1, :code => 'asdf123', :incentive => true)
+    assert dc.save
+  end
+  
   def test_deal_code_missing_fields
     dc = DealCode.new(:deal_id => nil, :code => 'asdf123')  
     assert !dc.save
     dc = DealCode.new(:deal_id => 1, :code => nil) 
     assert !dc.save
+    # ok
+    dc = DealCode.new(:deal_id => 1, :code => 'asdf123', :incentive => nil)
+    assert dc.save
   end
   
   def test_deal_code_create_multiple
@@ -37,7 +46,12 @@ class DealCodeTest < ActiveSupport::TestCase
     assert dc.save
     # same deal, same code - fail
     dc = DealCode.new(:deal_id => 1, :code => 'asdf123')
-    assert !dc.save        
+    assert !dc.save
+    # same deal, same code, incentive - ok
+    dc = DealCode.new(:deal_id => 1, :code => 'asdf123', :incentive => true)
+    assert dc.save          
   end
+  
+
 
 end

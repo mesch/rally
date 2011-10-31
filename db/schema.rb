@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111004175704) do
+ActiveRecord::Schema.define(:version => 20111031013530) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(:version => 20111004175704) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "reserved",   :default => false
+    t.boolean  "incentive",  :default => false
   end
 
   add_index "deal_codes", ["deal_id"], :name => "index_deal_codes_on_deal_id"
@@ -46,14 +47,6 @@ ActiveRecord::Schema.define(:version => 20111004175704) do
   end
 
   add_index "deal_images", ["deal_id", "counter"], :name => "deal_images_by_deal_counter"
-
-  create_table "deal_incentive_codes", :force => true do |t|
-    t.integer  "deal_incentive_id"
-    t.string   "code"
-    t.boolean  "reserved",          :default => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "deal_incentives", :force => true do |t|
     t.integer  "deal_id"
@@ -217,10 +210,11 @@ ActiveRecord::Schema.define(:version => 20111004175704) do
   create_table "shares", :force => true do |t|
     t.integer  "user_id"
     t.integer  "deal_id"
-    t.boolean  "posted",     :default => false
+    t.boolean  "posted",                   :default => false
     t.string   "post_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "facebook_id", :limit => 8
   end
 
   create_table "user_actions", :force => true do |t|

@@ -42,6 +42,22 @@ module Facebook
     return graph.get_object(id)
   end
   
+  def put_wall_post(message, args={}, id="me")
+    oauth = Koala::Facebook::OAuth.new(OPTIONS[:facebook_app_id], OPTIONS[:facebook_secret_key])
+    user_info = oauth.get_user_info_from_cookies(cookies)
+    if user_info && user_info["access_token"] && user_info["uid"]
+      graph = Koala::Facebook::GraphAPI.new(user_info["access_token"])
+      begin
+        graph.put_wall_post(message, args, id)
+      rescue Koala::Facebook::APIError => fe
+        logger.error "Facebook.put_wall_post: #{fe}"
+        return false
+      end
+    end
+    return true
+  end
+  
+  
   def parse_signed_request(signed_request)
     oauth = Koala::Facebook::OAuth.new(OPTIONS[:facebook_app_id], OPTIONS[:facebook_secret_key])
     results = oauth.parse_signed_request(signed_request)

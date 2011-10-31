@@ -324,7 +324,7 @@ class DealTest < ActiveSupport::TestCase
     di = d.deal_incentive    
     assert_equal di.max, 0
     # add incentive code - ok
-    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf123')
+    dic = DealCode.new(:deal_id => d.id, :code => 'asdf123', :incentive => true)
     assert dic.save
     d = Deal.find_by_id(d.id)
     assert d.publish
@@ -366,7 +366,7 @@ class DealTest < ActiveSupport::TestCase
       :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 5, :max => 2)
     assert di.save
     # Add one deal incentive code
-    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf123')
+    dic = DealCode.new(:deal_id => d.id, :code => 'asdf123', :incentive => true)
     assert dic.save  
     d = Deal.find_by_id(d.id)
     assert d.publish
@@ -390,11 +390,11 @@ class DealTest < ActiveSupport::TestCase
       :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 5, :max => 2)
     assert di.save
     # Add 3 deal incentive codes
-    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf123')
+    dic = DealCode.new(:deal_id => d.id, :code => 'asdf123', :incentive => true)
     assert dic.save
-    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf124')
+    dic = DealCode.new(:deal_id => d.id, :code => 'asdf124', :incentive => true)
     assert dic.save
-    dic = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => 'asdf125')
+    dic = DealCode.new(:deal_id => d.id, :code => 'asdf125', :incentive => true)
     assert dic.save
     d = Deal.find_by_id(d.id)
     assert d.publish
@@ -701,14 +701,14 @@ class DealTest < ActiveSupport::TestCase
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     # Share (not posted) - doesn't count
-    s = Share.new(:user_id => 1000, :deal_id => d.id)
+    s = Share.new(:user_id => 1000, :deal_id => d.id, :facebook_id => 100000)
     assert s.save
     assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 0
     # Post - counts
     s.update_attributes(:post_id => 1234, :posted => true)
     assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1    
     # Share for another deal - no change
-    s = Share.new(:user_id => 1000, :deal_id => d.id + 1, :post_id => 1234, :posted => true)
+    s = Share.new(:user_id => 1000, :deal_id => d.id + 1, :facebook_id => 100000, :post_id => 1234, :posted => true)
     assert s.save
     
     assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day + 1.days), 1
@@ -717,7 +717,7 @@ class DealTest < ActiveSupport::TestCase
     assert_equal d.shares_in_date_range(Time.zone.today + 1.days, Time.zone.today.end_of_day + 1.days), 0
     
     # Add another posted share
-    s = Share.new(:user_id => 1000, :deal_id => d.id, :post_id => 1234, :posted => true)
+    s = Share.new(:user_id => 1000, :deal_id => d.id, :facebook_id => 100000, :post_id => 1234, :posted => true)
     assert s.save
     assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2      
   end

@@ -710,7 +710,7 @@ class UserControllerTest < ActionController::TestCase
     ua = UserAction.find(:first)
     assert ua
     assert_equal ua.deal, @burger_deal
-    assert_equal ua.share, @burger_share   
+    assert_equal ua.share, @burger_share 
   end
   
   def test_subdomain_general
@@ -748,16 +748,16 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action => :home
   end    
   
-  def test_facebook_share
-    get :facebook_share, :deal_id => @burger_deal.id
+  def test_fb_share
+    get :fb_share, :deal_id => @burger_deal.id
     assert_response :redirect
     assert_redirected_to :action => :login
     self.login
     # won't have fb requirements
-    get :facebook_share, :deal_id => @burger_deal.id
+    get :fb_share, :deal_id => @burger_deal.id
     assert_response :redirect
     assert_redirected_to :action => :confirm_permissions, :deal_id => @burger_deal.id
-    get :facebook_share, :deal_id => 0
+    get :fb_share, :deal_id => 0
     assert_response :redirect
     assert_redirected_to :action => :home    
   end

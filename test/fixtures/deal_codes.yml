@@ -80,3 +80,13 @@ burger_code19:
 burger_code20:
     deal: burger_deal
     code: '1234abc20'
+
+burger_incentive_code1:
+    deal: burger_deal
+    code: '1234'
+    incentive: true
+
+burger_incentive_code2:
+    deal: burger_deal
+    code: '1235'
+    incentive: true

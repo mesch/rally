@@ -84,7 +84,7 @@ class MerchantController < ApplicationController
           di.save!
           if (file = params[:incentive_codes_file])
             FasterCSV.foreach(file.path) do |row|
-              dc = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => row[0])
+              dc = DealCode.new(:deal_id => @deal.id, :code => row[0], :incentive => true)
               dc.save!
             end
           end
@@ -119,9 +119,9 @@ class MerchantController < ApplicationController
     @image3 = deal_images[2] ? @deal.deal_images[2] : nil
     @video = @deal.deal_video ? @deal.deal_video : nil
     
-    @num_deal_codes = DealCode.count(:conditions => "deal_id = #{@deal.id}")
+    @num_deal_codes = DealCode.count(:conditions => ["deal_id = ? AND incentive = ?", @deal.id, false])
     if @deal.deal_incentive
-      @num_incentive_codes = DealIncentiveCode.count(:conditions => "deal_incentive_id = #{@deal.deal_incentive.id}")
+      @num_incentive_codes = DealCode.count(:conditions => ["deal_id = ? AND incentive = ?", @deal.id, true])
     end
   end
   
@@ -169,7 +169,7 @@ class MerchantController < ApplicationController
           dv.save!
         end       
         if (file = params[:codes_file] and !@deal.published)
-          DealCode.delete_all(["deal_id = ?", @deal.id])
+          DealCode.delete_all(["deal_id = ? and incentive = ?", @deal.id, false])
           FasterCSV.foreach(file.path) do |row|
             dc = DealCode.new(:deal_id => @deal.id, :code => row[0])
             dc.save!
@@ -182,9 +182,9 @@ class MerchantController < ApplicationController
             :number_required => params[:incentive_required], :max => params[:incentive_max])
           di.save!
           if (file = params[:incentive_codes_file])
-            DealIncentiveCode.delete_all(["deal_incentive_id = ?", di.id])
+            DealCode.delete_all(["deal_incentive_id = ? and incentive = ?", di.id, true])
             FasterCSV.foreach(file.path) do |row|
-              dc = DealIncentiveCode.new(:deal_incentive_id => di.id, :code => row[0])
+              dc = DealCode.new(:deal_id => @deal.id, :code => row[0], :incentive => true)
               dc.save!
             end
           end
@@ -213,7 +213,8 @@ class MerchantController < ApplicationController
       return
     end
     
-    if deal.deal_codes.size == 0
+    deal_codes = DealCode.find(:all, :conditions => ["deal_id = ? and incentive = ?", deal.id, false])
+    if deal_codes.size == 0
       flash[:error] = "You must upload coupon codes before you can publish."
       redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
       return
@@ -226,7 +227,8 @@ class MerchantController < ApplicationController
     end
     
     if deal.deal_incentive
-      if deal.deal_incentive.deal_incentive_codes.size == 0
+      deal_incentive_codes = DealCode.find(:all, :conditions => ["deal_id = ? and incentive = ?", deal.id, true])
+      if deal_incentive_codes.size == 0
         flash[:error] = "You must upload coupon codes for your deal incentive before you can publish."
         redirect_to :controller => self.controller_name, :action => :deals, :selector => 'drafts'
         return        

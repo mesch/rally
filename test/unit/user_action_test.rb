@@ -21,9 +21,8 @@ class UserActionTest < ActiveSupport::TestCase
     u = @test_user
     m = @bob
     d = @burger_deal
-    s = @burger_share
     ua = UserAction.new(:controller => 'user', :action => 'home', :method => 'get',
-      :visitor_id => v.id, :user_id => u.id, :merchant_id => m.id, :deal_id => d.id, :share_id => s.id)
+      :visitor_id => v.id, :user_id => u.id, :merchant_id => m.id, :deal_id => d.id)
     assert ua.save
     assert_equal ua.controller, 'user'
     assert_equal ua.action, 'home'
@@ -32,7 +31,6 @@ class UserActionTest < ActiveSupport::TestCase
     assert_equal ua.user, u
     assert_equal ua.merchant, m
     assert_equal ua.deal, d
-    assert_equal ua.share, s
   end  
   
   def test_create_multiple

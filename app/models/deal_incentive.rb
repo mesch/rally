@@ -16,12 +16,28 @@ class DealIncentive < ActiveRecord::Base
   money :incentive_value, :currency => false
 
   belongs_to :deal
-
-  has_many :deal_incentive_codes
   
   def self.create_type_options
     return [['', nil], ['Share', DealIncentive::SHARE]]
     #return [['', nil], ['Share', DealIncentive::SHARE], ['Purchase', DealIncentive::PURCHASE]]
+  end
+  
+  def added_value
+    return self.incentive_value - self.deal.deal_value
+  end
+  
+  def is_accomplished(user_id)
+    if self.metric_type == DealIncentive::SHARE
+      distinct_shares = Share.find(:all, :select => "DISTINCT(facebook_id)", :conditions => ["deal_id = ? AND user_id = ?", self.deal.id, user_id])
+      if distinct_shares.size >= self.number_required
+        return true
+      end
+    end
+    return false
+  end
+  
+  def reserved_coupons_count
+    return DealCode.count(:conditions => ["deal_id = ? and incentive = ? and reserved =?", self.deal_id, true, true])
   end
 
 end

@@ -76,7 +76,7 @@ class Order < ActiveRecord::Base
   def create_coupons!()
     deal = Deal.find(self.deal.id)
     for i in (1..self.quantity)
-      dc = DealCode.find(:first, :conditions => ["deal_id = ? AND reserved = ?", deal.id, false], :lock => true)
+      dc = DealCode.find(:first, :conditions => ["deal_id = ? AND reserved = ? AND incentive = ?", deal.id, false, false], :lock => true)
       if dc
         Coupon.create!(:user_id => self.user.id, :deal_id => deal.id, :order_id => self.id, :deal_code_id => dc.id)
         dc.update_attributes!(:reserved => true)
@@ -99,6 +99,7 @@ class Order < ActiveRecord::Base
         for order_payment in order_payments
           order_payment.capture!
         end
+        self.upgrade_coupons!
         # update order
         self.update_attributes!(:state => Order::PAID, :paid_at => Time.zone.now)
       end
@@ -118,6 +119,26 @@ class Order < ActiveRecord::Base
       logger.error "Order.capture: Failed for Order #{self.inspect} #{invalid}"
     end
     return false
+  end
+  
+  # check if deal_incentive is met and upgrade coupons
+  def upgrade_coupons!
+    deal = Deal.find(self.deal.id)
+    if deal.deal_incentive
+      if deal.deal_incentive.is_accomplished(self.user.id)
+        coupons = Coupon.find_by_order_id(self.id)  
+        for coupon in coupons
+          # check against max
+          if deal.deal_incentive.max == 0 or deal.deal_incentive.reserved_codes_count + 1 <= deal.deal_incentive.max
+            dc = DealCode.find(:first, :conditions => ["deal_id = ? AND reserved = ? AND incentive = ?", deal.id, false, true], :lock => true)
+            if dc
+              coupon.update_attributes!(:deal_code_id => dc.id)
+              dc.update_attributes!(:reserved => true)
+            end
+          end
+        end
+      end
+    end
   end
   
   def is_timed_out(timeout=nil)

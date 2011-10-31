@@ -949,7 +949,7 @@ class MerchantControllerTest < ActionController::TestCase
     assert flash[:error]
     assert_response :redirect
     assert_redirected_to :action=>'deals', :selector=>'drafts'
-    dic = DealIncentiveCode.new(:deal_incentive_id => deal.deal_incentive.id, :code => 'asdf123')
+    dic = DealCode.new(:deal_id => deal.id, :code => 'asdf123', :incentive => true)
     assert dic.save
     # publish - ok    
     get :publish_deal, :id => deal.id

@@ -8,7 +8,7 @@ Feature: View Coupons
 		When I go to the list of coupons
 		Then I should see "Log In"
 	
-	Scenario: Coupon List (Active, With Deal Code)
+	Scenario: Coupon List (Active)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
@@ -16,8 +16,10 @@ Feature: View Coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
 		And I should see "Active"
+		And I should see "Print"
+		And I should not see "Earn"
 
-	Scenario: Coupon List (Pending, With Deal Code)
+	Scenario: Coupon List (Pending)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
@@ -25,6 +27,8 @@ Feature: View Coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
 		And I should see "Pending"
+		And I should not see "Print"
+		And I should not see "Earn"
 
 	Scenario: Coupon List (Not Tipped)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -35,6 +39,8 @@ Feature: View Coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
 		And I should see "Pending"
+		And I should not see "Print"
+		And I should not see "Earn"
 	
 	Scenario: Coupon List (Expired)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -45,8 +51,60 @@ Feature: View Coupons
 		Then I should see "Coupons"
 		And I should see "Cool New Deal"
 		And I should see "Expired"
-	
-	Scenario: Coupon Page (Active, With Deal Code)
+		And I should see "Print"
+		And I should not see "Earn"
+		
+	Scenario: Coupon List (Active, With Incentive)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
+		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
+		When I go to the list of coupons
+		Then I should see "Coupons"
+		And I should see "Cool New Deal"
+		And I should see "Active"
+		And I should see "Print"
+		And I should not see "Earn"
+
+	Scenario: Coupon List (Pending, With Incentive)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
+		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
+		When I go to the list of coupons
+		Then I should see "Coupons"
+		And I should see "Cool New Deal"
+		And I should see "Pending"
+		And I should not see "Print"
+		And I should see "Earn"
+
+	Scenario: Coupon List (Not Tipped, With Incentive)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
+		And a merchant has changed the min of deal "Cool New Deal" to 2
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
+		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
+		When I go to the list of coupons
+		Then I should see "Coupons"
+		And I should see "Cool New Deal"
+		And I should see "Pending"
+		And I should not see "Print"
+		And I should see "Earn"
+
+	Scenario: Coupon List (Expired, With Incentive)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
+		And a merchant has changed the expiration date of deal "Cool New Deal" to yesterday
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
+		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
+		When I go to the list of coupons
+		Then I should see "Coupons"
+		And I should see "Cool New Deal"
+		And I should see "Expired"
+		And I should see "Print"
+		And I should not see "Earn"
+
+	Scenario: Coupon Page (Active)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
@@ -57,7 +115,7 @@ Feature: View Coupons
 		And I should see "Redemption Code"
 		And I should see "abc123"
 		
-	Scenario: Coupon Page (Pending, With Deal Code)
+	Scenario: Coupon Page (Pending)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
 		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"

@@ -74,7 +74,8 @@ class Deal < ActiveRecord::Base
     begin
       Deal.transaction do
         # check for deal codes
-        if self.deal_codes.size == 0
+        deal_codes = DealCode.find(:all, :conditions => ["deal_id = ? and incentive = ?", self.id, false])
+        if deal_codes.size == 0
           raise PublishError, "No deal codes"
         end
         # check for images
@@ -83,15 +84,16 @@ class Deal < ActiveRecord::Base
         end
         # handle deal incentive (if exists)
         if deal_incentive = self.deal_incentive
-          if deal_incentive.deal_incentive_codes.size == 0
+          deal_incentive_codes = DealCode.find(:all, :conditions => ["deal_id = ? and incentive = ?", self.id, true])
+          if deal_incentive_codes.size == 0
             raise PublishError, "No deal incentive codes."
           end
           if deal_incentive.incentive_value < self.deal_value
             raise PublishError, "Incentive value is less than deal value."
           end
           # make sure incentive max is large enough
-          max = [deal_incentive.deal_incentive_codes.size, deal_incentive.max].min
-          max = max == 0 ? deal_incentive.deal_incentive_codes.size : max
+          max = [deal_incentive_codes.size, deal_incentive.max].min
+          max = max == 0 ? deal_incentive_codes.size : max
           deal_incentive.update_attributes!(:max => max)
         end
         # make sure max is large enough
