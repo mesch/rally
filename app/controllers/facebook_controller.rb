@@ -38,26 +38,32 @@ class FacebookController < UserController
     
     if params[:signed_request]
       signed_request = parse_signed_request(params[:signed_request])
-      p signed_request
+      logger.info(signed_request)
       if signed_request and signed_request["page"] and signed_request["page"]["id"]
         facebook_page_id = signed_request["page"]["id"]
         if merchant = Merchant.find_by_facebook_page_id(facebook_page_id)
           @merchant_subdomain = MerchantSubdomain.find_by_merchant_id(merchant.id)
-          p @merchant_subdomain
+          logger.info(@merchant_subdomain)
           if @merchant_subdomain
             @app_url += "?sd=#{@merchant_subdomain.subdomain}"
             
             # TODO: Move this query into deal.rb? or user.rb?
-            @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
+            logger.info(Time.zone)
+            logger.info(Time.zone.now)
+            @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.now, Time.zone.now])
+            logger.info(@deals)
 
             # filter out other merchants if on a merchant subdomain
             if @merchant_subdomain and @merchant_subdomain.merchant
               @deals.delete_if {|deal| deal.merchant_id != @merchant_subdomain.merchant.id}
             end
+            logger.info(@deals)
             
           end
         end
       end
+    else
+      logger.info("No signed request passed in!")
     end
     
     render :layout => false

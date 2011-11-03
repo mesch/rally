@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111026000828) do
+ActiveRecord::Schema.define(:version => 20111102231428) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -63,9 +63,9 @@ ActiveRecord::Schema.define(:version => 20111026000828) do
   create_table "deals", :force => true do |t|
     t.integer  "merchant_id"
     t.string   "title"
-    t.date     "start_date"
-    t.date     "end_date"
-    t.date     "expiration_date"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.datetime "expiration_date"
     t.integer  "deal_price_in_cents"
     t.integer  "deal_value_in_cents"
     t.integer  "max",                 :default => 0

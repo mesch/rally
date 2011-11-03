@@ -6,9 +6,9 @@ class DealTest < ActiveSupport::TestCase
   
   def setup
     @m = @emptybob
-    @start = Time.zone.today
-    @end = Time.zone.today + 1.days
-    @expiration = Time.zone.today + 1.months
+    @start = Time.zone.today.beginning_of_day
+    @end = Time.zone.today.end_of_day + 1.days
+    @expiration = Time.zone.today.end_of_day + 1.months
   end
 
   def test_create_basic
@@ -400,57 +400,127 @@ class DealTest < ActiveSupport::TestCase
     today = Time.zone.today
     yesterday = Time.zone.today - 1.days
     tomorrow = Time.zone.today + 1.days
-    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today, :end_date => today, 
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today.beginning_of_day, :end_date => today.end_of_day, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.is_started
-    assert !d.is_started(yesterday)
-    assert d.is_started(tomorrow)
+    assert !d.is_started(yesterday.end_of_day)
+    assert d.is_started(tomorrow.beginning_of_day)
     
     # start_date yesterday - true
-    d.start_date = yesterday
+    d.start_date = yesterday.beginning_of_day
     assert d.is_started
     
     # start_date tomorrow - false
-    d.start_date = tomorrow
+    d.start_date = tomorrow.beginning_of_day
     assert !d.is_started
+  end
+  
+  def test_is_started_timezone
+    # merchant's time zone
+    Time.zone = 'US/Pacific'
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => Time.zone.now, :end_date => Time.zone.now + 10.minutes, 
+      :expiration_date => Time.zone.now + 10.minutes, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    # User w/ same time zone - pass
+    assert d.is_started
+    assert !d.is_started(Time.zone.now - 1.hours)
+    assert d.is_started(Time.zone.now + 1.hours)    
+    # User w/ earlier time zone - shouldn't change
+    Time.zone = 'US/Eastern'
+    assert d.is_started
+    assert !d.is_started(Time.zone.now - 1.hours)
+    assert d.is_started(Time.zone.now + 1.hours)    
+    # User w/ later time zone - shouldn't change
+    Time.zone = 'US/Hawaii'
+    assert d.is_started
+    assert !d.is_started(Time.zone.now - 1.hours)
+    assert d.is_started(Time.zone.now + 1.hours)
+    # return back to UTC
+    Time.zone = 'Etc/UTC'
   end
   
   def test_is_ended
     today = Time.zone.today
     yesterday = Time.zone.today - 1.days
     tomorrow = Time.zone.today + 1.days
-    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today, :end_date => today, 
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today.beginning_of_day, :end_date => today.end_of_day, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert !d.is_ended
-    assert !d.is_ended(yesterday)
-    assert d.is_ended(tomorrow)
+    assert !d.is_ended(yesterday.end_of_day)
+    assert d.is_ended(tomorrow.beginning_of_day)
     
     # end_date yesterday - true
-    d.end_date = yesterday
+    d.end_date = yesterday.end_of_day
     assert d.is_ended
     
     # end_date tomorrow - false
-    d.end_date = tomorrow
+    d.end_date = tomorrow.end_of_day
     assert !d.is_ended
+  end
+  
+  def test_is_ended_timezone
+    # merchant's time zone
+    Time.zone = 'US/Pacific'
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => Time.zone.now - 10.minutes, :end_date => Time.zone.now, 
+      :expiration_date => Time.zone.now, :deal_price => '10.00', :deal_value => '20.00')
+    # User w/ same time zone - pass
+    assert d.is_ended
+    assert !d.is_ended(Time.zone.now - 1.hours)
+    assert d.is_ended(Time.zone.now + 1.hours)    
+    # User w/ earlier time zone - shouldn't change
+    Time.zone = 'US/Eastern'
+    assert d.is_ended
+    assert !d.is_ended(Time.zone.now - 1.hours)
+    assert d.is_ended(Time.zone.now + 1.hours)    
+    # User w/ later time zone - shouldn't change
+    Time.zone = 'US/Hawaii'
+    assert d.is_ended
+    assert !d.is_ended(Time.zone.now - 1.hours)
+    assert d.is_ended(Time.zone.now + 1.hours)
+    # return back to UTC
+    Time.zone = 'Etc/UTC'
   end
   
   def test_is_expired
     today = Time.zone.today
     yesterday = Time.zone.today - 1.days
     tomorrow = Time.zone.today + 1.days
-    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today, :end_date => today, 
-      :expiration_date => today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today.beginning_of_day, :end_date => today.end_of_day, 
+      :expiration_date => today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     assert !d.is_expired
-    assert !d.is_expired(yesterday)
-    assert d.is_expired(tomorrow)
+    assert !d.is_expired(yesterday.end_of_day)
+    assert d.is_expired(tomorrow.beginning_of_day)
     
     # expiration_date yesterday - true
-    d.expiration_date = yesterday
+    d.expiration_date = yesterday.end_of_day
     assert d.is_expired
     
     # expiration_date tomorrow - false
-    d.expiration_date = tomorrow
+    d.expiration_date = tomorrow.end_of_day
     assert !d.is_expired   
+  end
+  
+  def test_is_expired_timezone
+    # merchant's time zone
+    Time.zone = 'US/Pacific'
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => Time.zone.now - 10.minutes, :end_date => Time.zone.now, 
+      :expiration_date => Time.zone.now, :deal_price => '10.00', :deal_value => '20.00')
+    # User w/ same time zone - pass
+    assert d.is_expired
+    assert !d.is_expired(Time.zone.now - 1.hours)
+    assert d.is_expired(Time.zone.now + 1.hours)    
+    # User w/ earlier time zone - shouldn't change
+    Time.zone = 'US/Eastern'
+    assert d.is_expired
+    assert !d.is_expired(Time.zone.now - 1.hours)
+    assert d.is_expired(Time.zone.now + 1.hours)    
+    # User w/ later time zone - shouldn't change
+    Time.zone = 'US/Hawaii'
+    assert d.is_expired
+    assert !d.is_expired(Time.zone.now - 1.hours)
+    assert d.is_expired(Time.zone.now + 1.hours)
+    # return back to UTC
+    Time.zone = 'Etc/UTC'
   end
   
   def test_time_difference_for_display
@@ -488,21 +558,44 @@ class DealTest < ActiveSupport::TestCase
     today = Time.zone.today
     yesterday = Time.zone.today - 1.days
     tomorrow = Time.zone.today + 1.days
-    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today, :end_date => today, 
-      :expiration_date => today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => today.beginning_of_day, :end_date => today.end_of_day, 
+      :expiration_date => today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     difference = d.time_left
     assert difference < 86400
  
     # end_date yesterday
-    d.end_date = yesterday
+    d.end_date = yesterday.end_of_day
     difference = d.time_left
     assert difference < 0
     assert difference > -86400
     
     # end_date tomorrow
-    d.end_date = tomorrow
+    d.end_date = tomorrow.end_of_day
     difference = d.time_left
     assert difference > 86400
+  end
+  
+  def test_time_left_timezone
+    # merchant's time zone
+    Time.zone = 'US/Pacific'
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => Time.zone.now, :end_date => Time.zone.now + 10.minutes, 
+      :expiration_date => Time.zone.now + 10.minutes, :deal_price => '10.00', :deal_value => '20.00')
+    # User w/ same time zone - pass
+    difference = d.time_left
+    assert difference > 60*9
+    assert difference <= 60*10
+    # User w/ earlier time zone - shouldn't change
+    Time.zone = 'US/Eastern'
+    difference = d.time_left
+    assert difference > 60*9
+    assert difference <= 60*10 
+    # User w/ later time zone - shouldn't change
+    Time.zone = 'US/Hawaii'
+    difference = d.time_left
+    assert difference > 60*9
+    assert difference <= 60*10
+    # return back to UTC
+    Time.zone = 'Etc/UTC'
   end
   
   def test_views_in_date_range

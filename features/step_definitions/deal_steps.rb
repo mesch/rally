@@ -14,9 +14,9 @@ end
 
 Given /^(?:I have|a merchant has) created (?:a deal|deals) titled (.+)$/ do |titles|
   # default settings for a deal
-  start_date = Time.zone.today
-  end_date = Time.zone.today
-  expiration_date = Time.zone.today + 1.months
+  start_date = Time.zone.today.beginning_of_day
+  end_date = Time.zone.today.end_of_day
+  expiration_date = Time.zone.today.end_of_day + 1.months
   titles.split(', ').each do |title|
     title = title.sub(/^"(.*)"$/,'\1')
     Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
@@ -27,9 +27,9 @@ end
 
 Given /^(?:I have|a merchant has) published (?:a deal|deals) titled (.+)$/ do |titles|
   # default settings for a deal
-  start_date = Time.zone.today
-  end_date = Time.zone.today
-  expiration_date = Time.zone.today + 1.months
+  start_date = Time.zone.today.beginning_of_day
+  end_date = Time.zone.today.end_of_day
+  expiration_date = Time.zone.today.end_of_day + 1.months
   titles.split(', ').each do |title|
     title = title.sub(/^"(.*)"$/,'\1')
     Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
@@ -43,11 +43,11 @@ Given /^(?:I have|a merchant has) changed the (start|end|expiration) date of dea
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
   case field
   when 'start'
-    deal.update_attributes!(:start_date => date)
+    deal.update_attributes!(:start_date => date.beginning_of_day)
   when 'end'
-    deal.update_attributes!(:end_date => date)
+    deal.update_attributes!(:end_date => date.end_of_day)
   when 'expiration'
-    deal.update_attributes!(:expiration_date => date)  
+    deal.update_attributes!(:expiration_date => date.end_of_day)  
   end  
 end
 

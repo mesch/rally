@@ -43,8 +43,8 @@ class CouponTest < ActiveSupport::TestCase
   end
 
   def test_state
-    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :min => 2)
+    d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00', :min => 2)
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -63,18 +63,18 @@ class CouponTest < ActiveSupport::TestCase
     c = Coupon.find_by_id(c.id)
     assert_equal c.state, "Pending"
     # expire the deal - should be expired
-    d.update_attributes(:expiration_date => Time.zone.today - 1.days)
+    d.update_attributes(:expiration_date => Time.zone.today.end_of_day - 1.days)
     assert d.is_expired
     c = Coupon.find_by_id(c.id)
     assert_equal c.state, "Expired"
     # the order gets paid - should be "Active"
-    d.update_attributes(:expiration_date => Time.zone.today)
+    d.update_attributes(:expiration_date => Time.zone.today.end_of_day)
     assert !d.is_expired
     o.update_attributes(:state => Order::PAID)
     c = Coupon.find_by_id(c.id)
     assert_equal c.state, "Active"
     # expire the deal - should be expired
-    d.update_attributes(:expiration_date => Time.zone.today - 1.days)
+    d.update_attributes(:expiration_date => Time.zone.today.end_of_day - 1.days)
     assert d.is_expired
     c = Coupon.find_by_id(c.id)
     assert_equal c.state, "Expired"

@@ -155,7 +155,7 @@ class Deal < ActiveRecord::Base
       datetime = Time.zone.now
     end
     
-    if self.start_date.to_date.beginning_of_day < datetime
+    if self.start_date < datetime
       return true
     else
       return false
@@ -168,7 +168,7 @@ class Deal < ActiveRecord::Base
       datetime = Time.zone.now
     end
     
-    if self.end_date.to_date.end_of_day < datetime
+    if self.end_date < datetime
       return true
     else
       return false
@@ -181,7 +181,7 @@ class Deal < ActiveRecord::Base
       datetime = Time.zone.now
     end
     
-    if self.expiration_date.to_date.end_of_day < datetime
+    if self.expiration_date < datetime
       return true
     else
       return false
@@ -195,7 +195,7 @@ class Deal < ActiveRecord::Base
     end    
     
     # weird rounding issue with the time difference?
-    return (self.end_date.to_date.end_of_day - datetime).round
+    return (self.end_date - datetime).round
   end
   
   # splits up a time difference (in seconds) into a hash:

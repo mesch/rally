@@ -98,8 +98,8 @@ class MerchantReportTest < ActiveSupport::TestCase
   def test_coupon_results
     m = @emptybob
     u = @empty_user
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :published => true, :max => 2)
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00', :published => true, :max => 2)
     assert d.save
     r = MerchantReport.new(:merchant_id => m.id, :report_type => MerchantReport::COUPON_REPORT, :state => MerchantReport::GENERATING, :deal_id => d.id)
     assert r.save
@@ -157,8 +157,8 @@ class MerchantReportTest < ActiveSupport::TestCase
   # also test destroy
   def test_generate_report
     m = @emptybob
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :published => true, :max => 2)
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00', :published => true, :max => 2)
     assert d.save
     r = MerchantReport.new(:merchant_id => m.id, :report_type => MerchantReport::COUPON_REPORT, :state => MerchantReport::GENERATING, :deal_id => d.id)
     assert r.save
