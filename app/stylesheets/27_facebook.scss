@@ -8,10 +8,10 @@ $link-color: #339999;
 $input-color: #89B4D6;
 $deal-box-color: lighten($background-color, 15%);
 
-$deal_price_url:"i/bg-deal-price.png";
-$deal_buy_url:"i/button-deal-buy.png";
-$deal_expired_url:"i/bg-deal-expired-text.gif";
-$deal_soldout_url:"i/bg-deal-soldout-text.gif";
+$deal_price_url:"https://s3.amazonaws.com/rallycommerce/webstores/27/deal-price.png";
+$deal_buy_url:"https://s3.amazonaws.com/rallycommerce/webstores/27/button-buy.png";
+$deal_expired_url:"https://s3.amazonaws.com/rallycommerce/webstores/27/button-expired.png";
+$deal_soldout_url:"https://s3.amazonaws.com/rallycommerce/webstores/27/button-soldout.png";
 
 /* IMPORTS */
 @import "global";
