@@ -5,7 +5,7 @@
 	<title><%= OPTIONS[:site_name] %></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<%= render :partial => 'layouts/partials/meta_tags' %>
-	<!-- <link rel="shortcut icon" href="/favicon.ico" /> -->
+
 	<% if @merchant_subdomain and @merchant_subdomain.get_css('facebook') %>
 		<%= raw stylesheet_link_tag @merchant_subdomain.get_css('facebook') %>
 	<% else %>
@@ -84,6 +84,8 @@
 		</script>
 	<% end %>
 
+	<%= render :partial => 'layouts/partials/verisign_trusted' %>
+	
 	<%= render :partial => 'layouts/partials/footer' %>
 	
 	<%= raw javascript_include_tag request.protocol + "connect.facebook.net/en_US/all.js" %>

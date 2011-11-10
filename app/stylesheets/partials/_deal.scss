@@ -8,7 +8,7 @@
 	border-style:solid;
 	border-width:2px;
 	border-color:lighten($bar-color, 10%);
-	background:lighten($background-color, 20%);
+	background:#fff;
 	border-bottom: solid lighten($background-color, 20%);
 }
 #deal-share .deal-share-links{float:left;width:453px;height:23px;padding:7px 0 0 20px;}
@@ -42,14 +42,15 @@
 #deal-intro h1 span{font-family:arial,sans-serif;}
 #deal-intro .deal-buy{position:relative;}
 #deal-intro .deal-today-link{text-decoration:none;}
-#deal-intro .deal-price-tag{position:absolute;z-index:1;left:-72px;width:237px;height:97px;padding-left:50px;background:url($deal_price_url) no-repeat 0 0;_background:transparent;_filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/static/css/i/bg-deal-price.png');}
+#deal-intro .deal-price-tag{position:absolute;z-index:1;left:-72px;width:237px;height:97px;padding-left:50px;background:url($deal_price_url) no-repeat 0 0;_background:transparent;}
 #deal-intro .deal-price{position:absolute;z-index:2;left:-72px;width:237px;height:97px;line-height:82px;padding-left:50px;}
 #deal-intro .deal-price span{position:absolute;z-index:2;top:0;left:144px;color:#fff;}
-#deal-intro .deal-price span.deal-price-expire,#deal-intro .deal-price span.deal-price-soldout{padding-left:10px;width:140px;background:url(i/bg-deal-close-text.gif) no-repeat 0 16px;color:#666;}
-#deal-intro .deal-price span.deal-price-expire{width:140px;height:84px;background:url(i/bg-deal-expired-text.gif) no-repeat 6px 17px;}
-#deal-intro .deal-price span.deal-price-soldout{width:140px;height:84px;background:url(i/bg-deal-soldout-text.gif) no-repeat 6px 17px;}
+//#deal-intro .deal-price span.deal-price-expire,#deal-intro .deal-price span.deal-price-soldout{padding-left:10px;width:140px;background:url(i/bg-deal-close-text.gif) no-repeat 0 16px;color:#666;}
+#deal-intro .deal-price span.deal-price-expire{width:140px;height:84px;background:url($deal_expired_url) no-repeat 6px 17px;}
+#deal-intro .deal-price span.deal-price-soldout{width:140px;height:84px;background:url($deal_soldout_url) no-repeat 6px 17px;}
 #deal-intro .deal-price strong{float:left;margin-left:5px;font-size:32px;color:#fff;font-weight:normal;}
-#deal-intro .deal-price span a{display:block;width:144px;height:53px;line-height:53px;margin-top:19px;outline:0;}
+#deal-intro .deal-price span img{width:144px;height:67px;background:url($deal_buy_url) no-repeat;}
+#deal-intro .deal-price span a{display:block;width:144px;height:56px;line-height:53px;margin-top:19px;outline:0;}
 #deal-intro .progress-pointer{float:left;padding:3px 0;}
 #deal-intro .progress-pointer span{float:left;width:14px;height:13px;background:url(i/bg-progress-pointer.gif) no-repeat 0 0;}
 #deal-intro .progress-bar{float:left;height:17px;padding:0 2px;width:198px;background:url(i/bg-progress-bottom.gif) no-repeat left top;}
@@ -79,11 +80,11 @@
 .deal-subscribe .address{width:100%;}
 .deal-subscribe .address td{vertical-align:top;}
 .deal-subscribe .f-text{width:147px;color:#999;font-size:12px;}
-.deal-discount{width:100%;margin-top:77px;border:1px solid lighten($bar-color, 20%);background:lighten($background-color, 10%);font-weight:bold;} 
+.deal-discount{width:100%;margin-top:77px;border:1px solid lighten($bar-color, 20%);background:$deal-box-color;font-weight:bold;} 
 .deal-discount th,.deal-discount td{padding:0 10px;text-align:center;}
 .deal-discount th{padding-top:20px;font-size:12px;font-weight:normal;}
 .deal-discount td{padding-bottom:10px;font-size:16px;}
-.deal-box{margin-top:12px;border:1px solid lighten($bar-color, 20%);background:lighten($background-color, 20%);padding:8px;}
+.deal-box{margin-top:12px;border:1px solid lighten($bar-color, 20%);background:$deal-box-color;padding:8px;}
 .deal-timeleft{padding-left:20px;padding-right:64px;background-image:url(i/bg-deal-open.gif);background-position:90% 50%;background-repeat:no-repeat;color:#333;}
 .deal-timeleft h3{font-size:14px;font-weight:normal;}
 .deal-timeleft li{font-weight:bold;}
@@ -209,7 +210,7 @@
 #deal-buy .back-to-check{margin-top:20px;}
 
 #recent-deals .sect{width:auto;padding:10px 20px 40px;}
-#recent-deals .deals-list li{float:left;width:650px;height:206px;border-bottom:1px dashed #ccc;border-right:1px dashed #ccc;}
+#recent-deals .deals-list li{float:left;width:450px;height:226px;border-bottom:1px dashed #ccc;border-right:1px dashed #ccc;}
 #recent-deals .deals-list li.first{height:213px;}
 #recent-deals .deals-list li.alt{padding-left:20px;border-right:none;}
 #recent-deals .deals-list .time{margin-top:15px;font-size:12px;font-weight:bold;color:#000;}

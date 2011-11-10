@@ -37,19 +37,18 @@
 					</p>
 				<% elsif !@deal.is_started %>
 					<p class="deal-price">
-						<strong><%= @deal.deal_price.format(:no_cents) %></strong>
-						<!-- <span><%= image_tag("/stylesheets/i/button-deal-buy.png") %></span>-->				
+						<strong><%= @deal.deal_price.format(:no_cents) %></strong>			
 					</p>
 				<% else %>
 					<p class="deal-price">
 						<strong><%= @deal.deal_price.format(:no_cents) %></strong>
 						<% if controller.controller_name == 'user' %>
 							<span>
-								<%= link_to image_tag("/stylesheets/i/button-deal-buy.png"), payment_order_url(:deal_id => @deal.id) %>
+								<%= link_to image_tag("/stylesheets/i/transparent.png"), payment_order_url(:deal_id => @deal.id) %>
 							</span>
 						<% else %>
 							<span>
-								<%= link_to image_tag("/stylesheets/i/button-deal-buy.png"), facebook_payment_order_url(:deal_id => @deal.id) %>
+								<%= link_to image_tag("/stylesheets/i/transparent.png"), facebook_payment_order_url(:deal_id => @deal.id) %>
 							</span>	
 						<% end %>					
 					</p>

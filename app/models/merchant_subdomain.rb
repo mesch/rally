@@ -32,4 +32,14 @@ class MerchantSubdomain < ActiveRecord::Base
     return nil
   end
   
+  def verisign_trusted?
+    if self.subdomain == 'www'
+      return true
+    end
+    if self.merchant
+      return self.merchant.verisign_trusted
+    end
+    return false
+  end
+  
 end

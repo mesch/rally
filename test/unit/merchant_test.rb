@@ -123,6 +123,8 @@ class MerchantTest < ActiveSupport::TestCase
     assert_not_nil m.salt
     assert m.active
     assert_equal m.time_zone, "Pacific Time (US & Canada)"
+    assert !m.verisign_trusted
+    assert_equal m.redemption_type, Merchant::COUPON_CODE
     assert m.save
     assert_equal 10, m.salt.length
     assert !m.terms
@@ -146,7 +148,8 @@ class MerchantTest < ActiveSupport::TestCase
     :time_zone => "Pacific Time (US & Canada)", :website => "http://abc.com", :contact_name => "Bobby Smith",
     :address1 => "Pier 38", :address2 => "Suite 201", :city => "San Francisco", :state => "CA", :zip => "94103", :country => "USA",
     :phone_number => "4155551212", :tax_id => "123456789", :bank => "BofA", :account_name => "Bob Smith",
-    :routing_number => "2345", :account_number => "345a", :paypal_account => "bob@abc.com")
+    :routing_number => "2345", :account_number => "345a", :paypal_account => "bob@abc.com", 
+    :verisign_trusted => 1, :redemption_type => Merchant::COUPON_URL)
     m.password = m.password_confirmation = "bobs_secure_password"
     assert_not_nil m.salt
     assert m.active
@@ -156,14 +159,14 @@ class MerchantTest < ActiveSupport::TestCase
       [:name, :username, :email, :hashed_password, :salt, :logo_file_name, :logo_content_type, :logo_file_size,
         :activation_code, :activate, :time_zone, :website, :contact_name,
         :address1, :address2, :city, :state, :zip, :country, :phone_number, :tax_id, :bank, :account_name,
-        :routing_number, :account_number, :paypal_account])
+        :routing_number, :account_number, :paypal_account, :verisign_trusted, :redemption_type])
     #check that changing a local field fails match
     m.contact_name = "Bob Smith"
     assert !equal?(m, Merchant.authenticate(m.username, m.password), 
       [:name, :username, :email, :hashed_password, :salt, :logo_file_name, :logo_content_type, :logo_file_size,
         :activation_code, :activate, :time_zone, :website, :contact_name,
         :address1, :address2, :city, :state, :zip, :country, :phone_number, :tax_id, :bank, :account_name,
-        :routing_number, :account_number, :paypal_account])
+        :routing_number, :account_number, :paypal_account, :verisign_trusted, :redemption_type])
   end
   
   
@@ -309,8 +312,8 @@ class MerchantTest < ActiveSupport::TestCase
   
   def test_deals_in_date_range
     m = @emptybob
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     assert_equal m.deals_in_date_range(Time.zone.today, Time.zone.today).size, 1
     assert_equal m.deals_in_date_range(Time.zone.today - 1.days, Time.zone.today).size, 1
@@ -318,8 +321,8 @@ class MerchantTest < ActiveSupport::TestCase
     assert_equal m.deals_in_date_range(Time.zone.today - 1.days, Time.zone.today - 1.days).size, 0
     assert_equal m.deals_in_date_range(Time.zone.today + 1.days, Time.zone.today + 1.days).size, 0
     # multiple deals
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     assert_equal m.deals_in_date_range(Time.zone.today, Time.zone.today).size, 2
     # delete - still show up
@@ -351,13 +354,13 @@ class MerchantTest < ActiveSupport::TestCase
     d.publish
     assert_equal m.drafts().size, 0   
     # add a draft 
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     assert_equal m.drafts().size, 1
     # add another draft
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     assert_equal m.drafts().size, 2
     # delete a draft
@@ -367,8 +370,8 @@ class MerchantTest < ActiveSupport::TestCase
   
   def test_current_deals
     m = @emptybob
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -380,17 +383,17 @@ class MerchantTest < ActiveSupport::TestCase
     # publish
     d.publish
     assert_equal m.current_deals().size, 1
-    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day - 1.days, :end_date => Time.zone.today.end_of_day)
     assert_equal m.current_deals().size, 1
-    d.update_attributes(:start_date => Time.zone.today, :end_date => Time.zone.today + 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day + 1.days)
     assert_equal m.current_deals().size, 1  
-    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day - 1.days, :end_date => Time.zone.today.end_of_day - 1.days)
     assert_equal m.current_deals().size, 0
-    d.update_attributes(:start_date => Time.zone.today + 1.days, :end_date => Time.zone.today + 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day + 1.days, :end_date => Time.zone.today.end_of_day + 1.days)
     assert_equal m.current_deals().size, 1   
     # add a draft 
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -409,8 +412,9 @@ class MerchantTest < ActiveSupport::TestCase
   
   def test_good_deals
     m = @emptybob
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day - 1.days, 
+      :end_date => Time.zone.today.end_of_day - 1.days, :expiration_date => Time.zone.today.end_of_day, 
+      :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -422,17 +426,18 @@ class MerchantTest < ActiveSupport::TestCase
     # publish
     d.publish
     assert_equal m.good_deals().size, 1
-    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day - 1.days, :end_date => Time.zone.today.end_of_day)
     assert_equal m.good_deals().size, 0
-    d.update_attributes(:start_date => Time.zone.today, :end_date => Time.zone.today + 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day + 1.days)
     assert_equal m.good_deals().size, 0  
-    d.update_attributes(:start_date => Time.zone.today + 1.days, :end_date => Time.zone.today + 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day + 1.days, :end_date => Time.zone.today.end_of_day + 1.days)
     assert_equal m.good_deals().size, 0
-    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day - 1.days, :end_date => Time.zone.today.end_of_day - 1.days)
     assert_equal m.good_deals().size, 1    
     # add a draft 
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, 
+      :end_date => Time.zone.today.end_of_day, :expiration_date => Time.zone.today.end_of_day, 
+      :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     assert_equal m.good_deals().size, 1
     # publish
@@ -444,7 +449,7 @@ class MerchantTest < ActiveSupport::TestCase
     d = Deal.find_by_id(d.id)
     d.publish
     assert_equal m.good_deals().size, 1
-    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day - 1.days, :end_date => Time.zone.today.end_of_day - 1.days)
     assert_equal m.good_deals().size, 2
     # delete
     assert d.delete
@@ -453,8 +458,9 @@ class MerchantTest < ActiveSupport::TestCase
   
   def test_failed_deals
     m = @emptybob
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day - 1.days, 
+      :end_date => Time.zone.today.end_of_day - 1.days, :expiration_date => Time.zone.today.end_of_day, 
+      :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -469,17 +475,17 @@ class MerchantTest < ActiveSupport::TestCase
     # set min to 1
     d.update_attributes(:min => 1)
     assert_equal m.failed_deals().size, 1
-    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day - 1.days, :end_date => Time.zone.today.end_of_day)
     assert_equal m.failed_deals().size, 0
-    d.update_attributes(:start_date => Time.zone.today, :end_date => Time.zone.today + 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day + 1.days)
     assert_equal m.failed_deals().size, 0  
-    d.update_attributes(:start_date => Time.zone.today + 1.days, :end_date => Time.zone.today + 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day + 1.days, :end_date => Time.zone.today.end_of_day + 1.days)
     assert_equal m.failed_deals().size, 0
-    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day - 1.days, :end_date => Time.zone.today.end_of_day - 1.days)
     assert_equal m.failed_deals().size, 1    
     # add a draft 
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today.beginning_of_day, :end_date => Time.zone.today.end_of_day, 
+      :expiration_date => Time.zone.today.end_of_day, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -491,7 +497,7 @@ class MerchantTest < ActiveSupport::TestCase
     # publish
     d.publish
     assert_equal m.failed_deals().size, 1
-    d.update_attributes(:start_date => Time.zone.today - 1.days, :end_date => Time.zone.today - 1.days)
+    d.update_attributes(:start_date => Time.zone.today.beginning_of_day - 1.days, :end_date => Time.zone.today.end_of_day - 1.days)
     assert_equal m.failed_deals().size, 1
     # set min to 1
     d.update_attributes(:min => 1)

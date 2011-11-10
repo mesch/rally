@@ -44,13 +44,15 @@ class MerchantController < ApplicationController
   end
 
   def create_deal
-    @deal = Deal.new(:merchant_id => @current_merchant.id, :title => params[:title],
-    :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
-    :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
-    :min => params[:min], :max => params[:max], :limit => params[:limit],
-    :description => params[:description], :terms => params[:terms])
-    
     begin
+      @deal = Deal.new(:merchant_id => @current_merchant.id, :title => params[:title],
+      :start_date => Time.zone.parse(params[:start_date]), 
+      :end_date => Time.zone.parse(params[:end_date]).advance(:hours => 23, :minutes => 59, :seconds => 59), 
+      :expiration_date => Time.zone.parse(params[:expiration_date]).advance(:hours => 23, :minutes => 59, :seconds => 59),
+      :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
+      :min => params[:min], :max => params[:max], :limit => params[:limit],
+      :description => params[:description], :terms => params[:terms])
+    
       Deal.transaction do
         # Create Deal
         @deal.save!
@@ -98,6 +100,11 @@ class MerchantController < ApplicationController
       flash.now[:error] = "#{pp_errors(invalid.record.errors)}"
       render :new_deal
       return
+    rescue TypeError => te
+      logger.error(te)
+      flash.now[:error] = "Date fields cannot be empty."
+      render :edit_deal
+      return
     end    
   end
   
@@ -138,11 +145,14 @@ class MerchantController < ApplicationController
         # Update Deal
         if @deal.published
           @deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
-          :start_date => params[:start_date], :end_date => params[:end_date],
+          :start_date => Time.zone.parse(params[:start_date]), 
+          :end_date => Time.zone.parse(params[:end_date]).advance(:hours => 23, :minutes => 59, :seconds => 59), 
           :description => params[:description], :terms => params[:terms])
         else
           @deal.update_attributes!(:merchant_id => @current_merchant.id, :title => params[:title],
-          :start_date => params[:start_date], :end_date => params[:end_date], :expiration_date => params[:expiration_date],
+          :start_date => Time.zone.parse(params[:start_date]), 
+          :end_date => Time.zone.parse(params[:end_date]).advance(:hours => 23, :minutes => 59, :seconds => 59), 
+          :expiration_date => Time.zone.parse(params[:expiration_date]).advance(:hours => 23, :minutes => 59, :seconds => 59),
           :deal_price => params[:deal_price], :deal_value => params[:deal_value], 
           :min => params[:min], :max => params[:max], :limit => params[:limit],
           :description => params[:description], :terms => params[:terms])
@@ -202,6 +212,12 @@ class MerchantController < ApplicationController
       logger.error(invalid.record.errors)
       flash.now[:error] = "#{pp_errors(invalid.record.errors)}"
       render :edit_deal
+      return
+    rescue TypeError => te
+      logger.error(te)
+      flash.now[:error] = "Date fields cannot be empty."
+      render :edit_deal
+      return    
     end        
   end
 

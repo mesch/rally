@@ -13,9 +13,9 @@ class MerchantControllerTest < ActionController::TestCase
   def setup
     @request.host = "www.rcom.com"
     
-    @start = Time.zone.today
-    @end = Time.zone.today + 1.days
-    @expiration = Time.zone.today + 1.months
+    @start = Time.zone.today.to_s
+    @end = (Time.zone.today + 1.days).to_s
+    @expiration = (Time.zone.today + 1.months).to_s
   end
 
   def login
@@ -758,8 +758,11 @@ class MerchantControllerTest < ActionController::TestCase
     deal = deals[0]
     assert_equal deal.title, 'dealio'
     #edit all fields
-    post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start + 1.days, 
-      :end_date => @end + 1.days, :expiration_date => @expiration + 1.days,
+    @start = (Time.zone.today + 1.days).to_s
+    @end = (Time.zone.today + 2.days).to_s
+    @expiration = (Time.zone.today + 1.months + 1.days).to_s
+    post :update_deal, :id => deal.id, :title => 'new name', :start_date => @start, 
+      :end_date => @end, :expiration_date => @expiration,
       :deal_price => '15.00', :deal_value => '30.00',  :min => '5', :max => '100', :limit => '3',
       :description => 'blahblahblah', :terms => 'you have to ...'
     assert flash[:notice]

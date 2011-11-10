@@ -24,8 +24,11 @@ class UserController < ApplicationController
   # Deals
   def deals()
     # TODO: Move this query into deal.rb? or user.rb?
-    @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.today, Time.zone.today])
-
+    logger.info(Time.zone)
+    logger.info(Time.zone.now)
+    @deals = Deal.find(:all, :conditions => [ "published = ? AND start_date <= ? AND end_date >= ?", true, Time.zone.now, Time.zone.now])
+    logger.info(@deals)
+    
     # filter out other merchants if on a merchant subdomain
     if @merchant_subdomain and @merchant_subdomain.merchant
       @deals.delete_if {|deal| deal.merchant_id != @merchant_subdomain.merchant.id}
@@ -58,10 +61,13 @@ class UserController < ApplicationController
     end
     
     # TODO: better query for other deals? Move into deal.rb? or user.rb?
+    logger.info(Time.zone)
+    logger.info(Time.zone.now)
     @others = Deal.find(
       :all, 
-      :conditions => [ "published = ? AND start_date <= ? AND end_date >= ? AND id != ?", true, Time.zone.today, Time.zone.today, @deal.id], 
+      :conditions => [ "published = ? AND start_date <= ? AND end_date >= ? AND id != ?", true, Time.zone.now, Time.zone.now, @deal.id], 
       :limit => 3)
+    logger.info(@others)
     # filter out other merchants if on a merchant subdomain
     if @merchant_subdomain and @merchant_subdomain.merchant
       @others.delete_if {|other| other.merchant_id != @merchant_subdomain.merchant.id}

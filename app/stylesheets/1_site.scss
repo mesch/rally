@@ -6,8 +6,12 @@ $bar-color: #CC0000;
 $button-color: #FF0000;
 $link-color: #FF0000;
 $input-color: #666666;
+$deal-box-color: lighten($background-color, 15%);
 
 $deal_price_url:"i/bg-deal-price.png";
+$deal_buy_url:"i/button-deal-buy.png";
+$deal_expired_url:"hi/bg-deal-expired-text.gif";
+$deal_soldout_url:"i/bg-deal-soldout-text.gif";
 
 /* IMPORTS */
 @import "global";
@@ -15,4 +19,5 @@ $deal_price_url:"i/bg-deal-price.png";
 @import "partials/_sysmsg";
 @import "partials/_deal";
 @import "partials/_border_radius";
+@import "partials/_facebook";
 @import "partials/_facebook";

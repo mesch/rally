@@ -12,6 +12,9 @@ class UserControllerTest < ActionController::TestCase
 
   def setup
     @request.host = "www.rcom.com"
+    @start = Time.zone.today.beginning_of_day
+    @end = Time.zone.today.end_of_day
+    @expiration = Time.zone.today.end_of_day
   end
 
   def login
@@ -363,8 +366,8 @@ class UserControllerTest < ActionController::TestCase
     assert_response :success
     assert_template "user/deals"        
     # one deal - go directly to deal
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -377,8 +380,8 @@ class UserControllerTest < ActionController::TestCase
     assert_response :redirect
     assert_redirected_to :action=>'deal', :id => d.id
     # two deals - stay on deals
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -395,8 +398,8 @@ class UserControllerTest < ActionController::TestCase
   def test_deals_page_subdomain
     Deal.delete_all
     m = @existingbob
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -406,8 +409,8 @@ class UserControllerTest < ActionController::TestCase
     d = Deal.find_by_id(d.id)    
     assert d.publish
     m = @bob
-    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    d = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
     dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
     assert dc.save
@@ -432,13 +435,64 @@ class UserControllerTest < ActionController::TestCase
     assert_response :redirect
     assert_redirected_to :action=>'home'
   end
+
+  def test_deals_page_timezone
+    Deal.delete_all
+    # merchant's time zone
+    Time.zone = 'US/Pacific'
+    # started deal
+    d = Deal.new(:merchant_id => @emptybob.id, :title => 'dealio', :start_date => Time.zone.now - 10.minutes, :end_date => Time.zone.now + 10.minutes, 
+      :expiration_date => Time.zone.now + 10.minutes, :deal_price => '10.00', :deal_value => '20.00')
+    assert d.save
+    dc = DealCode.new(:deal_id => d.id, :code => 'asdf123')
+    assert dc.save
+    di = DealImage.new(:deal_id => d.id, :counter => 1,
+      :image_file_name => 'test.png', :image_content_type => 'image/png', :image_file_size => 1000)
+    assert di.save
+    d = Deal.find_by_id(d.id)
+    assert d.publish
+    # User w/ same time zone - go directly to deal page
+    @test_user.update_attributes!(:time_zone => 'US/Pacific')
+    get :deals
+    assert_response :redirect
+    assert_redirected_to :action=>'deal', :id => d.id
+    # User w/ earlier time zone - shouldn't change
+    @test_user.update_attributes!(:time_zone => 'US/Eastern')
+    get :deals
+    assert_response :redirect
+    assert_redirected_to :action=>'deal', :id => d.id   
+    # User w/ later time zone - shouldn't change
+    @test_user.update_attributes!(:time_zone => 'US/Hawii')
+    get :deals
+    assert_response :redirect
+    assert_redirected_to :action=>'deal', :id => d.id
+    # ended deal
+    d.update_attributes!(:end_date => Time.zone.now - 10.minutes)
+    # User w/ same time zone - stays on deal page
+    @test_user.update_attributes!(:time_zone => 'US/Pacific')    
+    get :deals
+    assert_response :success
+    assert_template "user/deals"
+    # User w/ earlier time zone - shouldn't change
+    @test_user.update_attributes!(:time_zone => 'US/Eastern')
+    get :deals
+    assert_response :success
+    assert_template "user/deals"  
+    # User w/ later time zone - shouldn't change
+    @test_user.update_attributes!(:time_zone => 'US/Hawii')
+    get :deals
+    assert_response :success
+    assert_template "user/deals"   
+    # reset Time.zone
+    Time.zone = 'Etc/UTC'
+  end
   
   def test_coupon_page
     self.login
     m = @existingbob
     # Create Deal
-    deal = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
-      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00')
+    deal = Deal.new(:merchant_id => m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
+      :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert deal.save
     dc = DealCode.new(:deal_id => deal.id, :code => 'asdf123')
     assert dc.save
@@ -475,7 +529,7 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action=>'home' 
     # expired - can view
     self.login
-    deal.expiration_date = Time.zone.today - 1.days
+    deal.expiration_date = Time.zone.today.end_of_day - 1.days
     assert deal.save
     coupon = Coupon.find_by_id(coupon.id)
     assert_equal coupon.state, 'Expired'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111031013530) do
+ActiveRecord::Schema.define(:version => 20111102231428) do
 
   create_table "coupons", :force => true do |t|
     t.integer  "user_id"
@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(:version => 20111031013530) do
 
   create_table "deal_codes", :force => true do |t|
     t.integer  "deal_id"
-    t.string   "code"
+    t.text     "code"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "reserved",   :default => false
@@ -75,9 +75,9 @@ ActiveRecord::Schema.define(:version => 20111031013530) do
   create_table "deals", :force => true do |t|
     t.integer  "merchant_id"
     t.string   "title"
-    t.date     "start_date"
-    t.date     "end_date"
-    t.date     "expiration_date"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.datetime "expiration_date"
     t.integer  "deal_price_in_cents"
     t.integer  "deal_value_in_cents"
     t.integer  "max",                 :default => 0
@@ -163,6 +163,8 @@ ActiveRecord::Schema.define(:version => 20111031013530) do
     t.integer  "logo_file_size"
     t.integer  "facebook_page_id",  :limit => 8
     t.boolean  "terms",                          :default => false
+    t.boolean  "verisign_trusted",               :default => false
+    t.string   "redemption_type",                :default => "COUPON_CODE"
   end
 
   add_index "merchants", ["username"], :name => "index_merchants_on_username"

@@ -3,7 +3,9 @@
 	<meta content='<%= url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id, :only_path => false) %>' property='og:url' />
 	<meta content=<%= @deal.title %> property='og:title' />
 	<meta content='shopnrally:deal' property='og:type' />
-	<meta content='<%= @deal.deal_images[0].image.url(:display) %>' property='og:image' />
+	<% if @deal.deal_images[0] %>
+		<meta content='<%= @deal.deal_images[0].image.url(:display) %>' property='og:image' />
+	<% end %>
 	<meta content='<%= @deal.description %>' property='og:description' />
 <% end %>
 

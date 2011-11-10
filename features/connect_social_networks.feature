@@ -58,44 +58,48 @@ Feature: Manage User Account
 	@javascript @facebook
 	Scenario: Facebook Share Page (not logged into FB)
 		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
 		And I am on the user login page
 		When I fill in "email" with "empty_user@rallycommerce.com"
 		And I fill in "password" with "test"
 		And I press "Log In"	
 		When I go to the fb share page for deal "Cool New Deal"
-		Then I should not see "Share on Facebook"
+		Then I should not see "Share this deal on Facebook"
 		And I should see "You need to log in to Facebook with the proper permissions to share with your friends."
 	
 	@javascript @facebook
 	Scenario: Facebook Share Page (connected to our app, "email" permissions)
 		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
 		And a new Facebook user is connected to our app with permissions "email"
 		When I go to the user login page
 		And I click on the Facebook Login button
 		And I log into Facebook
 		When I go to the fb share page for deal "Cool New Deal"
-		Then I should not see "Share on Facebook"
+		Then I should not see "Share this deal on Facebook"
 		And I should see "You need to log in to Facebook with the proper permissions to share with your friends."
 	
 	@javascript @facebook
 	Scenario: Facebook Share Page (connected, "email,publish_stream" permissions)
 		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
 		And a new Facebook user is connected to our app with permissions "email,publish_stream"
 		When I go to the user login page
 		And I click on the Facebook Login button
 		And I log into Facebook
 		When I go to the fb share page for deal "Cool New Deal"
-		Then I should see "Share on Facebook"
+		Then I should see "Share this deal on Facebook"
 	
 	@javascript @facebook
 	Scenario: Facebook Share Page (connected, "email,publish_stream,sms" permissions)
 		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
 		And a new Facebook user is connected to our app with permissions "email,publish_stream,sms"
 		When I go to the user login page
 		And I click on the Facebook Login button
 		And I log into Facebook
 		When I go to the fb share page for deal "Cool New Deal"
-		Then I should see "Share on Facebook"
+		Then I should see "Share this deal on Facebook"
 
 	@javascript @facebook
 	Scenario: Facebook Share Flow (not logged into FB)
@@ -108,7 +112,7 @@ Feature: Manage User Account
 		And I press "Log In"	
 		When I go to the share page for deal "Cool New Deal"
 		And I follow "Share on Facebook"
-		Then I should not see "Share on Facebook"
+		Then I should not see "Share this deal on Facebook"
 		And I should see "You need to log in to Facebook with the proper permissions to share with your friends."
 		# todo: login and get to the fb_share page?
 
@@ -122,7 +126,7 @@ Feature: Manage User Account
 		And I log into Facebook
 		When I go to the share page for deal "Cool New Deal"
 		And I follow "Share on Facebook"
-		Then I should not see "Share on Facebook"
+		Then I should not see "Share this deal on Facebook"
 		And I should see "You need to log in to Facebook with the proper permissions to share with your friends."
 		# todo: login and get to the fb_share page?
 	
@@ -136,7 +140,7 @@ Feature: Manage User Account
 		And I log into Facebook
 		When I go to the share page for deal "Cool New Deal"
 		And I follow "Share on Facebook"
-		Then I should see "Share on Facebook"
+		Then I should see "Share this deal on Facebook"
 
 	@javascript @facebook
 	Scenario: Facebook Share Flow (connected, "email,publish_stream,sms" permissions)
@@ -148,4 +152,4 @@ Feature: Manage User Account
 		And I log into Facebook
 		When I go to the share page for deal "Cool New Deal"
 		And I follow "Share on Facebook"
-		Then I should see "Share on Facebook"
+		Then I should see "Share this deal on Facebook"

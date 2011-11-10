@@ -4,15 +4,19 @@ Given /^I am logged in as merchant "([^"]*)" with password "([^"]*)"/ do |userna
   @current_merchant = Merchant.find_by_username(username)
 end
 
+Given /the merchant has redemption_type "([^"]*)"/ do |redemption_type|
+  @current_merchant.update_attributes!(:redemption_type => redemption_type)
+end
+  
 Given /^there are no deals$/ do
   Deal.delete_all
 end
 
 Given /^(?:I have|a merchant has) created (?:a deal|deals) titled (.+)$/ do |titles|
   # default settings for a deal
-  start_date = Time.zone.today
-  end_date = Time.zone.today
-  expiration_date = Time.zone.today + 1.months
+  start_date = Time.zone.today.beginning_of_day
+  end_date = Time.zone.today.end_of_day
+  expiration_date = Time.zone.today.end_of_day + 1.months
   titles.split(', ').each do |title|
     title = title.sub(/^"(.*)"$/,'\1')
     deal = Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
@@ -26,9 +30,9 @@ end
 
 Given /^(?:I have|a merchant has) published (?:a deal|deals) titled (.+)$/ do |titles|
   # default settings for a deal
-  start_date = Time.zone.today
-  end_date = Time.zone.today
-  expiration_date = Time.zone.today + 1.months
+  start_date = Time.zone.today.beginning_of_day
+  end_date = Time.zone.today.end_of_day
+  expiration_date = Time.zone.today.end_of_day + 1.months
   titles.split(', ').each do |title|
     title = title.sub(/^"(.*)"$/,'\1')
     deal = Deal.create!(:merchant_id => @current_merchant.id, :title => title, 
@@ -45,11 +49,11 @@ Given /^(?:I have|a merchant has) changed the (start|end|expiration) date of dea
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
   case field
   when 'start'
-    deal.update_attributes!(:start_date => date)
+    deal.update_attributes!(:start_date => date.beginning_of_day)
   when 'end'
-    deal.update_attributes!(:end_date => date)
+    deal.update_attributes!(:end_date => date.end_of_day)
   when 'expiration'
-    deal.update_attributes!(:expiration_date => date)  
+    deal.update_attributes!(:expiration_date => date.end_of_day)  
   end  
 end
 
@@ -143,11 +147,11 @@ When /^I upload a valid image for Image 3$/ do
   attach_file('image3', File.join(::Rails.root.to_s, 'features', 'upload-files', 'valid_image.jpg'))
 end
 
-When /^I upload a file of 10 coupons codes$/ do
+When /^I upload a file of 10 coupon codes$/ do
   attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '10codes.csv'))
 end
 
-When /^I upload a file of 0 coupons codes$/ do
+When /^I upload a file of 0 coupon codes$/ do
   attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '0codes.csv'))
 end
 
@@ -157,6 +161,10 @@ end
 
 When /^I upload a file of 0 incentive codes$/ do
   attach_file('incentive_codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '0codes.csv'))
+end
+
+When /^I upload a file of 10 coupon urls$/ do
+  attach_file('codes_file', File.join(::Rails.root.to_s, 'features', 'upload-files', '10urlcodes.csv'))
 end
 
 When /^I upload a logo$/ do
@@ -178,11 +186,10 @@ Then /^"([^"]*)" should be selected for "([^"]*)"$/ do |value, field|
 end
 
 Then /^I should( not)? see the Buy(?:!)? button$/ do |negate|
-  #page.should have_xpath("//img[@alt=\'button-deal-buy\']")
   if negate
-    page.should_not have_css("img[alt=Button-deal-buy]")
+    page.should_not have_css("img[alt=Transparent]")
   else
-    page.should have_css("img[alt=Button-deal-buy]")
+    page.should have_css("img[alt=Transparent]")
   end
 end
 
@@ -223,4 +230,11 @@ Then /^I should( not)? see the "([^"]*)" facebook meta tag$/ do |negate, name|
   end
 end
 
+Then /^I should( not)? see the verisign trusted image/ do |negate|
+  if negate
+    page.should_not have_xpath("//img[@alt=\"verisign_trusted\"]")
+  else
+    page.should have_xpath("//img[@alt=\"verisign_trusted\"]")
+  end    
+end
 

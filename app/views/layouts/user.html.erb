@@ -78,6 +78,8 @@
 
 	<%= yield %>
 	
+	<%= render :partial => 'layouts/partials/verisign_trusted' %>
+	
 	<%= render :partial => 'layouts/partials/footer' %>
 	
 	<%= raw javascript_include_tag request.protocol + "connect.facebook.net/en_US/all.js" %>

@@ -1,12 +1,16 @@
 require "digest"
 class Merchant < ActiveRecord::Base
-  
+  # coupon types
+  COUPON_CODE = 'COUPON_CODE'
+  COUPON_URL = 'COUPON_URL'
+
   validates_length_of :username, :within => 3..40
   validates_length_of :name, :maximum => 50
   validates_length_of :email, :maximum => 50  
   validates_uniqueness_of :username
   validates_presence_of :name, :username, :email, :salt, :time_zone
   validates_format_of :email, :with => /^([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})$/i, :message => "invalid email"
+  validates_inclusion_of :redemption_type, :in => [ COUPON_CODE, COUPON_URL ]
 
   # info fields
   validates_length_of :website, :maximum => 255
@@ -81,7 +85,7 @@ class Merchant < ActiveRecord::Base
   # Deal methods
   def deals_in_date_range(start_date, end_date)
     return Deal.find(:all,
-      :conditions => ["merchant_id = ? AND start_date <= ? AND end_date >= ?", self.id, end_date, start_date],
+      :conditions => ["merchant_id = ? AND start_date <= ? AND end_date >= ?", self.id, end_date.beginning_of_day, start_date.end_of_day],
       :order => 'active desc, created_at desc')
   end
   
@@ -93,13 +97,13 @@ class Merchant < ActiveRecord::Base
   
   def current_deals
     return Deal.find(:all, 
-      :conditions => ["merchant_id = ? AND published = ? AND end_date >= ? AND active = ?", self.id, true, Time.zone.today, true], 
+      :conditions => ["merchant_id = ? AND published = ? AND end_date >= ? AND active = ?", self.id, true, Time.zone.now, true], 
       :order => 'active desc, created_at desc')
   end
   
   def good_deals
     deals = Deal.find(:all, 
-      :conditions => ["merchant_id = ? AND published = ? AND end_date < ? AND active = ?", self.id, true, Time.zone.today, true], 
+      :conditions => ["merchant_id = ? AND published = ? AND end_date < ? AND active = ?", self.id, true, Time.zone.now, true], 
       :order => 'active desc, created_at desc')
     results = []
     for deal in deals
@@ -112,7 +116,7 @@ class Merchant < ActiveRecord::Base
   
   def failed_deals
     deals = Deal.find(:all, 
-      :conditions => ["merchant_id = ? AND published = ? AND end_date < ? AND active = ?", self.id, true, Time.zone.today, true], 
+      :conditions => ["merchant_id = ? AND published = ? AND end_date < ? AND active = ?", self.id, true, Time.zone.now, true], 
       :order => 'active desc, created_at desc')
     results = []
     for deal in deals

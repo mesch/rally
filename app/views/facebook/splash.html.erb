@@ -4,7 +4,12 @@
 	<meta http-equiv=content-type content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
 	<title>Splash Page</title>
-	<%= raw stylesheet_link_tag 'facebook.css', :media => "screen", :charset => "utf-8" %>	
+
+	<% if @merchant_subdomain and @merchant_subdomain.get_css('site') %>
+		<%= raw stylesheet_link_tag @merchant_subdomain.get_css('site') %>
+	<% else %>
+		<%= raw stylesheet_link_tag 'site' %>
+	<% end %>
 	<%= render :partial => 'layouts/partials/google_analytics' %>
 </head>
 
@@ -31,7 +36,8 @@ body{ background:#fff;}
 		<% for deal in @deals %>
 			<li class="alt">
 				<p class="time">Ends on <%= deal.end_date.strftime(OPTIONS[:date_format]) %>!</p>
-				<h4><%= deal.merchant.name %> - <%= link_to deal.title, @app_url, :target => "_blank" %></h4>
+				<h4><%= deal.merchant.name %></h4>
+				<h4><%= link_to deal.title, @app_url, :target => "_blank" %></h4>
 				<div class="pic">
 					<div class="<%= deal.is_maxed ? 'soldout' : 'isopen' %>"></div>
 					<% if deal.deal_images[0] %>
