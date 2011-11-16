@@ -1,0 +1,22 @@
+$global-width: 740px;
+
+$header-color: #FFFFFF;
+$bar-color: #000000;
+$background-color: #E2E2E2;
+$button-color: #63C5C8;
+$link-color: #339999;
+$input-color: #89B4D6;
+$deal-box-color: lighten($background-color, 15%);
+
+$deal_price_url:"i/bg-deal-price.png";
+$deal_buy_url:"i/button-deal-buy.png";
+$deal_expired_url:"i/bg-deal-expired-text.gif";
+$deal_soldout_url:"i/bg-deal-soldout-text.gif";
+
+/* IMPORTS */
+@import "global";
+@import "application";
+@import "partials/_sysmsg";
+@import "partials/_deal";
+@import "partials/_border_radius";
+@import "partials/_facebook";
