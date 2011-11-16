@@ -690,13 +690,14 @@ class MerchantControllerTest < ActionController::TestCase
     assert flash[:error]
     assert_response :success
     assert_template "merchant/_deal_form"
+    # missing incentive_max - ok
     post :create_deal, :title => 'incentivo', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00',
       :min => 1, :max => 0, :limit => 0, :incentive_type => DealIncentive::SHARE, 
       :incentive_value => '25.00', :incentive_required => 5, :incentive_max => nil
-    assert flash[:error]
-    assert_response :success
-    assert_template "merchant/_deal_form"
+    assert flash[:notice]
+    assert_response :redirect
+    assert_redirected_to :action=>'deals'
   end
   
   def test_create_deal_incentive_non_numbers

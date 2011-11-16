@@ -1,0 +1,46 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Deal Incentive</h2>
+					&nbsp;&nbsp;<%= link_to "Back to Deals", admin_deals_url %>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" border="0" class="general-table">
+						<tr><th width="40">Id</th>
+							<th width="40">Deal Id</th>
+							<th width="60" nowrap>Price / Value</th>
+							<th width="60" nowrap>Metric Type</th>
+							<th width="40" nowrap>Number Required</th>
+							<th width="40" nowrap>Max</th>
+							<th width="40">Created</th>
+						</tr>
+						<% for deal_incentive in @deal_incentives %>							
+						<tr>
+							<td><%= deal_incentive.id %></td>
+							<td><%= deal_incentive.deal_id %></td>
+							<td nowrap>
+								<%= deal_incentive.incentive_price.format %><br/>
+								<%= deal_incentive.incentive_value.format %>
+							</td>
+							<td><%= deal_incentive.metric_type %></td>
+							<td><%= deal_incentive.number_required %></td>
+							<td><%= deal_incentive.max %></td>
+							<td><%= deal_incentive.created_at.strftime(OPTIONS[:date_format]) %></td>
+						</tr>
+						<% end %>
+                    </table>
+					<%= page_entries_info @deal_incentives %>
+					<%= will_paginate @deal_incentives %>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

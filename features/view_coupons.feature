@@ -78,7 +78,7 @@ Feature: View Coupons
 		And I should not see "Print"
 		And I should see "Earn"
 
-	Scenario: Coupon List (Not Tipped, With Incentive)
+	Scenario: Coupon List (Not Tipped, With Incentive, Not Earned)
 		Given a merchant has published a deal titled "Cool New Deal"
 		And a merchant has added a sharing incentive to deal "Cool New Deal"
 		And a merchant has changed the min of deal "Cool New Deal" to 2
@@ -90,6 +90,20 @@ Feature: View Coupons
 		And I should see "Pending"
 		And I should not see "Print"
 		And I should see "Earn"
+		
+	Scenario: Coupon List (Not Tipped, With Incentive, Not Earned)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
+		And a merchant has changed the min of deal "Cool New Deal" to 2
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
+		And the deal "Cool New Deal" has 1 authorized coupon with a deal code "abc123"
+		And the deal "Cool New Deal" has 1 share
+		When I go to the list of coupons
+		Then I should see "Coupons"
+		And I should see "Cool New Deal"
+		And I should see "Pending"
+		And I should not see "Print"
+		And I should not see "Earn"		
 
 	Scenario: Coupon List (Expired, With Incentive)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -114,6 +128,8 @@ Feature: View Coupons
 		And I should see "Cool New Deal"
 		And I should see "Redemption Code"
 		And I should see "abc123"
+		And I should see "Value"
+		And I should see "$20"
 		
 	Scenario: Coupon Page (Active, With URL Code)
 		Given a merchant has published a deal titled "Cool New Deal"
@@ -127,6 +143,22 @@ Feature: View Coupons
 		And I should see "Redemption URL"
 		And I should not see "Redemption Code"
 		And I should see "Redemption Link"
+		And I should see "Value"
+		And I should see "$20"
+		
+	Scenario: Coupon Page (Active, With Incentive)
+		Given a merchant has published a deal titled "Cool New Deal"
+		And a merchant has added a sharing incentive to deal "Cool New Deal"
+		And I am logged in as user "empty_user@rallycommerce.com" with password "test"
+		And the deal "Cool New Deal" has 1 paid coupon with a deal code "abc123"
+		And I am on the list of coupons
+		When I follow "Print"
+		Then I should see "Coupon"
+		And I should see "Cool New Deal"
+		And I should see "Redemption Code"
+		And I should see "abc123"
+		And I should see "Value"
+		And I should see "$20"	
 		
 	Scenario: Coupon Page (Pending, With Deal Code)
 		Given a merchant has published a deal titled "Cool New Deal"

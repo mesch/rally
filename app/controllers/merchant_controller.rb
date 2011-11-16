@@ -82,7 +82,7 @@ class MerchantController < ApplicationController
         if (!params[:incentive_type].blank?)
           di = DealIncentive.new(:deal_id => @deal.id, :metric_type => params[:incentive_type], 
             :incentive_price => params[:deal_price], :incentive_value => params[:incentive_value], 
-            :number_required => params[:incentive_required], :max => params[:incentive_max])
+            :number_required => params[:incentive_required], :max => params[:incentive_max] ? params[:incentive_max] : 0)
           di.save!
           if (file = params[:incentive_codes_file])
             FasterCSV.foreach(file.path) do |row|
@@ -189,7 +189,7 @@ class MerchantController < ApplicationController
         if (!params[:incentive_type].blank? and !@deal.published)
           di = DealIncentive.new(:deal_id => @deal.id, :metric_type => params[:incentive_type], 
             :incentive_price => params[:deal_price], :incentive_value => params[:incentive_value], 
-            :number_required => params[:incentive_required], :max => params[:incentive_max])
+            :number_required => params[:incentive_required], :max => params[:incentive_max] ? params[:incentive_max] : 0)
           di.save!
           if (file = params[:incentive_codes_file])
             DealCode.delete_all(["deal_incentive_id = ? and incentive = ?", di.id, true])

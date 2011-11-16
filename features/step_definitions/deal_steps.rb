@@ -65,7 +65,7 @@ end
 Given /^(?:I have|a merchant has) added a sharing incentive to deal "([^"]*)"$/ do |title|
   deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
   di = DealIncentive.create!(:deal_id => deal.id, :metric_type => DealIncentive::SHARE, 
-    :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 5, :max => 100)
+    :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 1, :max => 100)
 end
 
 Given /^(?:I have|a merchant has) changed the (incentive_value|incentive_price|number_required|max) of the sharing incentive for deal "([^"]*)" to (.+)$/ do |field, title, value|
@@ -111,6 +111,11 @@ Given /^the deal "([^"]*)" has 1 (authorized|paid) coupon(?: with a deal code "(
   else
     Coupon.create!(:user_id => @current_user.id, :deal_id => deal.id, :order_id => o.id)    
   end
+end
+
+Given /^the deal "([^"]*)" has 1 share$/ do |title|
+  deal = Deal.find(:first, :conditions => ["merchant_id = ? AND title = ?", @current_merchant.id, title])
+  Share.create!(:user_id => @current_user.id, :deal_id => deal.id, :facebook_id => 1000)
 end
 
 # User Givens

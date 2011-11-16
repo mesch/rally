@@ -155,6 +155,7 @@ Rally::Application.routes.draw do
     resources :users
     resources :deals do
       get 'deal_codes', :on => :member
+      get 'deal_incentive', :on => :member
     end
     resources :coupons
     resources :orders

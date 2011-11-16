@@ -284,7 +284,7 @@ class Deal < ActiveRecord::Base
   end
   
   def shares_in_date_range(start_time, end_time)
-    return Share.count(:conditions => ["deal_id = ? AND posted = ? AND created_at >= ? AND created_at <= ?", self.id, true, start_time, end_time])
+    return Share.count(:conditions => ["deal_id = ? AND created_at >= ? AND created_at <= ?", self.id, start_time, end_time])
   end
   
 end

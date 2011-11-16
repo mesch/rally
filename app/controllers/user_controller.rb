@@ -174,13 +174,13 @@ class UserController < ApplicationController
     if params[:next_action]
       redirect_to :controller => self.controller_name, :action => params[:next_action], :deal_id => params[:deal_id]
     else
-      redirect_to :controller => self.controller_name, :action => 'home'
+      redirect_user_to_stored
     end
   end
   
   def confirm_permissions
     @deal = Deal.find_by_id(params[:deal_id])
-    unless @deal
+    unless @deal and @deal.deal_incentive
       go_home
       return
     end
@@ -192,15 +192,16 @@ class UserController < ApplicationController
       return
     end
     
-    flash.now[:notice] = "You need to log in to Facebook with the proper permissions to share with your friends."
-    
+    message = "You need to log in to Facebook with the proper permissions to share with your friends and turn your <strong class=\"old\">#{@deal.deal_value.format(:no_cents)}</strong> into <strong class=\"discount\">#{@deal.deal_incentive.incentive_value.format(:no_cents)}</strong>!"
+    flash.now[:notice] = "#{message}"
+
     @next_action = 'facebook_share'
     render "user/#{self.action_name}"
   end
   
   def fb_share    
     @deal = Deal.find_by_id(params[:deal_id])
-    unless @deal
+    unless @deal and @deal.deal_incentive
       go_home
       return
     end
@@ -214,8 +215,8 @@ class UserController < ApplicationController
     
     if request.post?
       facebook_ids = params[:facebook_ids]
-      unless facebook_ids and facebook_ids.size > 0
-        flash[:error] = "You must select at least one friend."
+      unless facebook_ids and facebook_ids.size >= @deal.deal_incentive.number_required
+        flash[:error] = "You must select at least #{@deal.deal_incentive.number_required} friends."
         redirect_to :controller => self.controller_name, :action => 'fb_share', :deal_id => @deal.id
         return
       end

@@ -55,6 +55,13 @@ body{ background:#fff;}
 <div id="name">VIP</div>
 <div id="relname"><%= @coupon.user.full_name %>: <%= @coupon.user.email %></div>
 
+<div id="name">Value</div>
+<% if @coupon.deal_code.incentive %>
+	<div id="relname"><%= @coupon.deal.deal_incentive.incentive_value.format(:no_cents) %></div>
+<% else %>
+	<div id="relname"><%= @coupon.deal.deal_value.format(:no_cents) %></div>
+<% end %>	
+
 <div id="name">Expiration Date</div>
 <div id="relname">Valid till: <%= @coupon.deal.expiration_date %></div>
 

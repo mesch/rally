@@ -793,15 +793,12 @@ class DealTest < ActiveSupport::TestCase
     d = Deal.new(:merchant_id => @m.id, :title => 'dealio', :start_date => @start, :end_date => @end, 
       :expiration_date => @expiration, :deal_price => '10.00', :deal_value => '20.00')
     assert d.save
-    # Share (not posted) - doesn't count
+    # Share - counts
     s = Share.new(:user_id => 1000, :deal_id => d.id, :facebook_id => 100000)
     assert s.save
-    assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 0
-    # Post - counts
-    s.update_attributes(:post_id => 1234, :posted => true)
-    assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1    
+    assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 1  
     # Share for another deal - no change
-    s = Share.new(:user_id => 1000, :deal_id => d.id + 1, :facebook_id => 100000, :post_id => 1234, :posted => true)
+    s = Share.new(:user_id => 1000, :deal_id => d.id + 1, :facebook_id => 100000)
     assert s.save
     
     assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day + 1.days), 1
@@ -810,7 +807,7 @@ class DealTest < ActiveSupport::TestCase
     assert_equal d.shares_in_date_range(Time.zone.today + 1.days, Time.zone.today.end_of_day + 1.days), 0
     
     # Add another posted share
-    s = Share.new(:user_id => 1000, :deal_id => d.id, :facebook_id => 100000, :post_id => 1234, :posted => true)
+    s = Share.new(:user_id => 1000, :deal_id => d.id, :facebook_id => 100000)
     assert s.save
     assert_equal d.shares_in_date_range(Time.zone.today, Time.zone.today.end_of_day), 2      
   end

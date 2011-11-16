@@ -33,7 +33,7 @@
 													:action => 'coupon', :id => coupon.id), 
 													:target=>"_blank" %>
 									<% else %>
-										<% if coupon.deal.deal_incentive %>
+										<% if coupon.deal.deal_incentive and !coupon.deal.deal_incentive.is_accomplished(@current_user.id) %>
 											<%= link_to "Earn #{coupon.deal.deal_incentive.added_value.format(:no_cents)}!", 
 												url_for(:controller => controller.controller_name, 
 														:action => 'share', :deal_id => coupon.deal.id), 

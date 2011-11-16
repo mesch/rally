@@ -343,7 +343,6 @@ Feature: Manage Deals
 		And I select "Share" from "incentive_type"
 		And I fill in "incentive_value" with "30"
 		And I fill in "incentive_required" with "5"
-		And I fill in "incentive_max" with "100"
 		And I upload a file of 0 incentive codes
 		And I press "Create Deal"
 		Then I should see "Your deal was created successfully."

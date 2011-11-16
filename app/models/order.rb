@@ -17,6 +17,7 @@ class Order < ActiveRecord::Base
   belongs_to :deal
   belongs_to :user
   has_many :order_payments
+  has_many :coupons
 
   # Paginate methods
   def self.search(search="", page=1, per_page=10)
@@ -126,8 +127,7 @@ class Order < ActiveRecord::Base
     deal = Deal.find(self.deal.id)
     if deal.deal_incentive
       if deal.deal_incentive.is_accomplished(self.user.id)
-        coupons = Coupon.find_by_order_id(self.id)  
-        for coupon in coupons
+        for coupon in self.coupons
           # check against max
           if deal.deal_incentive.max == 0 or deal.deal_incentive.reserved_codes_count + 1 <= deal.deal_incentive.max
             dc = DealCode.find(:first, :conditions => ["deal_id = ? AND reserved = ? AND incentive = ?", deal.id, false, true], :lock => true)

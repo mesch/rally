@@ -17,6 +17,13 @@ class DealIncentive < ActiveRecord::Base
 
   belongs_to :deal
   
+  # Paginate methods
+  def self.search(search="", page=1, per_page=10)
+    paginate :per_page => per_page, :page => page,
+             :conditions => ['deal_id = ?', "#{search}"],
+             :order => 'created_at asc'
+  end
+  
   def self.create_type_options
     return [['', nil], ['Share', DealIncentive::SHARE]]
     #return [['', nil], ['Share', DealIncentive::SHARE], ['Purchase', DealIncentive::PURCHASE]]

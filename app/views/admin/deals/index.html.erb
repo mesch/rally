@@ -25,6 +25,7 @@
 						<th width="60" nowrap>Min</th>
 						<th width="60" nowrap>Max</th>
 						<th width="60" nowrap>Codes</th>
+						<th width="60" nowrap>Incentive</th>
 					</tr>
 					<% for deal in @deals %>
 					<tr class="alt">
@@ -43,6 +44,11 @@
 						<td nowrap><%= deal.min %></td>
 						<td nowrap><%= deal.max %></td>
 						<td nowrap><%= link_to "View", deal_codes_admin_deal_url(deal.id) %></td>
+						<% if deal.deal_incentive %>
+							<td nowrap><%= link_to "View", deal_incentive_admin_deal_url(deal.id) %></td>
+						<% else %>
+							<td nowrap></td>
+						<% end %>
 					</tr>
 					<% end %>
                     </table>

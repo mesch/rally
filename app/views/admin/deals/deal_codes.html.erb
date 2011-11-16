@@ -16,6 +16,7 @@
 							<th width="100">Code</th>
 							<th width="40">Created</th>
 							<th width="40">Reserved</th>
+							<th width="40">Incentive</th>
 						</tr>							
 						<% for deal_code in @deal_codes %>
 						<tr>
@@ -24,6 +25,7 @@
 							<td><%= deal_code.code %></td>
 							<td><%= deal_code.created_at.strftime(OPTIONS[:date_format]) %></td>
 							<td><%= deal_code.reserved %></td>
+							<td><%= deal_code.incentive %></td>
 						</tr>
 						<% end %>
                     </table>

@@ -797,9 +797,14 @@ class UserControllerTest < ActionController::TestCase
     get :share, :deal_id => @burger_deal.id
     assert_response :success
     assert_template "user/share"
+    # no deal - go home
     get :share, :deal_id => 0
     assert_response :redirect
     assert_redirected_to :action => :home
+    # deal without incentive - go home
+    get :share, :deal_id => @current_deal.id
+    assert_response :redirect
+    assert_redirected_to :action => :home    
   end    
   
   def test_fb_share
@@ -813,7 +818,16 @@ class UserControllerTest < ActionController::TestCase
     assert_redirected_to :action => :confirm_permissions, :deal_id => @burger_deal.id
     get :fb_share, :deal_id => 0
     assert_response :redirect
-    assert_redirected_to :action => :home    
+    assert_redirected_to :action => :home
+    ### todo - can't do this yet
+    # post - not enough facebook_ids
+    #post :fb_share, :deal_id => @burger_deal.id, :facebook_ids => [1], :message => 'yo! check this out.'
+    #assert_response :redirect
+    #assert_redirected_to :action => :fb_share, :deal_id => @burger_deal.id
+    # post - enough facebook_ids, but won't have fb_requirements
+    #post :fb_share, :deal_id => @burger_deal.id, :facebook_ids => [1,2,3,4,5,6,7,8,9,10], :message => 'yo! check this out.'
+    #assert_response :redirect
+    #assert_redirected_to :action => :confirm_permissions, :deal_id => @burger_deal.id    
   end
   
 =begin  

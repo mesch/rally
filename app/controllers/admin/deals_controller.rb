@@ -15,4 +15,10 @@ class Admin::DealsController < AdminController
     @deal_codes = DealCode.search(@deal.id, params[:page])
   end
 
+  def deal_incentive
+    @deal = Deal.find_by_id(params[:id])
+    
+    @deal_incentives = DealIncentive.search(@deal.id, params[:page])
+  end    
+
 end

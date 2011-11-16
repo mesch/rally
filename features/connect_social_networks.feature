@@ -65,7 +65,7 @@ Feature: Manage User Account
 		And I press "Log In"	
 		When I go to the fb share page for deal "Cool New Deal"
 		Then I should not see "Share this deal on Facebook"
-		And I should see "You need to log in to Facebook with the proper permissions to share with your friends."
+		And I should see "You need to log in to Facebook with the proper permissions to share with your friends"
 	
 	@javascript @facebook
 	Scenario: Facebook Share Page (connected to our app, "email" permissions)
@@ -77,7 +77,7 @@ Feature: Manage User Account
 		And I log into Facebook
 		When I go to the fb share page for deal "Cool New Deal"
 		Then I should not see "Share this deal on Facebook"
-		And I should see "You need to log in to Facebook with the proper permissions to share with your friends."
+		And I should see "You need to log in to Facebook with the proper permissions to share with your friends"
 	
 	@javascript @facebook
 	Scenario: Facebook Share Page (connected, "email,publish_stream" permissions)
@@ -113,7 +113,7 @@ Feature: Manage User Account
 		When I go to the share page for deal "Cool New Deal"
 		And I follow "Share on Facebook"
 		Then I should not see "Share this deal on Facebook"
-		And I should see "You need to log in to Facebook with the proper permissions to share with your friends."
+		And I should see "You need to log in to Facebook with the proper permissions to share with your friends"
 		# todo: login and get to the fb_share page?
 
 	@javascript @facebook
@@ -127,7 +127,7 @@ Feature: Manage User Account
 		When I go to the share page for deal "Cool New Deal"
 		And I follow "Share on Facebook"
 		Then I should not see "Share this deal on Facebook"
-		And I should see "You need to log in to Facebook with the proper permissions to share with your friends."
+		And I should see "You need to log in to Facebook with the proper permissions to share with your friends"
 		# todo: login and get to the fb_share page?
 	
 	@javascript @facebook
