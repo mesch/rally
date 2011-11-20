@@ -43,7 +43,7 @@ class DealIncentive < ActiveRecord::Base
     return false
   end
   
-  def reserved_coupons_count
+  def reserved_codes_count
     return DealCode.count(:conditions => ["deal_id = ? and incentive = ? and reserved =?", self.deal_id, true, true])
   end
 

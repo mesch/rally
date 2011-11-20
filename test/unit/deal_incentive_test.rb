@@ -108,42 +108,42 @@ class DealIncentiveTest < ActiveSupport::TestCase
     assert_equal di.added_value, 10.to_money
   end
   
-  def test_reserved_coupons_count
+  def test_reserved_codes_count
     # delete all current deal incentive codes
     DealCode.delete_all(["deal_id = ? AND incentive = ?", @d.id, true])
     
     di = DealIncentive.new(:deal_id => @d.id, :metric_type => DealIncentive::SHARE, 
       :incentive_price => '10.00', :incentive_value => '20.00', :number_required => 5)
     assert di.save
-    assert_equal di.reserved_coupons_count, 0
+    assert_equal di.reserved_codes_count, 0
     # Create an unreserved non-incentive code - no change
     dc = DealCode.new(:deal_id => @d.id, :code => "1234")
     assert dc.save
-    assert_equal di.reserved_coupons_count, 0
+    assert_equal di.reserved_codes_count, 0
     # reserve it - no change
     dc.update_attributes!(:reserved => true)
-    assert_equal di.reserved_coupons_count, 0
+    assert_equal di.reserved_codes_count, 0
     # Create an unreserved incentive code for a different deal - no change
     dc = DealCode.new(:deal_id => @d.id + 1, :code => "1234")
     assert dc.save
-    assert_equal di.reserved_coupons_count, 0
+    assert_equal di.reserved_codes_count, 0
     # reserve it - no change
     dc.update_attributes!(:reserved => true)
-    assert_equal di.reserved_coupons_count, 0
+    assert_equal di.reserved_codes_count, 0
     # Create an unreserved incentive code - no change
     dc = DealCode.new(:deal_id => @d.id, :code => "1234", :incentive => true)
     assert dc.save
-    assert_equal di.reserved_coupons_count, 0
+    assert_equal di.reserved_codes_count, 0
     # reserve it - add 1
     dc.update_attributes!(:reserved => true)
-    assert_equal di.reserved_coupons_count, 1
+    assert_equal di.reserved_codes_count, 1
     # Create another unreserved incentive code - no change
     dc = DealCode.new(:deal_id => @d.id, :code => "1235", :incentive => true)
     assert dc.save
-    assert_equal di.reserved_coupons_count, 1
+    assert_equal di.reserved_codes_count, 1
     # reserve it - add 1
     dc.update_attributes!(:reserved => true)
-    assert_equal di.reserved_coupons_count, 2
+    assert_equal di.reserved_codes_count, 2
   end
   
   def test_is_accomplished
