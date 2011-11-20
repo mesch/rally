@@ -259,6 +259,129 @@ class OrderTest < ActiveSupport::TestCase
     assert o.authorized_at
   end
   
+  def test_upgrade_coupons_no_incentive
+    # create deal
+    d = Deal.new(:merchant_id => 1000, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
+    assert d.save
+    # add deal code
+    dc = DealCode.new(:deal_id => d.id, :code => 'a')
+    assert dc.save
+    # create order
+    o = Order.new(:user_id => @test_user, :deal_id => d.id)
+    assert o.save
+    # create coupon
+    c = Coupon.new(:user_id => @test_user.id, :deal_id => d.id, :order_id => o.id, :deal_code_id => dc.id)
+    assert c.save
+    # upgrade - coupon doesn't change
+    coupons = Coupon.find(:all, :conditions =>["user_id = ? AND deal_id = ? AND order_id = ?", @test_user.id, d.id, o.id])
+    assert_equal coupons[0].deal_code.id, dc.id
+    o.upgrade_coupons!
+    coupons = Coupon.find(:all, :conditions =>["user_id = ? AND deal_id = ? AND order_id = ?", @test_user.id, d.id, o.id])
+    assert_equal coupons[0].deal_code.id, dc.id
+  end
+  
+  def test_upgrade_coupons_not_met
+    # create deal
+    d = Deal.new(:merchant_id => 1000, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
+    assert d.save
+    # add deal incentive
+    di = DealIncentive.new(:deal_id => d.id, :metric_type => DealIncentive::SHARE, 
+      :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 1)
+    assert di.save
+    # add deal code
+    dc = DealCode.new(:deal_id => d.id, :code => 'a')
+    assert dc.save
+    # add incentive deal code
+    idc = DealCode.new(:deal_id => d.id, :code => 'x', :incentive => true)
+    assert idc.save    
+    # create order
+    o = Order.new(:user_id => @test_user.id, :deal_id => d.id)
+    assert o.save
+    # create coupon
+    c = Coupon.new(:user_id => @test_user.id, :deal_id => d.id, :order_id => o.id, :deal_code_id => dc.id)
+    assert c.save
+    # upgrade - coupon doesn't change
+    coupons = Coupon.find(:all, :conditions =>["user_id = ? AND deal_id = ? AND order_id = ?", @test_user.id, d.id, o.id])
+    assert_equal coupons[0].deal_code.id, dc.id 
+    o.upgrade_coupons!
+    coupons = Coupon.find(:all, :conditions =>["user_id = ? AND deal_id = ? AND order_id = ?", @test_user.id, d.id, o.id])
+    assert_equal coupons[0].deal_code.id, dc.id  
+  end
+  
+  def test_upgrade_coupons_single
+    # create deal
+    d = Deal.new(:merchant_id => 1000, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
+    assert d.save
+    # add deal incentive
+    di = DealIncentive.new(:deal_id => d.id, :metric_type => DealIncentive::SHARE, 
+      :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 1)
+    assert di.save
+    # add deal code
+    dc = DealCode.new(:deal_id => d.id, :code => 'a')
+    assert dc.save
+    # add incentive deal code
+    idc = DealCode.new(:deal_id => d.id, :code => 'x', :incentive => true)
+    assert idc.save    
+    # create order
+    o = Order.new(:user_id => @test_user.id, :deal_id => d.id)
+    assert o.save
+    # create coupon
+    c = Coupon.new(:user_id => @test_user.id, :deal_id => d.id, :order_id => o.id, :deal_code_id => dc.id)
+    assert c.save
+    # create share
+    s = Share.new(:user_id => @test_user.id, :deal_id => d.id, :facebook_id => 100000)
+    assert s.save
+    # upgrade - coupon upgrades
+    coupons = Coupon.find(:all, :conditions =>["user_id = ? AND deal_id = ? AND order_id = ?", @test_user.id, d.id, o.id])
+    assert_equal coupons[0].deal_code.id, dc.id  
+    o.upgrade_coupons!
+    coupons = Coupon.find(:all, :conditions =>["user_id = ? AND deal_id = ? AND order_id = ?", @test_user.id, d.id, o.id])
+    assert_equal coupons[0].deal_code.id, idc.id    
+  end
+  
+  def test_upgrade_coupons_multiple
+    # create deal
+    d = Deal.new(:merchant_id => 1000, :title => 'dealio', :start_date => Time.zone.today, :end_date => Time.zone.today, 
+      :expiration_date => Time.zone.today, :deal_price => '10.00', :deal_value => '20.00', :max => 10)
+    assert d.save
+    # add deal incentive
+    di = DealIncentive.new(:deal_id => d.id, :metric_type => DealIncentive::SHARE, 
+      :incentive_price => '10.00', :incentive_value => '30.00', :number_required => 1)
+    assert di.save
+    # add deal codes
+    dc1 = DealCode.new(:deal_id => d.id, :code => 'a')
+    assert dc1.save
+    dc2 = DealCode.new(:deal_id => d.id, :code => 'b')
+    assert dc2.save
+    # add incentive deal codes
+    idc1 = DealCode.new(:deal_id => d.id, :code => 'x', :incentive => true)
+    assert idc1.save  
+    idc2 = DealCode.new(:deal_id => d.id, :code => 'y', :incentive => true)
+    assert idc2.save
+    # create order
+    o = Order.new(:user_id => @test_user.id, :deal_id => d.id)
+    assert o.save
+    # create coupon
+    c = Coupon.new(:user_id => @test_user.id, :deal_id => d.id, :order_id => o.id, :deal_code_id => dc1.id)
+    assert c.save
+    c = Coupon.new(:user_id => @test_user.id, :deal_id => d.id, :order_id => o.id, :deal_code_id => dc2.id)
+    assert c.save
+    # create share
+    s = Share.new(:user_id => @test_user.id, :deal_id => d.id, :facebook_id => 100000)
+    assert s.save
+    # upgrade - coupons upgrade
+    coupons = Coupon.find(:all, :conditions =>["user_id = ? AND deal_id = ? AND order_id = ?", @test_user.id, d.id, o.id])
+    assert [coupons[0].deal_code.id, coupons[1].deal_code.id].include?(dc1.id)
+    assert [coupons[0].deal_code.id, coupons[1].deal_code.id].include?(dc2.id)
+    o.upgrade_coupons!
+    coupons = Coupon.find(:all, :conditions =>["user_id = ? AND deal_id = ? AND order_id = ?", @test_user.id, d.id, o.id])
+    assert [coupons[0].deal_code.id, coupons[1].deal_code.id].include?(idc1.id)
+    assert [coupons[0].deal_code.id, coupons[1].deal_code.id].include?(idc2.id)   
+  end
+  
   def test_is_timed_out
     timeout = 0.001
     o = Order.new(:user_id => 1, :deal_id => 10)

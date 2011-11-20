@@ -159,6 +159,7 @@ Rally::Application.routes.draw do
     end
     resources :coupons
     resources :orders
+    resources :shares
     resources :payments
     resources :process_logs
     resources :visitors

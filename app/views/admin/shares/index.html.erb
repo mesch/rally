@@ -1,0 +1,40 @@
+<div id="bdw" class="bdw">
+<div id="bd" class="cf">
+<div>
+    <div id="content" class="clear mainwide">
+		<div class="box clear">
+            <div class="box-top"></div>
+            <div class="box-content">
+                <div class="head">
+                    <h2>Shares</h2>
+				</div>
+                <div class="sect">
+					<table id="list" cellspacing="0" cellpadding="0" bpayment="0" class="general-table">						
+						<tr><th width="40">Id</th>
+							<th width="60">User Id</th>
+							<th width="60">Deal Id</th>
+							<th width="150">Deal</th>							
+							<th width="60">Facebook Id</th>
+							<th width="40">Created</th>							
+						</tr>							
+						<% for share in @shares %>
+						<tr>
+							<td><%= share.id %></td>
+							<td><%= share.user.id %></td>
+							<td><%= share.deal.id %></td>
+							<td><%= share.deal.title %></td>
+							<td><%= share.facebook_id%></td>
+							<td><%= share.created_at.strftime(OPTIONS[:date_format]) %></td>
+						</tr>
+						<% end %>
+                    </table>
+					<%= page_entries_info @shares %>
+					<%= will_paginate @shares %>
+				</div>
+            </div>
+            <div class="box-bottom"></div>
+        </div>
+    </div>
+</div>
+</div> <!-- bd end -->
+</div> <!-- bdw end -->

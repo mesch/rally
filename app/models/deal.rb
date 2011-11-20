@@ -244,7 +244,7 @@ class Deal < ActiveRecord::Base
     successes = 0
     failures = 0
     # select all deals - tipped, within 1 week of end_date
-    deals = Deal.find(:all, :conditions => ["end_date < ? AND end_date > ?", Time.zone.today, Time.zone.today - 7.days])
+    deals = Deal.find(:all, :conditions => ["end_date < ? AND end_date > ?", Time.zone.now, Time.zone.now - 7.days])
     for deal in deals
       #p "Checking Deal #{deal.inspect}"
       if deal.is_tipped

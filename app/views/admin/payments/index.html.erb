@@ -13,11 +13,12 @@
 						<tr><th width="40">Id</th>
 							<th width="60">User Id</th>
 							<th width="60">Deal Id</th>
-							<th width="200">Deal</th>							
+							<th width="150">Deal</th>							
 							<th width="60">Order Id</th>
 							<th width="60">Amount</th>							
 							<th width="60">Gateway</th>
 							<th width="60">Transaction Type</th>
+							<th width="60">Transaction Id</th>
 							<th width="60">Confirmation Code</th>
 							<th width="40">Created</th>							
 						</tr>							
@@ -31,6 +32,7 @@
 							<td><%= payment.amount.format %></td>
 							<td><%= payment.gateway %></td>
 							<td><%= payment.transaction_type %></td>
+							<td><%= payment.transaction_id %></td>
 							<td><%= payment.confirmation_code %></td>
 							<td><%= payment.created_at.strftime(OPTIONS[:date_format]) %></td>
 						</tr>
