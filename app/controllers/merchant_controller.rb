@@ -192,7 +192,7 @@ class MerchantController < ApplicationController
             :number_required => params[:incentive_required], :max => params[:incentive_max] ? params[:incentive_max] : 0)
           di.save!
           if (file = params[:incentive_codes_file])
-            DealCode.delete_all(["deal_incentive_id = ? and incentive = ?", di.id, true])
+            DealCode.delete_all(["deal_id = ? and incentive = ?", di.id, true])
             FasterCSV.foreach(file.path) do |row|
               dc = DealCode.new(:deal_id => @deal.id, :code => row[0], :incentive => true)
               dc.save!
