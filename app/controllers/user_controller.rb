@@ -225,7 +225,7 @@ class UserController < ApplicationController
         args = {:name => @deal.title,
           :link => url_for(:controller => self.controller_name, :action => 'deal', :id => @deal.id),
           :caption => @deal.merchant.name,
-          :description => @template.simple_format(@template.strip_tags(@deal.description)),
+          :description => ActionController::Base.helpers.simple_format(ActionController::Base.helpers.strip_tags(@deal.description)),
           :picture => @deal.deal_images[0].image.url(:display)
         }
         put_wall_post(params[:message], args, facebook_id)
