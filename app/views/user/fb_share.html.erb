@@ -31,7 +31,7 @@
 					<span>
 						<%= link_to @deal.title, url_for(:controller => controller.controller_name, :action => 'deal', :id => @deal.id) %><br>
 						<%= @deal.merchant.name %><br>
-						<%= @deal.description %><br>
+						<%= simple_format(strip_tags(@deal.description)) %><br>
 					</span>
 				</div>
 				<!-- <div class="clear"></div> -->
