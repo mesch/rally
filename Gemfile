@@ -8,7 +8,7 @@ gem 'rake', '0.9.2'
 gem 'mysql'
 gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'ruby-debug'
-gem 'bartt-ssl_requirement', :require => 'ssl_requirement'
+gem 'bartt-ssl_requirement', '1.2.7', :require => 'ssl_requirement'
 gem 'heroku', '2.4.0'
 
 gem 'compass', '0.10.6'
