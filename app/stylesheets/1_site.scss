@@ -1,17 +1,17 @@
 $global-width: 960px;
 
-$header-color: #333333;
-$background-color: #CCCCCC;
-$bar-color: #CC0000;
-$button-color: #FF0000;
-$link-color: #FF0000;
-$input-color: #666666;
+$header-color: #FFFFFF;
+$background-color: #BDBDBD;
+$bar-color: #FE642E;
+$button-color: #63C5C8;
+$link-color: #339999;
+$input-color: #89B4D6;
 $deal-box-color: lighten($background-color, 15%);
 
-$deal_price_url:"i/bg-deal-price.png";
-$deal_buy_url:"i/button-deal-buy.png";
-$deal_expired_url:"hi/bg-deal-expired-text.gif";
-$deal_soldout_url:"i/bg-deal-soldout-text.gif";
+$deal_price_url:"https://s3.amazonaws.com/rallycommerce-staging/webstores/1/deal-price.png";
+$deal_buy_url:"https://s3.amazonaws.com/rallycommerce-staging/webstores/1/button-buy.png";
+$deal_expired_url:"https://s3.amazonaws.com/rallycommerce-staging/webstores/1/button-expired.png";
+$deal_soldout_url:"https://s3.amazonaws.com/rallycommerce-staging/webstores/1/button-soldout.png";
 
 /* IMPORTS */
 @import "global";
@@ -19,5 +19,4 @@ $deal_soldout_url:"i/bg-deal-soldout-text.gif";
 @import "partials/_sysmsg";
 @import "partials/_deal";
 @import "partials/_border_radius";
-@import "partials/_facebook";
 @import "partials/_facebook";
